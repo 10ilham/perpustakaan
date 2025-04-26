@@ -1,31 +1,63 @@
 <!-- SIDEBAR -->
 <section id="sidebar">
-    <a href="#" class="brand"><i class='bx bxs-smile icon'></i> AdminSite</a>
+    <a href="#" class="brand">
+        <img src="{{ asset('assets/img/logo_mts.png') }}" class="brand" style="width: 50px; height: auto;">
+        MTSN 6 Garut
+    </a>
     <ul class="side-menu">
-        <li><a href="#" class="active"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+        <li>
+            @if(Auth::user()->level === 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class='bx bxs-dashboard icon'></i> Dashboard</a>
+            @elseif(Auth::user()->level === 'siswa')
+            <a href="{{ route('siswa.dashboard') }}" class="{{ request()->routeIs('siswa.dashboard') ? 'active' : '' }}"><i class='bx bxs-dashboard icon'></i> Dashboard</a>
+            @elseif(Auth::user()->level === 'guru')
+            <a href="{{ route('guru.dashboard') }}" class="{{ request()->routeIs('guru.dashboard') ? 'active' : '' }}"><i class='bx bxs-dashboard icon'></i> Dashboard</a>
+            @elseif(Auth::user()->level === 'staff')
+            <a href="{{ route('staff.dashboard') }}" class="{{ request()->routeIs('staff.dashboard') ? 'active' : '' }}"><i class='bx bxs-dashboard icon'></i> Dashboard</a>
+            @endif
+        </li>
         <li class="divider" data-text="main">Main</li>
-        <li>
-            <a href="#"><i class='bx bxs-inbox icon'></i> Elements <i class='bx bx-chevron-right icon-right'></i></a>
-            <ul class="side-dropdown">
-                <li><a href="#">Alert</a></li>
-                <li><a href="#">Badges</a></li>
-                <li><a href="#">Breadcrumbs</a></li>
-                <li><a href="#">Button</a></li>
+        {{-- Buku --}}
+        <li class="{{ request()->is('buku*') ? 'active' : '' }}" id="bukuMenu">
+            <a href="#" class="{{ request()->is('buku*') ? 'active' : '' }}">
+                <i class='bx bxs-book icon'></i> Buku <i class='bx bx-chevron-right icon-right'></i>
+            </a>
+            <ul class="side-dropdown {{ request()->is('buku*') ? 'show' : '' }}">
+                @if (Auth::user()->level === 'admin')
+                <li><a href="{{ route('buku.index') }}" class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Data Buku</a></li>
+                @endif
+                @if(Auth::user()->level === 'admin' || Auth::user()->level === 'staff')
+                <li><a href="{{ route('buku.index') }}?sort=newest" class="{{ request()->fullUrl() == route('buku.index').'?sort=newest' ? 'active-menu-item' : '' }}">Buku Terbaru</a></li>
+                <li><a href="{{ route('buku.index') }}" class="{{ request()->fullUrl() == route('buku.index').'?status=tersedia' ? 'active-menu-item' : '' }}">Buku Favorit</a></li>
+                @endif
             </ul>
         </li>
-        <li><a href="#"><i class='bx bxs-chart icon'></i> Charts</a></li>
-        <li><a href="#"><i class='bx bxs-widget icon'></i> Widgets</a></li>
-        <li class="divider" data-text="table and forms">Table and forms</li>
-        <li><a href="#"><i class='bx bx-table icon'></i> Tables</a></li>
-        <li>
-            <a href="#"><i class='bx bxs-notepad icon'></i> Forms <i class='bx bx-chevron-right icon-right'></i></a>
-            <ul class="side-dropdown">
-                <li><a href="#">Basic</a></li>
-                <li><a href="#">Select</a></li>
-                <li><a href="#">Checkbox</a></li>
-                <li><a href="#">Radio</a></li>
+
+        {{-- Kategori --}}
+        @if (Auth::user()->level === 'admin')
+        <li class="{{ request()->is('kategori*') ? 'active' : '' }}" id="kategoriMenu">
+            <a href="#" class="{{ request()->is('kategori*') ? 'active' : '' }}">
+                <i class='bx bxs-category icon'></i> Kategori <i class='bx bx-chevron-right icon-right'></i>
+            </a>
+            <ul class="side-dropdown {{ request()->is('kategori*') ? 'show' : '' }}">
+                <li><a href="{{ route('kategori.index') }}" class="{{ request()->routeIs('kategori.index') ? 'active-menu-item' : '' }}">Lihat Kategori Buku</a></li>
             </ul>
         </li>
+        @endif
+
+        {{-- Anggota --}}
+        @if (Auth::user()->level === 'admin')
+        <li class="{{ request()->is('anggota*') ? 'active' : '' }}" id="anggotaMenu">
+            <a href="#" class="{{ request()->is('anggota*') ? 'active' : '' }}">
+                <i class='bx bxs-group icon'></i> Anggota <i class='bx bx-chevron-right icon-right'></i>
+            </a>
+            <ul class="side-dropdown {{ request()->is('anggota*') ? 'show' : '' }}">
+                <li><a href="{{ route('anggota.index') }}" class="{{ request()->routeIs('anggota.index') ? 'active-menu-item' : '' }}">Lihat Anggota</a></li>
+            </ul>
+        </li>
+        @endif
+        <!-- <li class="divider" data-text="table and forms">Table and forms</li> -->
+        <!-- <li><a href="#"><i class='bx bx-table icon'></i> Tables</a></li> -->
     </ul>
     <div class="ads">
         <div class="wrapper">

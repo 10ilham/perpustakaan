@@ -120,33 +120,21 @@ a:focus {
 
 .section-btn:hover,
 .section-btn:focus {
-    background: #00f260; /* fallback for old browsers */
+    background: #00f260;
     background: -webkit-linear-gradient(
         to right,
         #0575e6,
         #00f260
     ); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
-        to right,
-        #0575e6,
-        #00f260
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, #0575e6, #00f260);
     border-color: transparent;
     color: #393939;
 }
 
 .overlay {
-    background: #00f260; /* fallback for old browsers */
-    background: -webkit-linear-gradient(
-        to right,
-        #0575e6,
-        #00f260
-    ); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
-        to right,
-        #0575e6,
-        #00f260
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #00f260;
+    background: -webkit-linear-gradient(to right, #0575e6, #00f260);
+    background: linear-gradient(to right, #0575e6, #00f260);
     opacity: 0.7;
     position: absolute;
     width: 100%;
@@ -244,17 +232,9 @@ section {
 }
 
 .custom-navbar .section-btn:hover {
-    background: #000000; /* fallback for old browsers */
-    background: -webkit-linear-gradient(
-        to right,
-        #434343,
-        #000000
-    ); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
-        to right,
-        #434343,
-        #000000
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #000000;
+    background: -webkit-linear-gradient(to right, #434343, #000000);
+    background: linear-gradient(to right, #434343, #000000);
 }
 
 .custom-navbar .section-btn a {
@@ -441,17 +421,9 @@ section {
 -----------------------------------------*/
 
 #kontak {
-    background: #00f260; /* fallback for old browsers */
-    background: -webkit-linear-gradient(
-        to right,
-        #0575e6,
-        #00f260
-    ); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
-        to right,
-        #0575e6,
-        #00f260
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #00f260;
+    background: -webkit-linear-gradient(to right, #0575e6, #00f260);
+    background: linear-gradient(to right, #0575e6, #00f260);
 }
 
 #kontak .section-title h2 {
@@ -615,17 +587,7 @@ footer span,
 }
 
 .modal-dialog .modal-content {
-    background: #000000; /* fallback for old browsers */
-    background: -webkit-linear-gradient(
-        to right,
-        #434343,
-        #000000
-    ); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(
-        to right,
-        #434343,
-        #000000
-    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #119e4a;
     border: none;
     border-radius: 2px;
     text-align: center;
@@ -686,7 +648,7 @@ footer span,
     color: #ffffff;
     background-color: transparent;
     border: none;
-    border-bottom: 1px solid #ce3232;
+    border-bottom: 1px solid #ffffff;
 }
 
 .modal-dialog .tab-content {
@@ -695,11 +657,17 @@ footer span,
 
 .modal-dialog form .form-control {
     border-radius: 5px;
-    border: 1px solid #595959;
-    background: transparent;
+    border: 1px solid #f5f5f5;
+    background: #ffffff;
     box-shadow: none;
     margin: 15px 0 15px 0;
     height: 50px;
+}
+
+/* Mengatur warna placeholder juga agar konsisten */
+.modal-dialog form .form-control::placeholder {
+    color: #999999;
+    opacity: 1;
 }
 
 .modal-dialog form .form-control:hover,

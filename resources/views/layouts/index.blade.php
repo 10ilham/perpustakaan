@@ -11,25 +11,20 @@
     <meta name="keywords" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="{{ asset('assets/img/logo_mts.png') }}" rel="icon" type="image/x-icon">
 
     <!-- ONLINE CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/templatemo-style.css') }}">
 
 </head>
 
 <body>
-
-    <!-- Pesan ketika email berhasil terkirim terhubung ke "KirimEmailController.php" -->
-    @if (session('success'))
-    <script>
-        alert("{{ session('success') }}");
-    </script>
-    @endif
 
     <!-- PRE LOADER -->
     <section class="preloader">
@@ -293,6 +288,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.stellar/0.6.2/jquery.stellar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.10/SmoothScroll.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
 
     <script>
@@ -317,6 +313,38 @@
             }
         });
     </script>
+
+    <!-- Sweet Alert -->
+    <script>
+        // Menggunakan JavaScript untuk memeriksa nilai session yang sudah diteruskan dari PHP
+        const successMessage = "{{ session('success') }}";
+
+        // Jika ada pesan sukses, tampilkan SweetAlert
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        // Sweet Alert error email dan password
+        const errorMessage = "{{ session('error') }}";
+
+        // Jika ada pesan error, tampilkan SweetAlert
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: errorMessage,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    </script>
+
 
 </body>
 

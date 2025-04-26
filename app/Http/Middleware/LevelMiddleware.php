@@ -19,21 +19,26 @@ class LevelMiddleware
         if (Auth::check()) {
             $user = Auth::user();
 
-            // Redirect berdasarkan level
-            if ($user->level === 'admin' && !$request->is('admin/dashboard')) {
-                return redirect('/admin/dashboard');
-            } elseif ($user->level === 'siswa' && !$request->is('siswa/dashboard')) {
-                return redirect('/siswa/dashboard');
-            } elseif ($user->level === 'guru' && !$request->is('guru/dashboard')) {
-                return redirect('/guru/dashboard');
-            } elseif ($user->level === 'staff' && !$request->is('staff/dashboard')) {
-                return redirect('/staff/dashboard');
+            // Cek apakah pengguna memiliki level yang valid
+            if (!in_array($user->level, ['admin', 'siswa', 'guru', 'staff'])) {
+                return redirect('/')->with('error', 'Akses tidak diizinkan.');
             }
-        } else {
-            // Jika tidak login, arahkan ke halaman utama
-            return redirect('/')->with('error', 'Silakan login terlebih dahulu.');
+            // Cek apakah pengguna memiliki akses ke halaman yang diminta
+            if ($request->is('admin/*') && $user->level !== 'admin') {
+                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+            }
+            if ($request->is('siswa/*') && $user->level !== 'siswa') {
+                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+            }
+            if ($request->is('guru/*') && $user->level !== 'guru') {
+                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+            }
+            if ($request->is('staff/*') && $user->level !== 'staff') {
+                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+            }
+            // Jika pengguna memiliki akses yang sesuai, lanjutkan ke permintaan berikutnya
+            return $next($request);
         }
-
-        return $next($request);
+        return redirect('/')->with('error', 'Akses tidak diizinkan.');
     }
 }

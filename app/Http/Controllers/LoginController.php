@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -20,6 +21,17 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        // Cek apakah email terdaftar (untuk data error sweetalert)
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Email tidak terdaftar (untuk data error sweetalert)
+            return redirect('/')
+                ->with('error', 'Email tidak terdaftar!')
+                ->withInput($request->only('email'));
+        }
+
+        // Coba login
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
 
@@ -36,20 +48,11 @@ class LoginController extends Controller
             }
 
             return redirect('/');
-
-            // Versi simple
-            // $user = Auth::user();
-            // return match ($user->level) {
-            //     'admin' => redirect('/admin/dashboard'),
-            //     'siswa' => redirect('/siswa/dashboard'),
-            //     'guru' => redirect('/guru/dashboard'),
-            //     'staff' => redirect('/staff/dashboard'),
-            //     default => redirect('/'),
-            // };
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ]);
+        // Jika password salah (email sudah benar tapi auth gagal)
+        return redirect('/')
+            ->with('error', 'Password yang Anda masukkan salah!')
+            ->withInput($request->only('email'));
     }
 }

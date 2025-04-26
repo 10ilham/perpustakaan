@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('tanggal_lahir');
             $table->string('alamat');
             $table->string('no_telepon');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
 
@@ -56,6 +57,7 @@ return new class extends Migration
             $table->string('tanggal_lahir');
             $table->string('alamat');
             $table->string('no_telepon');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
 
@@ -69,6 +71,7 @@ return new class extends Migration
             $table->string('tanggal_lahir');
             $table->string('alamat');
             $table->string('no_telepon');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
 
@@ -82,6 +85,7 @@ return new class extends Migration
             $table->string('tanggal_lahir');
             $table->string('alamat');
             $table->string('no_telepon');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

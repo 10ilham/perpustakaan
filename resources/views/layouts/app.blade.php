@@ -6,9 +6,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ asset('assets/img/logo_mts.png') }}" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
     <!-- APP CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-modal.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <title>MTSN 6 Garut</title>
 </head>
@@ -29,8 +35,106 @@
     </section>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    {{-- JavaScript Custom --}}
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    <!-- Pastikan SweetAlert sudah di-load di layout utama atau tambahkan disini -->
+    <script>
+        // Menggunakan JavaScript untuk memeriksa nilai session yang sudah diteruskan dari PHP
+        const successMessage = "{{ session('success') }}";
+
+        // Jika ada pesan sukses, tampilkan SweetAlert
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        // Sweet Alert error
+        const errorMessage = "{{ session('error') }}";
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: errorMessage,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    </script>
+
+    <script>
+        // DataTable
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                responsive: true,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
+                },
+                columnDefs: [{
+                        orderable: false,
+                        targets: [1]
+                    } // Kolom foto tidak dapat diurutkan
+                ]
+            });
+        });
+    </script>
+
+    {{-- Script Modal Hapus --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            const deleteForm = document.getElementById('delete-form');
+
+            // Tangkap semua tombol hapus
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionUrl = this.getAttribute(
+                        'data-action'); // Ambil URL dari data-action
+                    deleteForm.setAttribute('action', actionUrl); // Set action form
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Fungsi untuk preview gambar
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview');
+            const previewContainer = document.getElementById('preview-container');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Tambahkan ini untuk merender scripts dari halaman lain, pastikan letaknya diakhir kode javascript -->
+    @yield('scripts')
 </body>
 
 </html>

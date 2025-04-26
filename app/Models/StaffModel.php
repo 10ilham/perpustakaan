@@ -15,10 +15,11 @@ class StaffModel extends Model
     protected $fillable = [
         'user_id',
         'nip',
-        'jabatan',
+        'bagian',
         'tanggal_lahir',
         'alamat',
         'no_telepon',
+        'foto',
     ];
 
     // Relasi ke tabel users

@@ -19,6 +19,7 @@ class GuruModel extends Model
         'tanggal_lahir',
         'alamat',
         'no_telepon',
+        'foto',
     ];
 
     // Relasi ke tabel users
