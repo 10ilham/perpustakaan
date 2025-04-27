@@ -33,31 +33,40 @@
                 <div class="col-12 col-lg-4">
                     <div class="profile-card">
                         <div class="card-body text-center">
-                            <!-- Kode Buku -->
-                            <div class="kode-buku position-absolute"
-                                style="top: 10px; left: 10px; background: rgba(0, 0, 0, 0.7); color: white; padding: 5px 8px; border-radius: 5px; display: inline-block; font-size: 14px; margin-bottom: 10px;">
-                                Kode Buku: {{ $buku->kode_buku }}
+                            <!-- Bar atas dengan kode buku dan stok buku -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; width: 100%;">
+                                <div class="kode-buku"
+                                    style="background: rgba(0, 0, 0, 0.7); color: white; padding: 5px 8px; border-radius: 5px; display: flex; align-items: center; font-size: 14px; flex: 1; margin-right: 10px;">
+                                    Kode Buku: {{ $buku->kode_buku }}
+                                </div>
+                                <div class="stok-buku"
+                                    style="background: rgba(185, 165, 9, 0.7); color: white; padding: 5px 8px; border-radius: 5px; font-size: 14px; display: flex; align-items: center; justify-content: center; width: auto; white-space: nowrap;">
+                                    Stok: {{ $buku->stok_buku }}
+                                </div>
                             </div>
+
                             <div class="book-cover">
                                 @if ($buku->foto)
                                     <img src="{{ asset('assets/img/buku/' . $buku->foto) }}" alt="{{ $buku->judul }}"
                                         style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                                 @else
-                                    <img src="{{ asset('assets/img/default-book.png') }}" alt="Default Book Cover"
+                                    <img src="{{ asset('assets/img/default_buku.png') }}" alt="Default Book Cover"
                                         style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                                 @endif
                             </div>
                             <h3 class="mt-4">{{ $buku->judul }}</h3>
                             <p class="text-muted mb-2">{{ $buku->pengarang }}</p>
+
+                            <!-- Status Buku -->
                             <div class="status-badge-center">
                                 @if ($buku->status === 'Tersedia')
                                     <span
                                         class="badge badge-outline-success status-badge-custom">{{ $buku->status }}</span>
-                                @elseif($buku->status === 'Dipinjam')
+                                @elseif($buku->status === 'Habis')
+                                    <span class="badge badge-outline-danger status-badge-custom">{{ $buku->status }}</span>
+                                @else
                                     <span
                                         class="badge badge-outline-warning status-badge-custom">{{ $buku->status }}</span>
-                                @else
-                                    <span class="badge badge-outline-danger status-badge-custom">{{ $buku->status }}</span>
                                 @endif
                             </div>
                         </div>
@@ -71,16 +80,17 @@
                             <h4 class="card-title mb-4" style="margin-bottom: 10px">Informasi Buku</h4>
 
                             <form class="profile-display">
-                                {{-- <div class="form-group">
-                                    <label for="kode_buku">Kode Buku</label>
-                                    <input type="text" id="kode_buku" class="form-control"
-                                        value="{{ $buku->kode_buku }}" readonly>
-                                </div> --}}
+                                {{-- Total Keseluruhan Buku --}}
+                                <div class="form-group">
+                                    <label for="total_buku">Total Buku</label>
+                                    <input type="text" id="total_buku" class="form-control" value="{{ $totalStokBuku }}"
+                                        readonly>
+                                </div>
 
                                 <div class="form-group">
                                     <label for="kategori">Kategori</label>
                                     <input type="text" id="kategori" class="form-control"
-                                        value="{{ $buku->kategori->nama }}" readonly>
+                                        value="{{ $buku->kategori->pluck('nama')->implode(', ') }}" readonly>
                                 </div>
 
                                 <div class="form-group">
@@ -99,6 +109,7 @@
                                     <label for="deskripsi">Deskripsi</label>
                                     <textarea id="deskripsi" class="form-control" rows="5" readonly>{{ $buku->deskripsi }}</textarea>
                                 </div>
+
 
                                 <div class="form-group">
                                     <label for="created_at">Ditambahkan Pada</label>

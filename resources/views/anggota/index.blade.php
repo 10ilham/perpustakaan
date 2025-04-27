@@ -70,7 +70,7 @@
                 <div class="head">
                     <h3>Daftar Anggota</h3>
                     <a href="{{ route('anggota.tambah') }}" class="btn btn-success d-flex align-items-center">
-                        <i class='bx bxs-plus-circle me-1'></i>
+                        <i class="bx bx-plus-circle"></i>
                         <span>Tambah Anggota</span>
                     </a>
                 </div>
@@ -167,7 +167,7 @@
                                             <!-- Tombol Detail -->
                                             <a href="{{ route('anggota.detail', $user->id) }}" class="btn btn-sm btn-info"
                                                 title="Detail" data-toggle="tooltip">
-                                                <i class='bx bxs-show'></i>
+                                                <i class="bx bx-info-circle"></i>
                                             </a>
 
                                             <!-- Tombol Edit -->

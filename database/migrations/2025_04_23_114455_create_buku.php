@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('tahun_terbit');
             $table->text('deskripsi');
             $table->string('foto')->nullable();
+            $table->unsignedInteger('total_buku')->default(0)->after('foto');
+            $table->integer('stok_buku')->default(0);
             $table->string('status')->default('Tersedia');
             $table->unsignedBigInteger('kategori_id');
             $table->foreign('kategori_id')->references('id')->on('kategori')->onUpdate('cascade')->onDelete('cascade');

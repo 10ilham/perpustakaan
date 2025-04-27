@@ -650,6 +650,32 @@ footer.footer i {
     margin-bottom: 10px; /* Jarak antar card */
 }
 
+/* Default styling untuk buku-container (detail kategori) */
+.buku-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+/* Jika hanya ada satu card, buat card memiliki lebar penuh */
+.buku-container.single-card .col-auto {
+    width: 100% !important; /* Lebar penuh */
+    max-width: 100% !important; /* Pastikan tidak menyusut */
+}
+
+/* Jika ada dua card, buat card memiliki lebar setengah layar */
+.buku-container.two-cards .col-auto {
+    width: calc(50% - 20px) !important; /* Lebar 50% dengan gap */
+    max-width: calc(50% - 20px) !important; /* Pastikan tidak menyusut */
+}
+
+/* Jika ada tiga card, buat card memiliki lebar sepertiga layar */
+.buku-container.three-cards .col-auto {
+    width: calc(33.33% - 20px) !important; /* Lebar 33.33% dengan gap */
+    max-width: calc(33.33% - 20px) !important; /* Pastikan tidak menyusut */
+}
+
 /* Styling khusus untuk card buku */
 .card-buku {
     height: 100%; /* Tinggi khusus untuk card buku */
@@ -1635,4 +1661,20 @@ option .icon {
     border-color: #24bc5c;
     box-shadow: 0 0 0 0.2rem rgba(35, 63, 133, 0.25);
     outline: 0;
+}
+
+.choices__list--multiple .choices__item {
+    background-color: #27ae60;
+    border: none;
+    border-radius: 3px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+/* button hover untuk choices item */
+.choices__list--multiple .choices__item:hover {
+    background-color: #3ee17a;
+    color: white;
 }

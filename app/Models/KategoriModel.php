@@ -21,6 +21,6 @@ class KategoriModel extends Model
     // Relasi ke tabel buku
     public function buku()
     {
-        return $this->hasMany(BukuModel::class, 'kategori_id');
+        return $this->belongsToMany(BukuModel::class, 'kategori_buku', 'kategori_id', 'buku_id');
     }
 }

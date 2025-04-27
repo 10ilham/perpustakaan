@@ -33,7 +33,7 @@
                     <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="row">
+                        <div class="row" style="display: flex; flex-wrap: nowrap;">
                             <div class="col-md-6">
                                 <!-- Informasi Dasar Buku -->
                                 <div class="form-group">
@@ -42,6 +42,11 @@
                                         value="{{ old('kode_buku', $buku->kode_buku) }}" required>
                                     @error('kode_buku')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -53,6 +58,11 @@
                                         value="{{ old('judul', $buku->judul) }}" required>
                                     @error('judul')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -60,16 +70,21 @@
 
                                 <div class="form-group">
                                     <label for="kategori_id">Kategori</label>
-                                    <select name="kategori_id" id="kategori_id" class="form-control" required>
-                                        <option value="">-- Pilih Kategori --</option>
+                                    <select name="kategori_id[]" id="kategori_id" class="form-control" multiple>
                                         @foreach ($kategori as $kat)
                                             <option value="{{ $kat->id }}"
-                                                {{ old('kategori_id', $buku->kategori_id) == $kat->id ? 'selected' : '' }}>
-                                                {{ $kat->nama }}</option>
+                                                {{ in_array($kat->id, old('kategori_id', $buku->kategori->pluck('id')->toArray())) ? 'selected' : '' }}>
+                                                {{ $kat->nama }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('kategori_id')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -81,23 +96,11 @@
                                         value="{{ old('pengarang', $buku->pengarang) }}" required>
                                     @error('pengarang')
                                         <div class="custom-alert" role="alert">
-                                            <p>{{ $message }}</p>
-                                        </div>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="status">Status Buku</label>
-                                    <select name="status" id="status" class="form-control" required>
-                                        <option value="Tersedia"
-                                            {{ old('status', $buku->status) == 'Tersedia' ? 'selected' : '' }}>Tersedia
-                                        </option>
-                                        <option value="Dipinjam"
-                                            {{ old('status', $buku->status) == 'Dipinjam' ? 'selected' : '' }}>Dipinjam
-                                        </option>
-                                    </select>
-                                    @error('status')
-                                        <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -111,6 +114,11 @@
                                         value="{{ old('penerbit', $buku->penerbit) }}" required>
                                     @error('penerbit')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -122,6 +130,28 @@
                                         value="{{ old('tahun_terbit', $buku->tahun_terbit) }}" required>
                                     @error('tahun_terbit')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
+                                            <p>{{ $message }}</p>
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="total_buku">Total Buku</label>
+                                    <input type="number" name="total_buku" id="total_buku" class="form-control"
+                                        value="{{ old('total_buku', $buku->total_buku ?? 0) }}" required>
+                                    <small class="form-text text-muted">Jumlah keseluruhan buku. Stok buku akan otomatis diperbarui.</small>
+                                    @error('total_buku')
+                                        <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
@@ -135,10 +165,16 @@
                                         Kosongkan jika tidak ingin mengubah foto sampul.</small>
                                     @error('foto')
                                         <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
                                             <p>{{ $message }}</p>
                                         </div>
                                     @enderror
 
+                                    {{-- Sampul saat ini --}}
                                     <div class="mt-3" style="margin-bottom: 10px;">
                                         <label>Sampul Saat Ini:</label>
                                         <div
@@ -148,12 +184,13 @@
                                                     alt="{{ $buku->judul }}"
                                                     style="max-width: 150px; max-height: 200px;">
                                             @else
-                                                <img src="{{ asset('assets/img/default-book.png') }}"
+                                                <img src="{{ asset('assets/img/default_buku.png') }}"
                                                     alt="Default Book Cover" style="max-width: 150px; max-height: 200px;">
                                             @endif
                                         </div>
                                     </div>
 
+                                    {{-- Preview sampul --}}
                                     <div class="mt-3" id="preview-container" style="display: none;">
                                         <label for="preview">Preview Sampul Baru:</label>
                                         <div
@@ -171,6 +208,11 @@
                             <textarea name="deskripsi" id="deskripsi" class="form-control" rows="5" required>{{ old('deskripsi', $buku->deskripsi) }}</textarea>
                             @error('deskripsi')
                                 <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
                                     <p>{{ $message }}</p>
                                 </div>
                             @enderror
@@ -208,6 +250,21 @@
             if (this.value.length > 4) {
                 this.value = this.value.slice(0, 4);
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const kategoriSelect = document.getElementById('kategori_id');
+
+            new Choices(kategoriSelect, {
+                removeItemButton: true, // tampilkan tombol “×” di tiap tag
+                placeholder: true, // pakai placeholder dari <select>
+                placeholderValue: 'Pilih kategori…',
+                shouldSort: false, // urutan sesuai option HTML
+                searchEnabled: true, // boleh cari kategori
+                itemSelectText: '', // text “Press to select” dihilangkan
+            });
         });
     </script>
 @endsection

@@ -70,11 +70,11 @@
 
                                 <div class="form-group">
                                     <label for="kategori_id">Kategori</label>
-                                    <select name="kategori_id" id="kategori_id" class="form-control" required>
-                                        <option value="">-- Pilih Kategori --</option>
+                                    <select name="kategori_id[]" id="kategori_id" class="form-control" multiple>
                                         @foreach ($kategori as $kat)
                                             <option value="{{ $kat->id }}"
-                                                {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>{{ $kat->nama }}
+                                                {{ collect(old('kategori_id', []))->contains($kat->id) ? 'selected' : '' }}>
+                                                {{ $kat->nama }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -140,6 +140,23 @@
                                     @enderror
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="total_buku">Total Buku</label>
+                                    <input type="number" name="total_buku" id="total_buku" class="form-control"
+                                        value="{{ old('total_buku', 0) }}">
+                                    <small class="form-text text-muted">Jumlah keseluruhan buku. Stok buku akan otomatis diisi dengan nilai yang sama.</small>
+                                    @error('total_buku')
+                                        <div class="custom-alert" role="alert">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                                </path>
+                                            </svg>
+                                            <p>{{ $message }}</p>
+                                        </div>
+                                    @enderror
+                                </div>
+
                                 <!-- Upload Foto Sampul -->
                                 <div class="form-group">
                                     <label for="foto">Foto Sampul</label>
@@ -156,7 +173,6 @@
                                                 style="max-width: 150px; max-height: 200px;">
                                         </div>
                                     </div>
-
                                     @error('foto')
                                         <div class="custom-alert" role="alert">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -189,12 +205,33 @@
 
                         <!-- Tombol Submit -->
                         <div class="form-group text-end mt-4">
-                            <button type="submit" class="btn btn-success">Simpan</button>
-                            <a href="{{ route('buku.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('buku.index') }}" class="btn btn-secondary me-2">
+                                <i class="bx bx-arrow-back"></i> Kembali
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save"></i> Simpan
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </section>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const kategoriSelect = document.getElementById('kategori_id');
+
+            new Choices(kategoriSelect, {
+                removeItemButton: true, // tampilkan tombol “×” di tiap tag
+                placeholder: true, // pakai placeholder dari <select>
+                placeholderValue: 'Pilih kategori…',
+                shouldSort: false, // urutan sesuai option HTML
+                searchEnabled: true, // boleh cari kategori
+                itemSelectText: '', // text “Press to select” dihilangkan
+            });
+        });
+    </script>
 @endsection

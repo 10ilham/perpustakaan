@@ -21,6 +21,8 @@ class BukuModel extends Model
         'tahun_terbit',
         'deskripsi',
         'foto',
+        'stok_buku',
+        'total_buku',
         'status',
         'kategori_id'
     ];
@@ -28,7 +30,7 @@ class BukuModel extends Model
     // Relasi ke tabel kategori
     public function kategori()
     {
-        return $this->belongsTo(KategoriModel::class, 'kategori_id');
+        return $this->belongsToMany(KategoriModel::class, 'kategori_buku', 'buku_id', 'kategori_id');
     }
 
     // Relasi ke tabel peminjaman

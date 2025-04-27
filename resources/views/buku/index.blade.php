@@ -38,12 +38,12 @@
                     <i class='bx bxs-book-open icon'></i>
                 </div>
             </div>
-            <!-- Card Buku Dipinjam -->
+            <!-- Card Buku Habis -->
             <div class="card">
                 <div class="head">
                     <div>
-                        <h2>{{ $dipinjam }}</h2>
-                        <p>Dipinjam</p>
+                        <h2>{{ $habis }}</h2>
+                        <p>Habis</p>
                     </div>
                     <i class='bx bxs-user-check icon'></i>
                 </div>
@@ -70,7 +70,7 @@
                         style="max-width: 150px;">
                         <option value="">Semua Status</option>
                         <option value="Tersedia" {{ request('status') == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                        <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
+                        <option value="Habis" {{ request('status') == 'Habis' ? 'selected' : '' }}>Habis</option>
                     </select>
                 </form>
             </div>
@@ -82,7 +82,7 @@
                     <h3>Daftar Buku</h3>
                     @if (auth()->user()->level == 'admin')
                         <a href="{{ route('buku.tambah') }}" class="btn btn-success d-flex align-items-center">
-                            <i class='bx bxs-plus-circle me-1'></i>
+                            <i class="bx bx-plus-circle"></i>
                             <span>Tambah Buku</span>
                         </a>
                     @endif
@@ -122,30 +122,45 @@
                                         </h5>
                                         <p class="card-text m-0">Kode Buku: {{ $item->kode_buku }}</p>
                                         <p class="card-text m-0">Pengarang: {{ $item->pengarang }}</p>
-                                        <p class="card-text m-0">Kategori: {{ $item->kategori->nama }}</p>
+                                        <p class="card-text m-0">Kategori:
+                                            {{ $item->kategori->pluck('nama')->implode(', ') }}</p>
                                         <p class="card-text m-0">Status:
                                             @if ($item->status === 'Tersedia')
                                                 <span class="badge badge-outline-success">{{ $item->status }}</span>
-                                            @elseif ($item->status === 'Dipinjam')
-                                                <span class="badge badge-outline-warning">{{ $item->status }}</span>
-                                            @else
+                                            @elseif ($item->status === 'Habis')
                                                 <span class="badge badge-outline-danger">{{ $item->status }}</span>
+                                            @else
+                                                <span class="badge badge-outline-warning">{{ $item->status }}</span>
                                             @endif
                                         </p>
                                     </div>
-                                    @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
-                                        <div class="button-area mt-3">
-                                            <a href="{{ route('buku.detail', $item->id) }}"
-                                                class="btn btn-sm btn-info px-2"
-                                                style="text-decoration: none; color: white;">Detail</a>
+                                    <div class="button-area mt-3" style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                        <a href="{{ route('buku.detail', $item->id) }}"
+                                            class="btn btn-sm btn-info px-2"
+                                            style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Detail</a>
+                                            
+                                        @if (auth()->user()->level == 'admin')
                                             <a href="{{ route('buku.edit', $item->id) }}"
                                                 class="btn btn-sm btn-warning px-2"
-                                                style="text-decoration: none; color: white;">Edit</a>
+                                                style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Edit</a>
                                             <button class="btn btn-sm btn-danger px-3 delete-btn" data-bs-toggle="modal"
                                                 data-bs-target="#deleteModal"
-                                                data-action="{{ route('buku.hapus', $item->id) }}">Hapus</button>
-                                        </div>
-                                    @endif
+                                                data-action="{{ route('buku.hapus', $item->id) }}" style="height: 31px; display: flex; align-items: center;">Hapus</button>
+                                        @endif
+                                        
+                                        @if (auth()->user()->level == 'siswa' || auth()->user()->level == 'guru' || auth()->user()->level == 'staff')
+                                            @if ($item->stok_buku > 0)
+                                                <form action="{{ route('buku.pinjam', $item->id) }}" method="POST" style="margin: 0; padding: 0;">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-success px-2"
+                                                        style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Pinjam</button>
+                                                </form>
+                                            @else
+                                                <button class="btn btn-sm btn-secondary px-2" disabled
+                                                    style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Stok Habis</button>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

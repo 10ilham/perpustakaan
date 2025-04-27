@@ -58,7 +58,7 @@
                                             @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
                                                 <a href="{{ route('kategori.edit', $item->id) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
-                                                    <i class="bx bx-edit"></i>
+                                                    <i class="bx bxs-edit"></i>
                                                 </a>
 
                                                 <form action="{{ route('kategori.hapus', $item->id) }}" method="POST"

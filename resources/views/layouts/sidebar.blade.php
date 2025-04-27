@@ -23,8 +23,8 @@
                 <i class='bx bxs-book icon'></i> Buku <i class='bx bx-chevron-right icon-right'></i>
             </a>
             <ul class="side-dropdown {{ request()->is('buku*') ? 'show' : '' }}">
-                @if (Auth::user()->level === 'admin')
-                <li><a href="{{ route('buku.index') }}" class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Data Buku</a></li>
+                @if (Auth::user()->level === 'admin' || Auth::user()->level === 'staff' || Auth::user()->level === 'guru' || Auth::user()->level === 'siswa')
+                <li><a href="{{ route('buku.index') }}" class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Daftar Buku</a></li>
                 @endif
                 @if(Auth::user()->level === 'admin' || Auth::user()->level === 'staff')
                 <li><a href="{{ route('buku.index') }}?sort=newest" class="{{ request()->fullUrl() == route('buku.index').'?sort=newest' ? 'active-menu-item' : '' }}">Buku Terbaru</a></li>

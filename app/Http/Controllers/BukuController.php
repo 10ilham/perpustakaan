@@ -20,7 +20,10 @@ class BukuController extends Controller
 
         // Filter berdasarkan kategori
         if ($kategoriId) {
-            $query->where('kategori_id', $kategoriId);
+            // Gunakan whereHas untuk filter many-to-many relationship
+            $query->whereHas('kategori', function ($q) use ($kategoriId) {
+                $q->where('kategori.id', $kategoriId);
+            });
         }
 
         // Filter berdasarkan status
@@ -58,17 +61,17 @@ class BukuController extends Controller
             })
             ->count();
 
-        // Hitung jumlah buku dipinjam berdasarkan filter
-        $dipinjam = (clone $query)
-            ->where('status', 'Dipinjam')
+        // Hitung jumlah buku habis berdasarkan filter
+        $habis = (clone $query)
+            ->where('status', 'Habis')
             ->when($status, function ($query) use ($status) {
-                if ($status !== 'Dipinjam') {
-                    $query->whereRaw('1 = 0'); // Pastikan hasilnya 0 jika status bukan "Dipinjam"
+                if ($status !== 'Habis') {
+                    $query->whereRaw('1 = 0'); // Pastikan hasilnya 0 jika status bukan "Habis"
                 }
             })
             ->count();
 
-        return view('buku.index', compact('buku', 'kategori', 'totalBuku', 'tersedia', 'dipinjam'));
+        return view('buku.index', compact('buku', 'kategori', 'totalBuku', 'tersedia', 'habis'));
     }
 
     //Menampilkan form tambah buku
@@ -108,8 +111,12 @@ class BukuController extends Controller
             'foto.mimes' => 'File yang diunggah harus berupa jpeg, png, jpg, atau gif.',
             'foto.max' => 'Ukuran file tidak boleh lebih dari 3MB.',
 
-            'kategori_id.required' => 'Kategori buku harus dipilih.',
-            'kategori_id.exists' => 'Kategori buku tidak valid.',
+            'total_buku.required' => 'Stok buku harus diisi.',
+            'total_buku.integer' => 'Stok buku harus berupa angka.',
+            'total_buku.min' => 'Stok buku tidak boleh kurang dari 0.',
+
+            'kategori_id.required' => 'Kategori buku harus diisi minimal 1.',
+            'kategori_id.min' => 'Kategori minimal 1 kategori harus dipilih.',
         ];
 
         // Validasi input
@@ -121,7 +128,8 @@ class BukuController extends Controller
             'tahun_terbit' => 'required|numeric|digits:4',
             'deskripsi' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
-            'kategori_id' => 'required|exists:kategori,id'
+            'total_buku' => 'required|integer|min:0',
+            'kategori_id' => 'required|min:1',
         ], $messages);
 
         $buku = new BukuModel();
@@ -131,6 +139,15 @@ class BukuController extends Controller
         $buku->penerbit = $request->penerbit;
         $buku->tahun_terbit = $request->tahun_terbit;
         $buku->deskripsi = $request->deskripsi;
+        $buku->total_buku = $request->total_buku;
+        $buku->stok_buku = $request->total_buku; // Stok awal sama dengan total buku
+
+        // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >=0, set status "Tersedia"
+        if ($buku->stok_buku <= 0) {
+            $buku->status = 'Habis';
+        } else {
+            $buku->status = 'Tersedia';
+        }
 
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
@@ -139,10 +156,11 @@ class BukuController extends Controller
             $buku->foto = $nama_file;
         }
 
-        // Set status default
-        $buku->status = 'Tersedia';
-        $buku->kategori_id = $request->kategori_id;
         $buku->save();
+
+        if ($request->has('kategori_id')) {
+            $buku->kategori()->attach($request->kategori_id);
+        }
 
         return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan.');
     }
@@ -151,7 +169,11 @@ class BukuController extends Controller
     public function detail($id)
     {
         $buku = BukuModel::with('kategori')->findOrFail($id);
-        return view('buku.detail', compact('buku'));
+
+        // Total stok buku sebelum dikurangi peminjaman (menggunakan kolom total_buku)
+        $totalStokBuku = $buku->total_buku;
+
+        return view('buku.detail', compact('buku', 'totalStokBuku'));
     }
 
     // Menampilkan form edit buku
@@ -192,15 +214,13 @@ class BukuController extends Controller
             'foto.mimes' => 'File yang diunggah harus berupa jpeg, png, jpg, atau gif.',
             'foto.max' => 'Ukuran file tidak boleh lebih dari 3MB.',
 
-            'status.required' => 'Status buku harus dipilih.',
-            'status.in' => 'Status buku tidak valid.',
+            'total_buku.required' => 'Stok buku harus diisi.',
+            'total_buku.integer' => 'Stok buku harus berupa angka.',
+            'total_buku.min' => 'Stok buku tidak boleh kurang dari 0.',
 
-            'kategori_id.required' => 'Kategori buku harus dipilih.',
-            'kategori_id.exists' => 'Kategori buku sudah ada.',
+            'kategori_id.required' => 'Kategori buku harus diisi minimal 1.',
+            'kategori_id.min' => 'Kategori minimal 1 kategori harus dipilih.',
 
-            // Validasi untuk foto
-            // Jika foto baru diunggah, maka validasi
-            // Jika tidak ada foto baru, maka lewati validasi
         ];
 
         // Validasi input
@@ -212,18 +232,31 @@ class BukuController extends Controller
             'tahun_terbit' => 'required|numeric|digits:4',
             'deskripsi' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
-            'status' => 'required|in:Tersedia,Dipinjam',
-            'kategori_id' => 'required|exists:kategori,id'
+            'total_buku' => 'required|integer|min:0',
+            'kategori_id' => 'required|min:1',
         ], $messages);
 
         $buku = BukuModel::findOrFail($id);
+        $oldStok = $buku->stok_buku; // Simpan stok lama
+        $oldTotal = $buku->total_buku ?? $oldStok; // Simpan total lama (jika ada)
+
+        // Hitung selisih antara stok saat ini dengan total (untuk melihat berapa buku yang sedang dipinjam)
+        $bukuDipinjam = $oldTotal - $oldStok;
+
         $buku->kode_buku = $request->kode_buku;
         $buku->judul = $request->judul;
         $buku->pengarang = $request->pengarang;
         $buku->penerbit = $request->penerbit;
         $buku->tahun_terbit = $request->tahun_terbit;
         $buku->deskripsi = $request->deskripsi;
-        $buku->kategori_id = $request->kategori_id;
+        $buku->total_buku = $request->total_buku;
+
+        // Perbarui stok berdasarkan total buku baru dikurangi buku yang sedang dipinjam
+        $newStok = $request->total_buku - $bukuDipinjam;
+        $buku->stok_buku = max(0, $newStok); // Pastikan stok tidak negatif
+        // Pastikan stok tidak melebihi total buku
+        $buku->stok_buku = min($buku->stok_buku, $request->total_buku);
+
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
             if ($buku->foto && file_exists(public_path('assets/img/buku/' . $buku->foto))) {
@@ -237,15 +270,21 @@ class BukuController extends Controller
             $buku->foto = $nama_file;
         }
 
-        // Update status jika ada perubahan
-        // Jika status tidak diubah, maka tetap gunakan status lama
-        if ($request->has('status')) {
-            $buku->status = $request->status;
+        // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >=0, set status "Tersedia"
+        if ($buku->stok_buku <= 0) {
+            $buku->status = 'Habis';
         } else {
-
-            $buku->status = $buku->getOriginal('status');
+            $buku->status = 'Tersedia';
         }
+
+        // Simpan perubahan
         $buku->save();
+
+        // Tambahkan baris ini untuk update kategori
+        if ($request->has('kategori_id')) {
+            $buku->kategori()->sync($request->kategori_id);
+        }
+
         return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
     }
 
@@ -259,5 +298,28 @@ class BukuController extends Controller
         }
         $buku->delete();
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus.');
+    }
+
+    // Logika  untuk mengurangi stok buku saat buku dipinjam
+    public function pinjamBuku($id)
+    {
+        $buku = BukuModel::findOrFail($id);
+
+        if ($buku->stok_buku > 0) {
+            // Kurangi stok buku
+            $buku->stok_buku -= 1;
+
+            // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >=0, set status "Tersedia"
+            if ($buku->stok_buku <= 0) {
+                $buku->status = 'Habis';
+            } else {
+                $buku->status = 'Tersedia';
+            }
+
+            $buku->save();
+
+            return redirect()->route('buku.index')->with('success', 'Buku berhasil dipinjam.');
+        }
+        return redirect()->route('buku.index')->with('error', 'Stok buku habis.');
     }
 }

@@ -307,8 +307,12 @@
 
                         <!-- Tombol Submit -->
                         <div class="form-group text-end">
-                            <button type="submit" class="btn btn-success">Simpan</button>
-                            <a href="{{ route('anggota.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('anggota.index') }}" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save"></i> Simpan
+                            </button>
                         </div>
                     </form>
                 </div>
