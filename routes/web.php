@@ -58,6 +58,7 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::post('/buku/update/{id}', [BukuController::class, 'update'])->name('buku.update');
     Route::post('/buku/hapus/{id}', [BukuController::class, 'hapus'])->name('buku.hapus');
     Route::post('/buku/pinjam/{id}', [BukuController::class, 'pinjamBuku'])->name('buku.pinjam');
+    Route::get('/buku/{id}/qrcode-download', [BukuController::class, 'downloadQrCode'])->name('buku.qrcode.download');
 
     // Route untuk kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');

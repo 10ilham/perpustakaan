@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BukuModel;
 use App\Models\KategoriModel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BukuController extends Controller
 {
@@ -298,6 +299,30 @@ class BukuController extends Controller
         }
         $buku->delete();
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus.');
+    }
+
+    // Menggunakan library simple-qrcode dan extension imagick (untuk membaca qr code)
+    // Download QR Code
+    public function downloadQrCode($id)
+    {
+        $buku = BukuModel::findOrFail($id);
+        $filename = 'qrcode-' . $buku->kode_buku . '.png';
+
+        // Path ke logo yang akan ditempatkan di tengah QR code
+        $logoPath = public_path('assets/img/logo_mts.png');
+
+        // Generate QR code dalam format png dengan logo di tengah
+        $qrcode = QrCode::format('png')
+            ->size(300)
+            ->margin(1)
+            ->errorCorrection('H') // Error correction level tinggi untuk memastikan QR code masih bisa terbaca meski ada logo
+            ->merge($logoPath, 0.3, true) // Menambahkan logo dengan ukuran 30% dari QR code
+            ->generate(route('peminjaman.form', $buku->id));
+
+        // Return file sebagai download
+        return response($qrcode)
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     // Logika  untuk mengurangi stok buku saat buku dipinjam

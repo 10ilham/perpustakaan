@@ -71,6 +71,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- QR Code untuk Peminjaman -->
+                    {{-- Menggunakan library simple-qrcode dan extension imagick (untuk membaca qr code) --}}
+                    @if (auth()->user()->level == 'siswa' || auth()->user()->level == 'guru' || auth()->user()->level == 'staff')
+                        <div class="profile-card qr-code-section mt-4">
+                            <h5 style="text-align: center; margin-bottom: 10px;">Scan untuk Peminjaman</h5>
+                            <div class="qr-code-container mt-2"
+                                style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+                                <img
+                                    src="data:image/png;base64,{{ base64_encode(QrCode::format('png')->size(150)->merge(public_path('assets/img/logo_mts.png'), 0.4, true)->errorCorrection('H')->generate(route('peminjaman.form', $buku->id))) }}">
+                                <a href="{{ route('buku.qrcode.download', $buku->id) }}" class="btn">
+                                    <i class="fas fa-download" style="margin-top: 10px"></i> Download QR
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Detail Informasi Buku -->
