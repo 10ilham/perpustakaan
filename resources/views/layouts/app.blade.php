@@ -137,6 +137,21 @@
         }
     </script>
 
+    {{-- modal logout --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmBtn = document.getElementById('confirm-logout-btn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    const logoutForm = document.getElementById('logout-form');
+                    if (logoutForm) {
+                        logoutForm.submit();
+                    }
+                });
+            }
+        });
+    </script>
+
     <!-- Tambahkan ini untuk merender scripts dari halaman lain, pastikan letaknya diakhir kode javascript -->
     @yield('scripts')
 </body>

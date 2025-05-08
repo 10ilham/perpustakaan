@@ -12,6 +12,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PeminjamanController;
 
 Route::get('/', function () {
     return view('layouts.index');
@@ -66,6 +67,14 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::get('/kategori/edit/{id}', [KategoriController::class, 'edit'])->name('kategori.edit');
     Route::post('/kategori/update/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::post('/kategori/hapus/{id}', [KategoriController::class, 'hapus'])->name('kategori.hapus');
+
+    // Route untuk peminjaman buku
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::get('/peminjaman/form/{id}', [PeminjamanController::class, 'formPinjam'])->name('peminjaman.form');
+    Route::post('/peminjaman/pinjam', [PeminjamanController::class, 'pinjamBuku'])->name('peminjaman.pinjam');
+    Route::get('/peminjaman/detail/{id}', [PeminjamanController::class, 'detail'])->name('peminjaman.detail');
+    Route::post('/peminjaman/kembalikan/{id}', [PeminjamanController::class, 'kembalikanBuku'])->name('peminjaman.kembalikan');
+    Route::delete('/peminjaman/hapus/{id}', [PeminjamanController::class, 'hapusPeminjaman'])->name('peminjaman.hapus');
 
     // Route untuk profile
     Route::get('/admin/profile', [AdminController::class, 'showProfile'])->name('admin.profile');

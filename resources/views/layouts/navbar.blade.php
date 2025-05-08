@@ -32,7 +32,7 @@
                 $photoPath =
                     $userData && $userData->foto ? asset('assets/img/siswa_foto/' . $userData->foto) : $defaultImage;
             } elseif ($userLevel === 'guru') {
-                $userData = \App\Models < GuruModel::where('user_id', Auth::id())->first();
+                $userData = \App\Models\GuruModel::where('user_id', Auth::id())->first();
                 $photoPath =
                     $userData && $userData->foto ? asset('assets/img/guru_foto/' . $userData->foto) : $defaultImage;
             } elseif ($userLevel === 'staff') {
@@ -88,19 +88,3 @@
         </div>
     </div>
 </div>
-
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const confirmBtn = document.getElementById('confirm-logout-btn');
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', function() {
-                    const logoutForm = document.getElementById('logout-form');
-                    if (logoutForm) {
-                        logoutForm.submit();
-                    }
-                });
-            }
-        });
-    </script>
-@endsection

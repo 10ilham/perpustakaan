@@ -1,169 +1,202 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="profile-page">
-    <div class="page-heading">
-        <div class="page-title">
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="title">Edit Siswa Profile</h1>
-                    <ol class="breadcrumb   ">
-                        <li class="breadcrumb-item"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
-                        <li class="divider">/</li>
-                        <li class="breadcrumb-item"><a href="{{ route('siswa.profile') }}">Profile</a></li>
-                        <li class="divider">/</li>
-                        <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
-                    </ol>
+    <div class="profile-page">
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="title">Edit Siswa Profile</h1>
+                        <ol class="breadcrumb   ">
+                            <li class="breadcrumb-item"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                            <li class="divider">/</li>
+                            <li class="breadcrumb-item"><a href="{{ route('siswa.profile') }}">Profile</a></li>
+                            <li class="divider">/</li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <section class="section">
-        <div class="profile-card">
-            <div class="card-body">
-                <form action="{{ route('siswa.profile.update') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
-                        <input type="text" name="nama" id="nama" class="form-control" value="{{ $siswa->user->nama }}" required>
-                        @error('nama')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+        <section class="section">
+            <div class="profile-card">
+                <div class="card-body">
+                    <form action="{{ route('siswa.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="nama">Nama Lengkap</label>
+                            <input type="text" name="nama" id="nama" class="form-control"
+                                value="{{ $siswa->user->nama }}" required>
+                            @error('nama')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" value="{{ $siswa->user->email }}" required>
-                        @error('email')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" class="form-control"
+                                value="{{ $siswa->user->email }}" required>
+                            @error('email')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="nis">NIS</label>
-                        <input type="text" name="nis" id="nis" class="form-control" value="{{ $siswa->nis }}" required>
-                        @error('nis')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="nis">NIS</label>
+                            <input type="text" name="nis" id="nis" class="form-control"
+                                value="{{ $siswa->nis }}" required>
+                            @error('nis')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="kelas">Kelas</label>
-                        <select name="kelas" id="kelas" class="form-control" required>
-                            <option value="">Pilih Kelas</option>
-                            <option value="7A" {{ $siswa->kelas == '7A' ? 'selected' : '' }}>7A</option>
-                            <option value="7B" {{ $siswa->kelas == '7B' ? 'selected' : '' }}>7B</option>
-                            <option value="7C" {{ $siswa->kelas == '7C' ? 'selected' : '' }}>7C</option>
-                            <option value="8A" {{ $siswa->kelas == '8A' ? 'selected' : '' }}>8A</option>
-                            <option value="8B" {{ $siswa->kelas == '8B' ? 'selected' : '' }}>8B</option>
-                            <option value="8C" {{ $siswa->kelas == '8C' ? 'selected' : '' }}>8C</option>
-                            <option value="9A" {{ $siswa->kelas == '9A' ? 'selected' : '' }}>9A</option>
-                            <option value="9B" {{ $siswa->kelas == '9B' ? 'selected' : '' }}>9B</option>
-                            <option value="9C" {{ $siswa->kelas == '9C' ? 'selected' : '' }}>9C</option>
-                        </select>
-                        @error('kelas')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="kelas">Kelas</label>
+                            <select name="kelas" id="kelas" class="form-control" required>
+                                <option value="">Pilih Kelas</option>
+                                <option value="7A" {{ $siswa->kelas == '7A' ? 'selected' : '' }}>7A</option>
+                                <option value="7B" {{ $siswa->kelas == '7B' ? 'selected' : '' }}>7B</option>
+                                <option value="7C" {{ $siswa->kelas == '7C' ? 'selected' : '' }}>7C</option>
+                                <option value="8A" {{ $siswa->kelas == '8A' ? 'selected' : '' }}>8A</option>
+                                <option value="8B" {{ $siswa->kelas == '8B' ? 'selected' : '' }}>8B</option>
+                                <option value="8C" {{ $siswa->kelas == '8C' ? 'selected' : '' }}>8C</option>
+                                <option value="9A" {{ $siswa->kelas == '9A' ? 'selected' : '' }}>9A</option>
+                                <option value="9B" {{ $siswa->kelas == '9B' ? 'selected' : '' }}>9B</option>
+                                <option value="9C" {{ $siswa->kelas == '9C' ? 'selected' : '' }}>9C</option>
+                            </select>
+                            @error('kelas')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="tanggal_lahir">Tanggal Lahir</label>
-                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ $siswa->tanggal_lahir }}" required>
-                        @error('tanggal_lahir')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="tanggal_lahir">Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control"
+                                value="{{ $siswa->tanggal_lahir }}" required>
+                            @error('tanggal_lahir')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="alamat">Alamat</label>
-                        <textarea name="alamat" id="alamat" class="form-control" rows="3" required>{{ $siswa->alamat }}</textarea>
-                        @error('alamat')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="alamat">Alamat</label>
+                            <textarea name="alamat" id="alamat" class="form-control" rows="3" required>{{ $siswa->alamat }}</textarea>
+                            @error('alamat')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="no_telepon">Nomor Telepon</label>
-                        <input type="text" name="no_telepon" id="no_telepon" class="form-control" value="{{ $siswa->no_telepon }}" required>
-                        @error('no_telepon')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="no_telepon">Nomor Telepon</label>
+                            <input type="text" name="no_telepon" id="no_telepon" class="form-control"
+                                value="{{ $siswa->no_telepon }}" required>
+                            @error('no_telepon')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah password">
-                        @error('password')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control"
+                                placeholder="Kosongkan jika tidak ingin mengubah password">
+                            @error('password')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="password_confirmation">Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Konfirmasi password">
-                    </div>
-                    <!-- Upload Foto dengan review -->
-                    <div class="form-group">
-                        <label for="foto">Foto Profil</label>
-                        <input type="file" name="foto" id="foto" class="form-control" onchange="previewImage(event)" value="{{ $siswa->foto }}">
-                        <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah foto profil.</small>
+                        <div class="form-group">
+                            <label for="password_confirmation">Konfirmasi Password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="form-control" placeholder="Konfirmasi password">
+                        </div>
+                        <!-- Upload Foto dengan review -->
+                        <div class="form-group">
+                            <label for="foto">Foto Profil</label>
+                            <input type="file" name="foto" id="foto" class="form-control"
+                                onchange="previewImage(event)" value="{{ $siswa->foto }}">
+                            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah foto profil.</small>
 
-                        <!-- Preview Foto -->
-                        <div class="mt-3" id="preview-container" style="display: none;">
-                            <label for="preview" style="margin-top: 15px;">Preview Foto:</label>
-                            <div class="preview-box" style="border: 2px solid #ddd; padding: 5px; display: inline-block; border-radius: 5px; margin-top: 5px;">
-                                <img id="preview" src="{{ asset('assets/img/siswa_foto/' . $siswa->foto) }}" alt="Preview Foto" style="max-width: 120px; max-height: 120px; border-radius: 3px;">
+                            <!-- Preview Foto -->
+                            <div class="mt-3" id="preview-container" style="display: none;">
+                                <label for="preview" style="margin-top: 15px;">Preview Foto:</label>
+                                <div class="preview-box"
+                                    style="border: 2px solid #ddd; padding: 5px; display: inline-block; border-radius: 5px; margin-top: 5px;">
+                                    <img id="preview" src="{{ asset('assets/img/siswa_foto/' . $siswa->foto) }}"
+                                        alt="Preview Foto"
+                                        style="max-width: 120px; max-height: 120px; border-radius: 3px;">
+                                </div>
                             </div>
-                        </div>
 
-                        @error('foto')
-                        <div class="custom-alert" role="alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
-                            </svg>
-                            <p>Perhatian: {{ $message }}</p>
+                            @error('foto')
+                                <div class="custom-alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z">
+                                        </path>
+                                    </svg>
+                                    <p>Perhatian: {{ $message }}</p>
+                                </div>
+                            @enderror
                         </div>
-                        @enderror
-                    </div>
-                    <div class="form-group text-end">
-                        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-                        <a href="{{ route('siswa.profile') }}" class="btn btn-secondary">Batal</a>
-                    </div>
-                </form>
+                        <div class="form-group text-end">
+                            <a href="{{ route('siswa.profile') }}" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i>Batal
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save"></i>Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>
 @endsection

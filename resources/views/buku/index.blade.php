@@ -138,7 +138,7 @@
                                         <a href="{{ route('buku.detail', $item->id) }}"
                                             class="btn btn-sm btn-info px-2"
                                             style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Detail</a>
-                                            
+
                                         @if (auth()->user()->level == 'admin')
                                             <a href="{{ route('buku.edit', $item->id) }}"
                                                 class="btn btn-sm btn-warning px-2"
@@ -147,17 +147,14 @@
                                                 data-bs-target="#deleteModal"
                                                 data-action="{{ route('buku.hapus', $item->id) }}" style="height: 31px; display: flex; align-items: center;">Hapus</button>
                                         @endif
-                                        
+
                                         @if (auth()->user()->level == 'siswa' || auth()->user()->level == 'guru' || auth()->user()->level == 'staff')
                                             @if ($item->stok_buku > 0)
-                                                <form action="{{ route('buku.pinjam', $item->id) }}" method="POST" style="margin: 0; padding: 0;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success px-2"
-                                                        style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Pinjam</button>
-                                                </form>
+                                                <a href="{{ route('peminjaman.form', $item->id) }}" class="btn btn-sm btn-success px-2"
+                                                    style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Pinjam</a>
                                             @else
-                                                <button class="btn btn-sm btn-secondary px-2" disabled
-                                                    style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Stok Habis</button>
+                                                <button class="btn btn-sm btn-warning px-2" disabled
+                                                    style="text-decoration: none; height: 31px; display: flex; align-items: center;">Stok Habis</button>
                                             @endif
                                         @endif
                                     </div>

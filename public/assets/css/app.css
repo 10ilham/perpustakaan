@@ -347,6 +347,20 @@ main .breadcrumbs li.divider {
     pointer-events: none;
 }
 
+.info-data {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-data .card {
+    padding: 20px;
+    border-radius: 10px;
+    background: var(--light);
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.05);
+}
+
 main .info-data {
     margin-top: 36px;
     display: grid;
@@ -682,6 +696,7 @@ footer.footer i {
     display: flex;
     flex-direction: column; /* Atur konten card secara vertikal */
     justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
@@ -794,7 +809,7 @@ footer.footer i {
 /* Warna tombol Edit */
 .button-area .btn-warning {
     background-color: #ffc107; /* Warna kuning */
-    color: #212529; /* Warna teks hitam */
+    color: #ffffff; /* Warna teks hitam */
 }
 
 .button-area .btn-warning:hover {
@@ -1495,17 +1510,22 @@ option .icon {
 /* Warna latar tombol */
 .btn-info {
     background-color: #17a2b8;
-    color: #fff;
+    color: #ffffffd3;
 }
 
 .btn-warning {
     background-color: #ffc107;
-    color: #212529;
+    color: #ffffff;
 }
 
 .btn-danger {
     background-color: #dc3545;
     color: #fff;
+}
+
+.btn-secondary {
+    background-color: #b5bbc0;
+    color: #ffffff;
 }
 
 /* Efek hover */
@@ -1677,4 +1697,90 @@ option .icon {
 .choices__list--multiple .choices__item:hover {
     background-color: #3ee17a;
     color: white;
+}
+
+/* Style untuk informasi peminjaman */
+.peminjaman-details {
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    margin-bottom: 20px;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.status-borrowed {
+    background-color: #fff8e1;
+    border: 1px solid #ffe082;
+}
+
+.status-returned {
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+}
+
+.status-late {
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+}
+
+.status-box .icon {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.status-borrowed .icon {
+    color: #ffa000;
+}
+
+.status-returned .icon {
+    color: #43a047;
+}
+
+.status-late .icon {
+    color: #e53935;
+}
+
+.status-box .info h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.status-box .info p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+}
+
+.catatan-item .catatan {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.detail-item {
+    margin-bottom: 15px;
+}
+
+.detail-item .label {
+    display: block;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 3px;
+}
+
+.detail-item .value {
+    display: block;
+    color: #333;
 }
