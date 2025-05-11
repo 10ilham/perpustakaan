@@ -40,11 +40,11 @@ class LoginController extends Controller
             if ($user->level === 'admin') {
                 return redirect('/admin/dashboard');
             } elseif ($user->level === 'siswa') {
-                return redirect('/siswa/dashboard');
+                return redirect('/anggota/dashboard');
             } elseif ($user->level === 'guru') {
-                return redirect('/guru/dashboard');
+                return redirect('/anggota/dashboard');
             } elseif ($user->level === 'staff') {
-                return redirect('/staff/dashboard');
+                return redirect('/anggota/dashboard');
             }
 
             return redirect('/');

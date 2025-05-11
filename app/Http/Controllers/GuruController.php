@@ -9,19 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class GuruController extends Controller
 {
-    public function showGuruData()
-    {
-        // Ambil data guru berdasarkan user yang sedang login
-        $guru = GuruModel::where('user_id', Auth::id())->first();
-
-        if (!$guru) {
-            return redirect()->back()->with('error', 'Data guru tidak ditemukan.');
-        }
-
-        // Kirim data ke view
-        return view('guru.dashboard', compact('guru'));
-    }
-
     public function showProfile()
     {
         // Ambil data guru berdasarkan user yang sedang login

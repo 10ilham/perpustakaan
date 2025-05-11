@@ -9,19 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class StaffController extends Controller
 {
-    public function showStaffData()
-    {
-        // Ambil data staff berdasarkan user yang sedang login
-        $staff = StaffModel::where('user_id', Auth::id())->first();
-
-        if (!$staff) {
-            return redirect()->back()->with('error', 'Data staff tidak ditemukan.');
-        }
-
-        // Kirim data ke view
-        return view('staff.dashboard', compact('staff'));
-    }
-
     public function showProfile()
     {
         // Ambil data staff berdasarkan user yang sedang login

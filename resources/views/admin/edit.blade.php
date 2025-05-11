@@ -163,7 +163,7 @@
                         </div>
                         <div class="form-group text-end">
                             <a href="{{ route('admin.profile') }}" class="btn btn-secondary">
-                                <i class="bx bx-arrow-back"></i>Batal
+                                <i class="bx bx-arrow-back"></i> Batal
                             </a>
                             <button type="submit" class="btn btn-success">
                                 <i class="bx bx-save"></i>Simpan Perubahan

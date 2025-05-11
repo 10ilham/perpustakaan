@@ -12,65 +12,50 @@ class BukuController extends Controller
     //Menampilkan data buku
     public function index(Request $request)
     {
-        // Filter berdasarkan kategori jika ada
+        // Ambil parameter filter dan pencarian
         $kategoriId = $request->get('kategori');
         $status = $request->get('status');
         $search = $request->get('search');
 
+        // Base query untuk ngeloading data kategori
         $query = BukuModel::with('kategori');
 
-        // Filter berdasarkan kategori
+        // Terapkan filter kategori jika ada
         if ($kategoriId) {
-            // Gunakan whereHas untuk filter many-to-many relationship
             $query->whereHas('kategori', function ($q) use ($kategoriId) {
                 $q->where('kategori.id', $kategoriId);
             });
         }
 
-        // Filter berdasarkan status
+        // Terapkan filter status jika ada
         if ($status) {
             $query->where('status', $status);
         }
 
-        // Pencarian berdasarkan judul
+        // Terapkan pencarian judul jika ada
         if ($search) {
             $query->where('judul', 'like', '%' . $search . '%');
         }
 
-        // Ambil data buku
-        $buku = $query->get();
+        // Clone query untuk perhitungan statistik, total buku, buku tersedia, dan buku habis
+        $totalQuery = clone $query;
 
-        // Salin query untuk menghitung total buku, supaya tidak tertimpa pagnation (jika tidak diclone, maka total buku akan muncul 0 saat berpindah halaman)
-        $totalBukuQuery = clone $query;
+        // Dapatkan hasil buku dengan pagination, maksimal menampilkan 8 buku per halaman
+        $buku = $query->paginate(8)->appends($request->all());
 
-        // Pagination data buku 8 item perhalaman
-        $buku = $query->paginate(8)->appends($request->query());
-
-        // Ambil semua kategori
+        // Ambil semua kategori untuk dropdown filter
         $kategori = KategoriModel::all();
 
-        // Hitung jumlah total buku berdasarkan filter
-        $totalBuku = $totalBukuQuery->count();
+        // Hitung jumlah total buku dengan filter yang sama
+        $totalBuku = $totalQuery->count();
 
-        // Hitung jumlah buku tersedia berdasarkan filter
-        $tersedia = (clone $query)
-            ->where('status', 'Tersedia')
-            ->when($status, function ($query) use ($status) {
-                if ($status !== 'Tersedia') {
-                    $query->whereRaw('1 = 0'); // Pastikan hasilnya 0 jika status bukan "Tersedia"
-                }
-            })
-            ->count();
+        // Hitung jumlah buku tersedia dengan filter yang sama
+        $tersediaQuery = clone $totalQuery;
+        $tersedia = $tersediaQuery->where('status', 'Tersedia')->count();
 
-        // Hitung jumlah buku habis berdasarkan filter
-        $habis = (clone $query)
-            ->where('status', 'Habis')
-            ->when($status, function ($query) use ($status) {
-                if ($status !== 'Habis') {
-                    $query->whereRaw('1 = 0'); // Pastikan hasilnya 0 jika status bukan "Habis"
-                }
-            })
-            ->count();
+        // Hitung jumlah buku habis dengan filter yang sama
+        $habisQuery = clone $totalQuery;
+        $habis = $habisQuery->where('status', 'Habis')->count();
 
         return view('buku.index', compact('buku', 'kategori', 'totalBuku', 'tersedia', 'habis'));
     }

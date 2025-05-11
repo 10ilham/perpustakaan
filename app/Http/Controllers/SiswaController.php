@@ -8,19 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SiswaController extends Controller
 {
-    public function showSiswaData()
-    {
-        // Ambil data siswa berdasarkan user yang sedang login
-        $siswa = SiswaModel::where('user_id', Auth::id())->first();
-
-        if (!$siswa) {
-            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
-        }
-
-        // Kirim data ke view
-        return view('siswa.dashboard', compact('siswa'));
-    }
-
     public function showProfile()
     {
         // Ambil data siswa berdasarkan user yang sedang login

@@ -1573,6 +1573,11 @@ option .icon {
     transition: all 0.3s ease;
 }
 
+.btn-success-peminjaman {
+    background: var(--green);
+    color: var(--light);
+}
+
 .btn-success:hover {
     background: var(--green);
     color: var(--light); /* Updated to use var(--light) */

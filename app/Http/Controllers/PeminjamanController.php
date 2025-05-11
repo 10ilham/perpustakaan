@@ -131,13 +131,24 @@ class PeminjamanController extends Controller
         }
 
         // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan
+        // Perubahan: Mencakup semua status yang belum dikembalikan (Dipinjam DAN Terlambat)
         $sudahPinjam = PeminjamanModel::where('user_id', Auth::id())
             ->where('buku_id', $id)
-            ->where('status', 'Dipinjam')
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
             ->first();
 
         if ($sudahPinjam) {
             return redirect()->back()->with('error', 'Anda sudah meminjam buku ini dan belum mengembalikannya.');
+        }
+
+        // Cek jumlah buku yang sedang dipinjam oleh user
+        $jumlahPinjam = PeminjamanModel::where('user_id', Auth::id())
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->count();
+
+        // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
+        if ($jumlahPinjam >= 1) {
+            return redirect()->back()->with('error', 'Anda sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu untuk meminjam buku lain.');
         }
 
         return view('peminjaman.form', compact('buku'));
@@ -180,6 +191,26 @@ class PeminjamanController extends Controller
         // Cek stok buku lagi (double-check)
         if ($buku->stok_buku <= 0) {
             return redirect()->back()->with('error', 'Stok buku tidak tersedia untuk dipinjam.');
+        }
+
+        // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan (termasuk status Terlambat)
+        $sudahPinjam = PeminjamanModel::where('user_id', Auth::id())
+            ->where('buku_id', $request->buku_id)
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->first();
+
+        if ($sudahPinjam) {
+            return redirect()->back()->with('error', 'Anda sudah meminjam buku ini dan belum mengembalikannya.')->withInput();
+        }
+
+        // Cek jumlah buku yang sedang dipinjam oleh user
+        $jumlahPinjam = PeminjamanModel::where('user_id', Auth::id())
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->count();
+
+        // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
+        if ($jumlahPinjam >= 1) {
+            return redirect()->back()->with('error', 'Anda sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu untuk meminjam buku lain.')->withInput();
         }
 
         // Generate nomor peminjaman
@@ -287,22 +318,34 @@ class PeminjamanController extends Controller
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengembalikan buku.');
         }
 
-        // Periksa status terlambat
+        // Ambil tanggal batas kembali dan jadikan jam 23:59:59 (akhir hari)
+        $tanggalBatasKembali = Carbon::parse($peminjaman->tanggal_kembali)->endOfDay();
+        $tanggalPengembalian = Carbon::now();
+
+        // Periksa status terlambat, hanya terlambat jika pengembalian melewati akhir hari tanggal batas kembali
         $isTerlambat = false;
-        if ($peminjaman->status == 'Terlambat' || (Carbon::now() > Carbon::parse($peminjaman->tanggal_kembali))) {
+        if ($peminjaman->status == 'Terlambat' || $tanggalPengembalian->greaterThan($tanggalBatasKembali)) {
             $isTerlambat = true;
         }
 
         // Update status peminjaman ke 'Dikembalikan'
         // Namun tetap simpan informasi keterlambatan dengan field terpisah
-        $peminjaman->is_terlambat = $isTerlambat; // Tambahkan field baru untuk melacak keterlambatan
+        $peminjaman->is_terlambat = $isTerlambat; // Kolom(Field) untuk melacak keterlambatan
         $peminjaman->status = 'Dikembalikan';
-        $peminjaman->tanggal_pengembalian = Carbon::now();
+        $peminjaman->tanggal_pengembalian = $tanggalPengembalian;
 
         // Hitung jumlah hari terlambat jika terlambat
         if ($isTerlambat) {
-            $hariTerlambat = Carbon::now()->diffInDays(Carbon::parse($peminjaman->tanggal_kembali));
+            // Gunakan startOfDay() untuk kedua tanggal agar perhitungan konsisten
+            $hariTerlambat = Carbon::parse($peminjaman->tanggal_kembali)->startOfDay()
+                ->diffInDays($tanggalPengembalian->copy()->startOfDay(), false);
+
+            // Jika hasil negatif, ubah menjadi positif
+            $hariTerlambat = abs($hariTerlambat);
             $peminjaman->jumlah_hari_terlambat = $hariTerlambat;
+        } else {
+            // Jika tidak terlambat, pastikan jumlah hari terlambat adalah 0
+            $peminjaman->jumlah_hari_terlambat = 0;
         }
 
         $peminjaman->save();
@@ -351,5 +394,20 @@ class PeminjamanController extends Controller
         $peminjaman->delete();
 
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil dihapus.');
+    }
+
+    // Mendapatkan buku populer (paling banyak dipinjam) untuk ditampilkan di dashboard
+    public static function getBukuPopuler($limit = 10)
+    {
+        // Mengelompokkan peminjaman berdasarkan buku_id dan menghitung jumlahnya
+        $bukuPopuler = PeminjamanModel::select('buku_id')
+            ->selectRaw('COUNT(*) as total_peminjaman')
+            ->groupBy('buku_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->limit($limit)
+            ->with('buku') // Load relasi buku
+            ->get();
+
+        return $bukuPopuler;
     }
 }

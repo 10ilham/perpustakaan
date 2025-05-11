@@ -7,11 +7,11 @@
             @if (auth()->user()->level == 'admin')
                 <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'siswa')
-                <li><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'guru')
-                <li><a href="{{ route('guru.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'staff')
-                <li><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @endif
             <li class="divider">/</li>
             <li><a class="active">Kategori</a></li>

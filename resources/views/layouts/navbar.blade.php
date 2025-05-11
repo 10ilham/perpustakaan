@@ -11,10 +11,6 @@
         <i class='bx bxs-bell icon'></i>
         <span class="badge">5</span>
     </a>
-    <a href="#" class="nav-link">
-        <i class='bx bxs-message-square-dots icon'></i>
-        <span class="badge">8</span>
-    </a>
     <span class="divider"></span>
     <div class="profile">
         @php

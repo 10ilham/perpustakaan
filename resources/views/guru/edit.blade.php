@@ -8,7 +8,7 @@
                     <div class="col-12">
                         <h1 class="title">Edit Guru Profile</h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('guru.dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
                             <li class="divider">/</li>
                             <li class="breadcrumb-item"><a href="{{ route('guru.profile') }}">Profile</a></li>
                             <li class="divider">/</li>

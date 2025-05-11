@@ -10,8 +10,6 @@
                     <ol class="breadcrumb">
                         @if(auth()->user()->level == 'admin')
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        @elseif(auth()->user()->level == 'staff')
-                        <li class="breadcrumb-item"><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
                         @endif
                         <li class="divider">/</li>
                         <li class="breadcrumb-item"><a href="{{ route('kategori.index') }}">Kategori</a></li>

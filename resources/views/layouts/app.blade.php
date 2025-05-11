@@ -63,7 +63,7 @@
                 icon: 'success',
                 title: 'Berhasil!',
                 text: successMessage,
-                timer: 3000,
+                timer: 5000,
                 timerProgressBar: true
             });
         }
@@ -75,7 +75,7 @@
                 icon: 'error',
                 title: 'Gagal!',
                 text: errorMessage,
-                timer: 3000,
+                timer: 8000,
                 timerProgressBar: true
             });
         }

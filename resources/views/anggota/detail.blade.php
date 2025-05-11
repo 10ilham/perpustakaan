@@ -11,11 +11,11 @@
                             @if (auth()->user()->level == 'admin')
                                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                             @elseif(auth()->user()->level == 'siswa')
-                                <li class="breadcrumb-item"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
                             @elseif(auth()->user()->level == 'guru')
-                                <li class="breadcrumb-item"><a href="{{ route('guru.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
                             @elseif(auth()->user()->level == 'staff')
-                                <li class="breadcrumb-item"><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
                             @endif
                             <li class="divider">/</li>
                             <li class="breadcrumb-item"><a href="{{ route('anggota.index') }}">Anggota</a></li>
@@ -52,18 +52,15 @@
                             </div>
                             <h3 class="mt-3">{{ $user->nama }}</h3>
                             <p class="text-muted">
-                                <span
-                                    class="badge badge-outline-
-                            @if ($user->level === 'admin') primary
-                            @elseif($user->level === 'siswa')
-                                success
-                            @elseif($user->level === 'guru')
-                                warning
-                            @elseif($user->level === 'staff')
-                                secondary @endif
-                            ">
-                                    {{ ucfirst($user->level) }}
-                                </span>
+                                @if ($user->level === 'admin')
+                                    <span class="badge badge-outline-primary">Admin</span>
+                                @elseif($user->level === 'siswa')
+                                    <span class="badge badge-outline-success">Siswa</span>
+                                @elseif($user->level === 'guru')
+                                    <span class="badge badge-outline-warning">Guru</span>
+                                @elseif($user->level === 'staff')
+                                    <span class="badge badge-outline-secondary">Staff</span>
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -174,4 +171,82 @@
             </div>
         </section>
     </div>
+
+    <!-- Riwayat Peminjaman kecualikan admin dengan tanda (!) -->
+    @if ($user->level !== 'admin')
+        <div class="row mt-4" style="width: 100%; padding: 0 20px 20px 20px; margin-top: 0 !important;">
+            <div class="col-12">
+                <div class="profile-card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Daftar Riwayat Peminjaman</h4>
+                        <div class="table-responsive">
+                            <table id="dataTable" class="table align-items-center table-flush table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>No. Peminjaman</th>
+                                        <th>Judul Buku</th>
+                                        <th>Tgl Pinjam</th>
+                                        <th>Tgl Batas Kembali</th>
+                                        <th>Tgl Pengembalian</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($peminjaman as $index => $item)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item->no_peminjaman }}</td>
+                                            <td>{{ $item->buku->judul }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y') }}
+                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d/m/Y') }}
+                                            </td>
+                                            <td>
+                                                @if ($item->tanggal_pengembalian)
+                                                    {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->status == 'Dipinjam')
+                                                    <span class="badge" style="color: #ffc107;">{{ $item->status }}
+                                                    </span>
+                                                @elseif ($item->status == 'Dikembalikan')
+                                                    @if ($item->is_terlambat)
+                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
+                                                        </span>
+                                                        <span class="badge" style="color: #dc3545;">Terlambat
+                                                            ({{ $item->jumlah_hari_terlambat }} hari)
+                                                        </span>
+                                                    @else
+                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
+                                                        </span>
+                                                    @endif
+                                                @elseif ($item->status == 'Terlambat')
+                                                    <span class="badge" style="color: #dc3545;">{{ $item->status }}
+                                                        ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="{{ route('peminjaman.detail', $item->id) }}"
+                                                        class="btn btn-sm btn-info" title="Detail">
+                                                        <i class="bx bx-info-circle"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection

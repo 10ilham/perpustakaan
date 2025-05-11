@@ -36,9 +36,7 @@ Route::post('/logout', function () {
 // Route untuk dashboard user, memanggil middleware LevelMiddleware
 Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'showAdminData'])->name('admin.dashboard');
-    Route::get('/siswa/dashboard', [SiswaController::class, 'showSiswaData'])->name('siswa.dashboard');
-    Route::get('/guru/dashboard', [GuruController::class, 'showGuruData'])->name('guru.dashboard');
-    Route::get('/staff/dashboard', [StaffController::class, 'showStaffData'])->name('staff.dashboard');
+    Route::get('/anggota/dashboard', [AnggotaController::class, 'showAnggotaData'])->name('anggota.dashboard');
 
     // Route untuk anggota (halaman admin)
     Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.index');

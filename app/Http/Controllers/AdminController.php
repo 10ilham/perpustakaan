@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\AdminModel;
+use App\Models\BukuModel;
+use App\Models\KategoriModel;
+use App\Models\PeminjamanModel;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -17,8 +21,18 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Data admin tidak ditemukan.');
         }
 
-        // Kirim data ke view
-        return view('admin.dashboard', compact('admin'));
+        // Data untuk dashboard
+        $totalBuku = BukuModel::count();
+        $totalKategori = KategoriModel::count();
+        $totalPeminjaman = PeminjamanModel::count();
+
+        // Total anggota tidak termasuk admin
+        $totalAnggota = User::where('level', '!=', 'admin')->count();
+
+        // Mendapatkan 10 buku terpopuler
+        $bukuPopuler = PeminjamanController::getBukuPopuler(10);
+
+        return view('layouts.AdminDashboard', compact('admin', 'totalBuku', 'totalKategori', 'totalPeminjaman', 'totalAnggota', 'bukuPopuler'));
     }
 
     public function showProfile()

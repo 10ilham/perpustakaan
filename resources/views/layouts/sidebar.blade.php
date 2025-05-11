@@ -11,16 +11,16 @@
                     class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
                     Dashboard</a>
             @elseif(Auth::user()->level === 'siswa')
-                <a href="{{ route('siswa.dashboard') }}"
-                    class="{{ request()->routeIs('siswa.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
+                <a href="{{ route('anggota.dashboard') }}"
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
                     Dashboard</a>
             @elseif(Auth::user()->level === 'guru')
-                <a href="{{ route('guru.dashboard') }}"
-                    class="{{ request()->routeIs('guru.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
+                <a href="{{ route('anggota.dashboard') }}"
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
                     Dashboard</a>
             @elseif(Auth::user()->level === 'staff')
-                <a href="{{ route('staff.dashboard') }}"
-                    class="{{ request()->routeIs('staff.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
+                <a href="{{ route('anggota.dashboard') }}"
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
                     Dashboard</a>
             @endif
         </li>
@@ -39,13 +39,13 @@
                             class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Daftar Buku</a>
                     </li>
                 @endif
-                @if (Auth::user()->level === 'admin')
-                    <li><a href="{{ route('buku.index') }}?sort=newest"
-                            class="{{ request()->fullUrl() == route('buku.index') . '?sort=newest' ? 'active-menu-item' : '' }}">Buku
-                            Terbaru</a></li>
-                    <li><a href="{{ route('buku.index') }}"
+                @if (Auth::user()->level === 'siswa' || Auth::user()->level === 'guru' || Auth::user()->level === 'staff')
+                    <li>
+                        <a href="{{ route('buku.index') }}"
                             class="{{ request()->fullUrl() == route('buku.index') . '?status=tersedia' ? 'active-menu-item' : '' }}">Buku
-                            Favorit</a></li>
+                            Favorit
+                        </a>
+                    </li>
                 @endif
             </ul>
         </li>

@@ -30,7 +30,9 @@
                                 @endif
                             </div>
                             <h3 class="mt-3">{{ $admin->user->nama }}</h3>
-                            <p class="text-muted">Admin</p>
+                            <p class="text-center">
+                                <span class="badge badge-outline-primary">Admin</span>
+                            </p>
                         </div>
                     </div>
                 </div>

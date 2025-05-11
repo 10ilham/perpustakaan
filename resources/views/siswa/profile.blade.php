@@ -8,7 +8,7 @@
                     <div class="col-12 col-md-6 order-md-1 order-last">
                         <h1 class="title">Siswa Profile</h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
                             <li class="divider">/</li>
                             <li class="breadcrumb-item active" aria-current="page">Profile</li>
                         </ol>
@@ -30,7 +30,9 @@
                                 @endif
                             </div>
                             <h3 class="mt-3">{{ $siswa->user->nama }}</h3>
-                            <p class="text-muted">Siswa</p>
+                            <p class="text-center">
+                                <span class="badge badge-outline-success">Siswa</span>
+                            </p>
                         </div>
                     </div>
                 </div>

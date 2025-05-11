@@ -7,11 +7,11 @@
             @if (auth()->user()->level == 'admin')
                 <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'siswa')
-                <li><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'guru')
-                <li><a href="{{ route('guru.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'staff')
-                <li><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @endif
             <li class="divider">/</li>
             <li><a class="active">Buku</a></li>
@@ -88,11 +88,19 @@
                     @endif
                 </div>
 
-                <form class="navbar-search mb-3" action="/buku" method="GET">
+                <!-- Form pencarian dengan menyertakan parameter filter yang aktif -->
+                {{-- Untuk mempertahankan filter saat dalam mode pencarian --}}
+                <form class="navbar-search mb-3" action="{{ route('buku.index') }}" method="GET">
                     <div class="input-group">
+                        @if (request('kategori'))
+                            <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+                        @endif
+                        @if (request('status'))
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        @endif
                         <input type="search" name="search" class="form-control bg-light border-1 small"
                             placeholder="Cari Judul Buku" aria-label="Search" aria-describedby="basic-addon2"
-                            style="border-color: #244fbc;">
+                            value="{{ request('search') }}" style="border-color: #244fbc;">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search fa-sm"></i>
@@ -134,9 +142,9 @@
                                             @endif
                                         </p>
                                     </div>
-                                    <div class="button-area mt-3" style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                        <a href="{{ route('buku.detail', $item->id) }}"
-                                            class="btn btn-sm btn-info px-2"
+                                    <div class="button-area mt-3"
+                                        style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                        <a href="{{ route('buku.detail', $item->id) }}" class="btn btn-sm btn-info px-2"
                                             style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Detail</a>
 
                                         @if (auth()->user()->level == 'admin')
@@ -145,16 +153,19 @@
                                                 style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Edit</a>
                                             <button class="btn btn-sm btn-danger px-3 delete-btn" data-bs-toggle="modal"
                                                 data-bs-target="#deleteModal"
-                                                data-action="{{ route('buku.hapus', $item->id) }}" style="height: 31px; display: flex; align-items: center;">Hapus</button>
+                                                data-action="{{ route('buku.hapus', $item->id) }}"
+                                                style="height: 31px; display: flex; align-items: center;">Hapus</button>
                                         @endif
 
                                         @if (auth()->user()->level == 'siswa' || auth()->user()->level == 'guru' || auth()->user()->level == 'staff')
                                             @if ($item->stok_buku > 0)
-                                                <a href="{{ route('peminjaman.form', $item->id) }}" class="btn btn-sm btn-success px-2"
+                                                <a href="{{ route('peminjaman.form', $item->id) }}"
+                                                    class="btn btn-sm btn-success px-2"
                                                     style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Pinjam</a>
                                             @else
                                                 <button class="btn btn-sm btn-warning px-2" disabled
-                                                    style="text-decoration: none; height: 31px; display: flex; align-items: center;">Stok Habis</button>
+                                                    style="text-decoration: none; height: 31px; display: flex; align-items: center;">Stok
+                                                    Habis</button>
                                             @endif
                                         @endif
                                     </div>

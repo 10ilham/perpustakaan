@@ -8,6 +8,9 @@ use App\Models\AdminModel;
 use App\Models\SiswaModel;
 use App\Models\GuruModel;
 use App\Models\StaffModel;
+use App\Models\PeminjamanModel;
+use App\Models\BukuModel;
+use Illuminate\Support\Facades\Auth;
 
 class AnggotaController extends Controller
 {
@@ -49,7 +52,13 @@ class AnggotaController extends Controller
             $profileData = StaffModel::where('user_id', $user->id)->first();
         }
 
-        return view('anggota.detail', compact('user', 'profileData'));
+        // Ambil riwayat peminjaman anggota
+        $peminjaman = PeminjamanModel::where('user_id', $id)
+            ->with(['buku'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('anggota.detail', compact('user', 'profileData', 'peminjaman'));
     }
 
     // Tambah anggota
@@ -351,5 +360,50 @@ class AnggotaController extends Controller
         // Hapus user
         $user->delete();
         return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus');
+    }
+
+    // Dashboard Anggota (untuk level: siswa, guru, staff)
+    public function showAnggotaData()
+    {
+        $userLevel = Auth::user()->level;
+        $userId = Auth::id();
+        $profileData = null;
+
+        // Ambil data profil sesuai level
+        if ($userLevel === 'siswa') {
+            $profileData = SiswaModel::where('user_id', $userId)->first();
+        } elseif ($userLevel === 'guru') {
+            $profileData = GuruModel::where('user_id', $userId)->first();
+        } elseif ($userLevel === 'staff') {
+            $profileData = StaffModel::where('user_id', $userId)->first();
+        }
+
+        // Menghitung total buku
+        $totalBuku = BukuModel::count();
+
+        // Menghitung peminjaman berdasarkan user yang sedang login
+        // Peminjaman yang sedang dipinjam (status Dipinjam dan Terlambat)
+        $dipinjam = PeminjamanModel::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', 'Dipinjam')
+                    ->orWhere('status', 'Terlambat');
+            })->count();
+
+        // Peminjaman yang terlambat
+        $terlambat = PeminjamanModel::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', 'Terlambat')
+                    ->orWhere('is_terlambat', true);
+            })->count();
+
+        // Peminjaman yang sudah dikembalikan
+        $dikembalikan = PeminjamanModel::where('user_id', $userId)
+            ->where('status', 'Dikembalikan')
+            ->count();
+
+        // Mendapatkan 10 buku terpopuler
+        $bukuPopuler = PeminjamanController::getBukuPopuler(10);
+
+        return view('layouts.AnggotaDashboard', compact('profileData', 'userLevel', 'totalBuku', 'dipinjam', 'terlambat', 'dikembalikan', 'bukuPopuler'));
     }
 }

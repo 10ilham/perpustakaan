@@ -7,11 +7,11 @@
             @if (auth()->user()->level == 'admin')
                 <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'siswa')
-                <li><a href="{{ route('siswa.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'guru')
-                <li><a href="{{ route('guru.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @elseif(auth()->user()->level == 'staff')
-                <li><a href="{{ route('staff.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
             @endif
             <li class="divider">/</li>
             <li><a class="active">Peminjaman</a></li>
@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-            <!-- Tampilan tabel untuk Admin -->
+            <!-- Tampilan tabel untuk Halaman Admin -->
             <div class="tab-content" id="userTypesContent">
                 @if (!request('user_type') || request('user_type') == 'siswa')
                     <div class="tab-pane fade show active" id="siswa-peminjaman" role="tabpanel"
@@ -104,7 +104,8 @@
                                                 <th>Judul Buku</th>
                                                 <th>Peminjam</th>
                                                 <th>Tgl Pinjam</th>
-                                                <th>Tgl Kembali</th>
+                                                <th>Tgl Batas Kembali</th>
+                                                <th>Tgl Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -124,23 +125,35 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d/m/Y') }}
                                                         </td>
                                                         <td>
+                                                            @if ($item->tanggal_pengembalian)
+                                                                {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        </td>
+                                                        <td>
                                                             @if ($item->status == 'Dipinjam')
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #ffc107;">{{ $item->status }}
+                                                                </span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
-                                                                    <span class="badge">{{ $item->status }}</span>
-                                                                    <span class="badge">Terlambat
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
+                                                                    <span class="badge" style="color: #dc3545;">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
-                                                                    <span class="badge">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
-                                                                <span class="badge">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
-                                                                    hari)</span>
-                                                            @else
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #dc3545;">{{ $item->status }}
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -152,7 +165,7 @@
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
-                                                                        class="btn btn-sm btn-success return-btn"
+                                                                        class="btn btn-sm btn-success-peminjaman"
                                                                         data-bs-toggle="modal" data-bs-target="#returnModal"
                                                                         data-action="{{ route('peminjaman.kembalikan', $item->id) }}"
                                                                         title="Konfirmasi Pengembalian">
@@ -197,7 +210,8 @@
                                                 <th>Judul Buku</th>
                                                 <th>Peminjam</th>
                                                 <th>Tgl Pinjam</th>
-                                                <th>Tgl Kembali</th>
+                                                <th>Tgl Batas Kembali</th>
+                                                <th>Tgl Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -217,23 +231,35 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d/m/Y') }}
                                                         </td>
                                                         <td>
+                                                            @if ($item->tanggal_pengembalian)
+                                                                {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        </td>
+                                                        <td>
                                                             @if ($item->status == 'Dipinjam')
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #ffc107;">{{ $item->status }}
+                                                                </span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
-                                                                    <span class="badge">{{ $item->status }}</span>
-                                                                    <span class="badge">Terlambat
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
+                                                                    <span class="badge" style="color: #dc3545;">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
-                                                                    <span class="badge">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
-                                                                <span class="badge">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
-                                                                    hari)</span>
-                                                            @else
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #dc3545;">{{ $item->status }}
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -245,7 +271,7 @@
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
-                                                                        class="btn btn-sm btn-success return-btn"
+                                                                        class="btn btn-sm btn-success-peminjaman"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#returnModal"
                                                                         data-action="{{ route('peminjaman.kembalikan', $item->id) }}"
@@ -292,7 +318,8 @@
                                                 <th>Judul Buku</th>
                                                 <th>Peminjam</th>
                                                 <th>Tgl Pinjam</th>
-                                                <th>Tgl Kembali</th>
+                                                <th>Tgl Batas Kembali</th>
+                                                <th>Tgl Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -312,23 +339,35 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d/m/Y') }}
                                                         </td>
                                                         <td>
+                                                            @if ($item->tanggal_pengembalian)
+                                                                {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        </td>
+                                                        <td>
                                                             @if ($item->status == 'Dipinjam')
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #ffc107;">{{ $item->status }}
+                                                                </span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
-                                                                    <span class="badge">{{ $item->status }}</span>
-                                                                    <span class="badge">Terlambat
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
+                                                                    <span class="badge" style="color: #dc3545;">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
-                                                                    <span class="badge">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #28a745;">{{ $item->status }}
+                                                                    </span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
-                                                                <span class="badge">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
-                                                                    hari)</span>
-                                                            @else
-                                                                <span class="badge">{{ $item->status }}</span>
+                                                                <span class="badge"
+                                                                    style="color: #dc3545;">{{ $item->status }}
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -340,7 +379,7 @@
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
-                                                                        class="btn btn-sm btn-success return-btn"
+                                                                        class="btn btn-sm btn-success-peminjaman"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#returnModal"
                                                                         data-action="{{ route('peminjaman.kembalikan', $item->id) }}"
@@ -385,7 +424,8 @@
                                     <th>Judul Buku</th>
                                     <th>Peminjam</th>
                                     <th>Tgl Pinjam</th>
-                                    <th>Tgl Kembali</th>
+                                    <th>Tgl Batas Kembali</th>
+                                    <th>Tgl Pengembalian</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -403,22 +443,31 @@
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d/m/Y') }}</td>
                                             <td>
+                                                @if ($item->tanggal_pengembalian)
+                                                    {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d/m/Y') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
                                                 @if ($item->status == 'Dipinjam')
-                                                    <span class="badge">{{ $item->status }}</span>
+                                                    <span class="badge" style="color: #ffc107;">{{ $item->status }}
+                                                    </span>
                                                 @elseif ($item->status == 'Dikembalikan')
                                                     @if ($item->is_terlambat)
-                                                        <span class="badge">{{ $item->status }}</span>
-                                                        <span class="badge">Terlambat
+                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
+                                                        </span>
+                                                        <span class="badge" style="color: #dc3545;">Terlambat
                                                             ({{ $item->jumlah_hari_terlambat }} hari)
                                                         </span>
                                                     @else
-                                                        <span class="badge">{{ $item->status }}</span>
+                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
+                                                        </span>
                                                     @endif
                                                 @elseif ($item->status == 'Terlambat')
-                                                    <span class="badge">{{ $item->status }}
-                                                        ({{ $item->is_late ? $item->late_days : '?' }} hari)</span>
-                                                @else
-                                                    <span class="badge">{{ $item->status }}</span>
+                                                    <span class="badge" style="color: #dc3545;">{{ $item->status }}
+                                                        ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                    </span>
                                                 @endif
                                             </td>
                                             <td>
@@ -454,7 +503,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <form id="return-form" method="POST" style="display: inline;">
+                    <form id="return-form" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-success">Konfirmasi</button>
                     </form>
@@ -477,7 +526,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <form id="delete-form" method="POST" style="display: inline;">
+                    <form id="delete-form" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Hapus</button>
@@ -495,7 +544,7 @@
             const returnModal = document.getElementById('returnModal');
             const returnForm = document.getElementById('return-form');
 
-            document.querySelectorAll('.return-btn').forEach(button => {
+            document.querySelectorAll('.btn-success-peminjaman').forEach(button => {
                 button.addEventListener('click', function() {
                     const actionUrl = this.getAttribute('data-action');
                     returnForm.setAttribute('action', actionUrl);
