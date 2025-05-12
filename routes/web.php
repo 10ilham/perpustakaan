@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KirimEmailController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Middleware\LevelMiddleware;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
@@ -24,6 +25,11 @@ Route::post('kirim', [KirimEmailController::class, 'kirim']);
 // Route untuk login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
+// Route untuk lupa password dan reset password
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
 // Route untuk logout
 Route::post('/logout', function () {

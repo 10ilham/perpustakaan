@@ -10,8 +10,8 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        // Kembali ke halaman utama karena login menggunakan modal
-        return redirect('/');
+        // Tampilkan halaman login yang baru
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -26,7 +26,7 @@ class LoginController extends Controller
 
         if (!$user) {
             // Email tidak terdaftar (untuk data error sweetalert)
-            return redirect('/')
+            return redirect()->route('login')
                 ->with('error', 'Email tidak terdaftar!')
                 ->withInput($request->only('email'));
         }
@@ -51,7 +51,7 @@ class LoginController extends Controller
         }
 
         // Jika password salah (email sudah benar tapi auth gagal)
-        return redirect('/')
+        return redirect()->route('login')
             ->with('error', 'Password yang Anda masukkan salah!')
             ->withInput($request->only('email'));
     }

@@ -62,7 +62,7 @@
                     <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                     <li><a href="#"><i class="fa fa-instagram"></i></a></li>
                     <li class="section-btn">
-                        <a href="#" data-toggle="modal" data-target="#modal-form" style="color: #ffffff; text-decoration: none;">Sign in / Join</a>
+                        <a href="{{ route('login') }}" style="color: #ffffff; text-decoration: none;">Log in / Masuk</a>
                     </li>
                 </ul>
             </div>
@@ -86,7 +86,8 @@
 
                 <div class="col-md-6 col-sm-12">
                     <div class="beranda-image">
-                        <img src="{{ asset('assets/img/logo_mts.png') }}" class="img-responsive" alt="beranda Image" style="max-width: 600px; max-height: 400px;">
+                        <img src="{{ asset('assets/img/logo_mts.png') }}" class="img-responsive" alt="beranda Image"
+                            style="max-width: 600px; max-height: 400px;">
                     </div>
                 </div>
 
@@ -105,7 +106,10 @@
                             <h2>Tentang Kami</h2>
                             <span class="line-bar">...</span>
                         </div>
-                        <p style="text-align: justify;">MTS 6 Garut adalah sebuah Madrasah Tsanawiyah (setara dengan sekolah menengah pertama) yang berada di wilayah Garut, Indonesia. Madrasah Tsanawiyah merupakan lembaga pendidikan formal berbasis Islam yang berada di bawah naungan Kementerian Agama Republik Indonesia.</p>
+                        <p style="text-align: justify;">MTS 6 Garut adalah sebuah Madrasah Tsanawiyah (setara dengan
+                            sekolah menengah pertama) yang berada di wilayah Garut, Indonesia. Madrasah Tsanawiyah
+                            merupakan lembaga pendidikan formal berbasis Islam yang berada di bawah naungan Kementerian
+                            Agama Republik Indonesia.</p>
                     </div>
                 </div>
 
@@ -137,19 +141,23 @@
                     <form id="kontak-form" role="form" action="/kirim" method="POST">
                         @csrf
                         <div class="col-md-6 col-sm-6">
-                            <input type="text" class="form-control" placeholder="Full Name" name="nama" required="">
+                            <input type="text" class="form-control" placeholder="Full Name" name="nama"
+                                required="">
                         </div>
 
                         <div class="col-md-6 col-sm-6">
-                            <input type="text" class="form-control" placeholder="Your Email" name="email" required="">
+                            <input type="text" class="form-control" placeholder="Your Email" name="email"
+                                required="">
                         </div>
 
                         <div class="col-md-6 col-sm-6">
-                            <input type="text" class="form-control" placeholder="Your Phone" name="telepon" required="">
+                            <input type="text" class="form-control" placeholder="Your Phone" name="telepon"
+                                required="">
                         </div>
 
                         <div class="col-md-6 col-sm-6">
-                            <input type="text" class="form-control" placeholder="Subject" name="subject" required="">
+                            <input type="text" class="form-control" placeholder="Subject" name="subject"
+                                required="">
                         </div>
 
                         <div class="col-md-12 col-sm-12">
@@ -170,8 +178,10 @@
             2. Click on your location point
             3. Click "Share" and choose "Embed map" tab
             4. Copy only URL and paste it within the src="" field below
-	-->
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.5705915229064!2d107.72642927476417!3d-7.621612892393833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6617b76558094f%3A0x811c9ddc726bd69b!2sMTS%20NEGERI%206%20GARUT!5e0!3m2!1sid!2sid!4v1743832475103!5m2!1sid!2sid" allowfullscreen></iframe>
+ -->
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.5705915229064!2d107.72642927476417!3d-7.621612892393833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6617b76558094f%3A0x811c9ddc726bd69b!2sMTS%20NEGERI%206%20GARUT!5e0!3m2!1sid!2sid!4v1743832475103!5m2!1sid!2sid"
+                            allowfullscreen></iframe>
                     </div>
                 </div>
 
@@ -187,9 +197,12 @@
                 <div class="col-md-5 col-sm-12">
                     <div class="footer-thumb footer-info">
                         <h2>MTSN 6 GARUT</h2>
-                        <p style="text-align: justify;">MTS 6 Garut adalah sebuah Madrasah Tsanawiyah (setara dengan sekolah menengah pertama)
-                            berbasis Islam yang berada di bawah naungan Kementerian Agama Republik Indonesia. Sekolah ini
-                            memadukan kurikulum pendidikan umum dengan pendidikan agama Islam untuk membentuk karakter siswa
+                        <p style="text-align: justify;">MTS 6 Garut adalah sebuah Madrasah Tsanawiyah (setara dengan
+                            sekolah menengah pertama)
+                            berbasis Islam yang berada di bawah naungan Kementerian Agama Republik Indonesia. Sekolah
+                            ini
+                            memadukan kurikulum pendidikan umum dengan pendidikan agama Islam untuk membentuk karakter
+                            siswa
                             yang berilmu dan berakhlak mulia.</p>
                     </div>
                 </div>
@@ -206,7 +219,8 @@
                 <div class="col-md-3 col-sm-4">
                     <div class="footer-thumb">
                         <h2>Alamat</h2>
-                        <p>JL. PANYINDANGAN Kp. Baru jati RT/RW 001/016. Ds. PAMEUNGPEUK Kec, JL. BOJONG, Pameungpeuk, Kec. Pameungpeuk, Kabupaten Garut, Jawa Barat 44175</p>
+                        <p>JL. PANYINDANGAN Kp. Baru jati RT/RW 001/016. Ds. PAMEUNGPEUK Kec, JL. BOJONG, Pameungpeuk,
+                            Kec. Pameungpeuk, Kabupaten Garut, Jawa Barat 44175</p>
                     </div>
                 </div>
 
@@ -222,7 +236,8 @@
                                 <p>Telepon <span>(+62) 853-2023-3524</span></p>
                             </div>
                             <ul class="social-icon">
-                                <li><a href="https://www.facebook.com/templatemo" class="fa fa-facebook-square" attr="facebook icon"></a></li>
+                                <li><a href="https://www.facebook.com/templatemo" class="fa fa-facebook-square"
+                                        attr="facebook icon"></a></li>
                                 <li><a href="#" class="fa fa-twitter"></a></li>
                                 <li><a href="#" class="fa fa-instagram"></a></li>
                             </ul>
@@ -234,53 +249,7 @@
         </div>
     </footer>
 
-    <!-- MODAL -->
-    <section class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-popup">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-
-                            <div class="col-md-12 col-sm-12">
-                                <div class="modal-title">
-                                    <h2>MTSN 6 GARUT</h2>
-                                </div>
-
-                                <!-- NAV TABS -->
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="active"><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Sign In</a></li>
-                                </ul>
-
-                                <!-- TAB PANES -->
-                                <div class="tab-content">
-
-                                    <div role="tabpanel" class="tab-pane fade in active" id="sign_in">
-                                        <form action="{{ route('login') }}" method="post">
-                                            @csrf
-                                            <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                            <input type="password" class="form-control" name="password" placeholder="Password" required>
-                                            <input type="submit" class="form-control" name="submit" value="Login">
-                                            <a href="#">Forgot your password?</a>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
+    <!-- Login Modal telah dipindahkan ke halaman terpisah: resources/views/auth/login.blade.php -->
 
     <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
