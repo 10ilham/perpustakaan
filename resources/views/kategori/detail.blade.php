@@ -37,7 +37,7 @@
                             <p>{{ $kategori->deskripsi ?: 'Tidak ada deskripsi' }}</p>
                             <div class="badge badge-outline-primary"
                                 style="margin-bottom: 15px; margin-top: 10px; display: block;">
-                                {{ $kategori->buku->count() }} buku dalam kategori ini
+                                {{ $bukuKategori->total() }} buku dalam kategori ini
                             </div>
 
                             <div class="d-flex justify-content-center mt-4 button-container">
@@ -59,12 +59,29 @@
                 <div class="col-md-8">
                     <div class="profile-card">
                         <div class="card-body">
-                            <h5 class="card-title">Buku dalam Kategori Ini</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">Buku dalam Kategori Ini</h5>
+                            </div>
 
-                            @if ($kategori->buku->count() > 0)
-                                <div
-                                    class="row buku-container {{ $kategori->buku->count() === 1 ? 'single-card' : ($kategori->buku->count() === 2 ? 'two-cards' : ($kategori->buku->count() === 3 ? 'three-cards' : '')) }}">
-                                    @foreach ($kategori->buku as $item)
+                            <!-- Form pencarian buku dalam kategori -->
+                            <form class="navbar-search mb-3" action="{{ route('kategori.detail', $kategori->id) }}"
+                                method="GET">
+                                <div class="input-group" style="margin-top: 20px">
+                                    <input type="search" name="search" class="form-control bg-light border-1 small"
+                                        placeholder="Cari Judul Buku" aria-label="Search" aria-describedby="basic-addon2"
+                                        value="{{ request('search') }}" style="border-color: #244fbc;">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            @if ($bukuKategori->total() > 0)
+                                <div class="row buku-container {{ count($bukuKategori) === 1 ? 'single-card' : (count($bukuKategori) === 2 ? 'two-cards' : (count($bukuKategori) === 3 ? 'three-cards' : '')) }}"
+                                    style="margin-bottom: 20px;">
+                                    @foreach ($bukuKategori as $item)
                                         <div class="col-auto" style="width: calc(25% - 20px);">
                                             <div class="card card-buku" style="min-height: 28rem; text-align: left;">
                                                 @if ($item->foto)
@@ -76,29 +93,30 @@
                                                         src="{{ asset('assets/img/default_buku.png') }}"
                                                         alt="Default Book Cover">
                                                 @endif
-                                                <div class="card-body d-flex flex-column align-items-start justify-content-start w-100"
-                                                    style="text-align: left;">
-                                                    <div class="detail-buku w-100" style="text-align: left;">
-                                                        <h5 class="card-title text-start"
-                                                            style="text-align: left; width: 100%;">
+                                                <div class="card-body d-flex flex-column align-items-center justify-content-center w-100"
+                                                    style="text-align: center;">
+                                                    <div class="detail-buku w-100" style="text-align: center;">
+                                                        <h5 class="card-title text-center"
+                                                            style="text-align: center; width: 100%;">
                                                             <a>
                                                                 {{ $item->judul }}
                                                             </a>
                                                         </h5>
-                                                        <p class="card-text m-0 text-start"
-                                                            style="text-align: left; display: block; width: 100%;">Kode
+                                                        <p class="card-text m-0"
+                                                            style="text-align: justify; display: block; width: 100%;">Kode
                                                             Buku:
                                                             {{ $item->kode_buku }}</p>
-                                                        <p class="card-text m-0 text-start"
-                                                            style="text-align: left; display: block; width: 100%;">
+                                                        <p class="card-text m-0"
+                                                            style="text-align: justify; display: block; width: 100%;">
                                                             Pengarang:
                                                             {{ $item->pengarang }}</p>
-                                                        <p class="card-text m-0 text-start"
-                                                            style="text-align: left; display: block; width: 100%;">Kategori:
+                                                        <p class="card-text m-0"
+                                                            style="text-align: justify; display: block; width: 100%;">
+                                                            Kategori:
                                                             {{ $kategori->nama }}
                                                         </p>
-                                                        <p class="card-text m-0 text-start"
-                                                            style="text-align: left; display: block; width: 100%;">Status:
+                                                        <p class="card-text m-0"
+                                                            style="text-align: justify; display: block; width: 100%;">Status:
                                                             @if ($item->status === 'Tersedia')
                                                                 <span
                                                                     class="badge badge-outline-success">{{ $item->status }}</span>
@@ -128,6 +146,26 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                </div>
+
+                                <!-- Pagination -->
+                                <div class="d-flex justify-content-between align-items-center mx-2 my-2"
+                                    style="margin-top: 10px;">
+                                    <p class="text-primary my-2 mb-0">Menampilkan data
+                                        ke-{{ $bukuKategori->firstItem() ?? 0 }} hingga
+                                        {{ $bukuKategori->lastItem() ?? 0 }}
+                                        dari {{ $bukuKategori->total() ?? 0 }} buku</p>
+                                    <div class="pagination-wrapper">
+                                        @if ($bukuKategori->hasPages())
+                                            {{ $bukuKategori->links('pagination::bootstrap-4') }}
+                                        @else
+                                            <ul class="pagination">
+                                                <li class="page-item active" aria-current="page">
+                                                    <span class="page-link">1</span>
+                                                </li>
+                                            </ul>
+                                        @endif
+                                    </div>
                                 </div>
                             @else
                                 <div class="alert alert-info">
@@ -163,4 +201,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Script untuk menangani modal konfirmasi hapus -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set action URL untuk form delete saat tombol hapus diklik
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const deleteForm = document.getElementById('delete-form');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionUrl = this.getAttribute('data-action');
+                    deleteForm.setAttribute('action', actionUrl);
+                });
+            });
+        });
+    </script>
 @endsection

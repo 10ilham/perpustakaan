@@ -15,9 +15,23 @@ class KategoriController extends Controller
 
     public function detail($id)
     {
-        // Ambil detail kategori dan buku yang terkait
-        $kategori = KategoriModel::with('buku')->findOrFail($id);
-        return view('kategori.detail', compact('kategori'));
+        // Ambil detail kategori
+        $kategori = KategoriModel::findOrFail($id);
+
+        // Ambil buku yang terkait dengan pagination dan pencarian
+        $search = request('search');
+        $query = $kategori->buku();
+
+        // Filter berdasarkan pencarian jika ada
+        if ($search) {
+            $query->where('judul', 'like', '%' . $search . '%');
+        }
+
+        // Pagination
+        $bukuKategori = $query->paginate(8);
+        $bukuKategori->appends(request()->query());
+
+        return view('kategori.detail', compact('kategori', 'bukuKategori'));
     }
 
     public function tambah()

@@ -679,6 +679,12 @@ footer.footer i {
     max-width: 100% !important; /* Pastikan tidak menyusut */
 }
 
+/* Perbaikan khusus untuk satu card dalam buku-container ketika pagination */
+.buku-container .col-auto:only-child {
+    width: 100% !important; /* Lebar penuh untuk child tunggal */
+    max-width: 100% !important; /* Pastikan tidak menyusut */
+}
+
 /* Jika ada dua card, buat card memiliki lebar setengah layar */
 .buku-container.two-cards .col-auto {
     width: calc(50% - 20px) !important; /* Lebar 50% dengan gap */
@@ -771,7 +777,8 @@ footer.footer i {
     margin-bottom: 8px;
     margin-left: auto;
     margin-right: auto;
-    text-align: justify;
+    text-align: justify; /* Rata kiri-kanan */
+    max-width: 100%; /* Maksimal lebar teks */
 }
 
 /* Container untuk card buku */

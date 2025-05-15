@@ -185,8 +185,6 @@
                         <div class="pagination-wrapper">
                             {{ $buku->links('pagination::bootstrap-4') }}
                         </div>
-                    @else
-                        <p class="text-primary my-2 mb-0">Menampilkan 1 dari 1 Halaman</p>
                     @endif
                 </div>
 
