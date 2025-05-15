@@ -664,6 +664,7 @@ footer.footer i {
     margin-bottom: 10px; /* Jarak antar card */
 }
 
+/* Style detail kategori */
 /* Default styling untuk buku-container (detail kategori) */
 .buku-container {
     display: flex;
@@ -690,13 +691,47 @@ footer.footer i {
     max-width: calc(33.33% - 20px) !important; /* Pastikan tidak menyusut */
 }
 
+/* Style untuk tombol, jika admin maka ada gap antar tombol */
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+/* Jika hanya ada satu tombol (non-admin), maka tombol akan berada di tengah */
+.button-container:has(> a:only-child) {
+    justify-content: center;
+}
+
+/* Container dengan satu buku */
+.single-card {
+    justify-content: center;
+}
+
+/* Container dengan dua buku */
+.two-cards {
+    justify-content: center;
+}
+
+/* Container dengan tiga buku */
+.three-cards {
+    justify-content: center;
+}
+
 /* Styling khusus untuk card buku */
 .card-buku {
     height: 100%; /* Tinggi khusus untuk card buku */
+    width: 100%;
     display: flex;
     flex-direction: column; /* Atur konten card secara vertikal */
     justify-content: space-between;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card-buku:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {

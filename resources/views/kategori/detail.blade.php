@@ -40,7 +40,7 @@
                                 {{ $kategori->buku->count() }} buku dalam kategori ini
                             </div>
 
-                            <div class="d-flex justify-content-center mt-4">
+                            <div class="d-flex justify-content-center mt-4 button-container">
                                 <a href="{{ route('kategori.index') }}" class="btn btn-secondary">
                                     <i class="bx bx-arrow-back"></i> Kembali
                                 </a>
@@ -62,11 +62,11 @@
                             <h5 class="card-title">Buku dalam Kategori Ini</h5>
 
                             @if ($kategori->buku->count() > 0)
-                                <div class="row buku-container {{ $kategori->buku->count() === 1 ? 'single-card' : ($kategori->buku->count() === 2 ? 'two-cards' : ($kategori->buku->count() === 3 ? 'three-cards' : '')) }}">
+                                <div
+                                    class="row buku-container {{ $kategori->buku->count() === 1 ? 'single-card' : ($kategori->buku->count() === 2 ? 'two-cards' : ($kategori->buku->count() === 3 ? 'three-cards' : '')) }}">
                                     @foreach ($kategori->buku as $item)
                                         <div class="col-auto" style="width: calc(25% - 20px);">
-                                            <div class="card card-buku text-center align-items-center justify-content-center"
-                                                style="min-height: 28rem;">
+                                            <div class="card card-buku" style="min-height: 28rem; text-align: left;">
                                                 @if ($item->foto)
                                                     <img class="card-img-top" style="max-height: 180px;"
                                                         src="{{ asset('assets/img/buku/' . $item->foto) }}"
@@ -76,18 +76,29 @@
                                                         src="{{ asset('assets/img/default_buku.png') }}"
                                                         alt="Default Book Cover">
                                                 @endif
-                                                <div
-                                                    class="card-body d-flex flex-column align-items-center justify-content-center">
-                                                    <div class="detail-buku">
-                                                        <h5 class="card-title">
+                                                <div class="card-body d-flex flex-column align-items-start justify-content-start w-100"
+                                                    style="text-align: left;">
+                                                    <div class="detail-buku w-100" style="text-align: left;">
+                                                        <h5 class="card-title text-start"
+                                                            style="text-align: left; width: 100%;">
                                                             <a>
                                                                 {{ $item->judul }}
                                                             </a>
                                                         </h5>
-                                                        <p class="card-text m-0">Kode Buku: {{ $item->kode_buku }}</p>
-                                                        <p class="card-text m-0">Pengarang: {{ $item->pengarang }}</p>
-                                                        <p class="card-text m-0">Kategori: {{ $kategori->nama }}</p>
-                                                        <p class="card-text m-0">Status:
+                                                        <p class="card-text m-0 text-start"
+                                                            style="text-align: left; display: block; width: 100%;">Kode
+                                                            Buku:
+                                                            {{ $item->kode_buku }}</p>
+                                                        <p class="card-text m-0 text-start"
+                                                            style="text-align: left; display: block; width: 100%;">
+                                                            Pengarang:
+                                                            {{ $item->pengarang }}</p>
+                                                        <p class="card-text m-0 text-start"
+                                                            style="text-align: left; display: block; width: 100%;">Kategori:
+                                                            {{ $kategori->nama }}
+                                                        </p>
+                                                        <p class="card-text m-0 text-start"
+                                                            style="text-align: left; display: block; width: 100%;">Status:
                                                             @if ($item->status === 'Tersedia')
                                                                 <span
                                                                     class="badge badge-outline-success">{{ $item->status }}</span>

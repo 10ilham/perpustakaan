@@ -128,9 +128,105 @@
             </div>
         </div>
 
+        <!-- Laporan Peminjaman -->
+        <div class="data">
+            <div class="content-data">
+                <div class="head">
+                    <h3>Laporan Peminjaman</h3>
+                    <div class="filter-period">
+                        <select id="period-filter" class="form-control">
+                            <option value="day" selected>1 Hari</option>
+                            <option value="week">1 Minggu</option>
+                            <option value="month">1 Bulan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart">
+                    <div id="chart"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Other content sections can be removed/commented out -->
     </main>
     <!-- END MAIN -->
+@endsection
+
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChart('day'); // Default load 1 hari
+
+            document.getElementById('period-filter').addEventListener('change', function() {
+                const period = this.value;
+                loadChart(period);
+            });
+        });
+
+        function loadChart(period) {
+            // Mendapatkan data berdasarkan periode
+            fetch(`/anggota/chart-data?period=${period}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderChart(data);
+                })
+                .catch(error => {
+                    console.error('Error loading chart data:', error);
+                });
+        }
+
+        function renderChart(data) {
+            // Destroy chart jika sudah ada
+            if (window.chart) {
+                window.chart.destroy();
+            }
+
+            const options = {
+                series: [{
+                    name: 'Peminjaman',
+                    data: data.peminjaman || []
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area'
+                },
+                colors: ['#1775f1'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                title: {
+                    text: 'Grafik Riwayat Peminjaman Anda',
+                    align: 'left'
+                },
+                grid: {
+                    borderColor: '#e7e7e7',
+                    row: {
+                        colors: ['#f3f3f3', 'transparent'],
+                        opacity: 0.5
+                    }
+                },
+                xaxis: {
+                    categories: data.labels || [],
+                    title: {
+                        text: 'Tanggal'
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: 'Jumlah Peminjaman'
+                    },
+                    min: 0
+                }
+            };
+
+            window.chart = new ApexCharts(document.querySelector("#chart"), options);
+            window.chart.render();
+        }
+    </script>
 @endsection
 
 <style>
@@ -224,5 +320,20 @@
 
     .leaderboard .btn-info:hover {
         background-color: #138496;
+    }
+
+    /* Chart and Filter Styling */
+    .filter-period {
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-period select {
+        width: 120px;
+        padding: 6px 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        font-size: 14px;
     }
 </style>

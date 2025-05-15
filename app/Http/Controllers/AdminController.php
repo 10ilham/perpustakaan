@@ -167,4 +167,177 @@ class AdminController extends Controller
 
         return redirect()->route('admin.profile')->with('success', 'Profile berhasil diperbarui.');
     }
+
+    /**
+     * Generate chart data for admin dashboard
+     */
+    public function getChartData(Request $request)
+    {
+        $period = $request->query('period', 'day'); // menentukan periode default ke 'day' yang ditampilkan di admin dashboard
+
+        // Tentukan rentang waktu berdasarkan periode
+        $startDate = now();
+        $endDate = now();
+
+        if ($period == 'day') {
+            $startDate = now()->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'H:i';
+            $interval = 'hour';
+            $intervalValue = 2; // setiap 2 jam
+        } elseif ($period == 'week') {
+            $startDate = now()->subDays(6)->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1; // setiap hari
+        } elseif ($period == 'month') {
+            $startDate = now()->subDays(29)->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1; // setiap 1 hari
+        }
+
+        // Ambil data total peminjaman untuk verifikasi
+        $totalPeminjamanDB = PeminjamanModel::count();
+        $totalPeminjamanSiswa = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'siswa');
+        })->count();
+        $totalPeminjamanGuru = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'guru');
+        })->count();
+        $totalPeminjamanStaff = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'staff');
+        })->count();
+
+        // Generate labels untuk chart (tanggal)
+        $labels = [];
+        $current = clone $startDate;
+        while ($current <= $endDate) {
+            $labels[] = $current->format($format);
+            if ($interval == 'hour') {
+                $current->addHours($intervalValue);
+            } elseif ($interval == 'day') {
+                $current->addDays($intervalValue);
+            }
+        }
+
+        // Ambil data peminjaman untuk setiap level user
+        $siswaData = $this->getPeminjamanByPeriodAndLevel($startDate, $endDate, $interval, $intervalValue, 'siswa');
+        $guruData = $this->getPeminjamanByPeriodAndLevel($startDate, $endDate, $interval, $intervalValue, 'guru');
+        $staffData = $this->getPeminjamanByPeriodAndLevel($startDate, $endDate, $interval, $intervalValue, 'staff');
+
+        // Hitung total dari semua data grafik untuk verifikasi
+        $totalInChart = array_sum($siswaData) + array_sum($guruData) + array_sum($staffData);
+
+        // Get actual loan dates from database for verification
+        $actualSiswaLoanDates = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'siswa');
+        })
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam')
+            ->get()
+            ->map(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y');
+            });
+
+        $actualGuruLoanDates = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'guru');
+        })
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam')
+            ->get()
+            ->map(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y');
+            });
+
+        $actualStaffLoanDates = PeminjamanModel::whereHas('user', function ($query) {
+            $query->where('level', 'staff');
+        })
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam')
+            ->get()
+            ->map(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y');
+            });
+
+        // Kembalikan data dalam format JSON
+        return response()->json([
+            'labels' => $labels,
+            'siswa' => $siswaData,
+            'guru' => $guruData,
+            'staff' => $staffData,
+            'totalPeminjamanDB' => $totalPeminjamanDB,
+            'totalSiswa' => $totalPeminjamanSiswa,
+            'totalGuru' => $totalPeminjamanGuru,
+            'totalStaff' => $totalPeminjamanStaff,
+            'totalInChart' => $totalInChart,
+            'actualDates' => [
+                'siswa' => $actualSiswaLoanDates,
+                'guru' => $actualGuruLoanDates,
+                'staff' => $actualStaffLoanDates
+            ]
+        ]);
+    }
+
+    /**
+     * Helper function to get loan data by period and user level
+     */
+    private function getPeminjamanByPeriodAndLevel($startDate, $endDate, $interval, $intervalValue, $userLevel)
+    {
+        $data = [];
+        $current = clone $startDate;
+        $dateFormat = 'd/m/Y'; // Format for displaying and debugging dates
+
+        // Ambil data peminjaman aktual dari database terlebih dahulu
+        $peminjamanData = PeminjamanModel::whereHas('user', function ($query) use ($userLevel) {
+            $query->where('level', $userLevel);
+        })
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam')
+            ->get();
+
+        $actualDates = $peminjamanData->map(function ($item) use ($dateFormat) {
+            return \Carbon\Carbon::parse($item->tanggal_pinjam)->format($dateFormat);
+        })->toArray();
+
+        // Initialize empty array with correct date keys based on periods
+        $dateMap = [];
+        $tempCurrent = clone $startDate;
+        while ($tempCurrent <= $endDate) {
+            $dateKey = $tempCurrent->format($dateFormat);
+            $dateMap[$dateKey] = 0;
+
+            if ($interval == 'hour') {
+                $tempCurrent->addHours($intervalValue);
+            } elseif ($interval == 'day') {
+                $tempCurrent->addDays($intervalValue);
+            }
+        }
+
+        // Count actual loans for each date
+        foreach ($peminjamanData as $peminjaman) {
+            $dateKey = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format($dateFormat);
+            if (isset($dateMap[$dateKey])) {
+                $dateMap[$dateKey]++;
+            }
+        }
+
+        // Now create data array in the correct sequence
+        $current = clone $startDate;
+        while ($current <= $endDate) {
+            $dateKey = $current->format($dateFormat);
+            // Only add count for dates that exist in the dateMap
+            $data[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
+
+            if ($interval == 'hour') {
+                $current->addHours($intervalValue);
+            } elseif ($interval == 'day') {
+                $current->addDays($intervalValue);
+            }
+        }
+
+        return $data;
+    }
 }

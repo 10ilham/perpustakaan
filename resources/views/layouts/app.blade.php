@@ -36,20 +36,22 @@
         @include('layouts.footer')
     </section>
 
+    <!-- jQuery first, then other JS libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- Choices.js JS -->
     <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
-    <!-- Scripts -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ApexCharts - Chart library -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-    {{-- JavaScript Custom --}}
+    <!-- Custom JS - should be loaded after all other libraries but before page-specific scripts -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
     <!-- Pastikan SweetAlert sudah di-load di layout utama atau tambahkan disini -->

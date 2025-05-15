@@ -406,4 +406,103 @@ class AnggotaController extends Controller
 
         return view('layouts.AnggotaDashboard', compact('profileData', 'userLevel', 'totalBuku', 'dipinjam', 'terlambat', 'dikembalikan', 'bukuPopuler'));
     }
+
+    /**
+     * Generate chart data for anggota dashboard
+     */
+    public function getChartData(Request $request)
+    {
+        $period = $request->query('period', 'day'); // menentukan periode default ke 'day' yang ditampilkan di dashboard
+        $userId = Auth::id();
+
+        // Tentukan rentang waktu berdasarkan periode
+        $startDate = now();
+        $endDate = now();
+
+        if ($period == 'day') {
+            $startDate = now()->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'H:i';
+            $interval = 'hour';
+            $intervalValue = 2; // setiap 2 jam
+        } elseif ($period == 'week') {
+            $startDate = now()->subDays(6)->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1; // setiap hari
+        } elseif ($period == 'month') {
+            $startDate = now()->subDays(29)->startOfDay();
+            $endDate = now()->endOfDay();
+            $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1; // setiap 1 hari
+        }
+
+        // Ambil data peminjaman aktual dari database untuk periode yang dipilih
+        $peminjamanFromDB = PeminjamanModel::where('user_id', $userId)
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam')
+            ->get();
+
+        // Dapatkan total peminjaman user
+        $totalPeminjaman = PeminjamanModel::where('user_id', $userId)->count();
+
+        // Generate labels untuk chart (tanggal)
+        $labels = [];
+        $peminjamanData = [];
+        $current = clone $startDate;
+        $dateFormat = 'd/m/Y'; // Format for displaying and debugging dates
+
+        // Initialize empty array with correct date keys based on periods
+        $dateMap = [];
+        $tempCurrent = clone $startDate;
+        while ($tempCurrent <= $endDate) {
+            $dateKey = $tempCurrent->format($dateFormat);
+            $dateMap[$dateKey] = 0;
+
+            if ($interval == 'hour') {
+                $tempCurrent->addHours($intervalValue);
+            } elseif ($interval == 'day') {
+                $tempCurrent->addDays($intervalValue);
+            }
+        }
+
+        // Count actual loans for each date
+        foreach ($peminjamanFromDB as $peminjaman) {
+            $dateKey = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format($dateFormat);
+            if (isset($dateMap[$dateKey])) {
+                $dateMap[$dateKey]++;
+            }
+        }
+
+        // Generate labels and populate data array in the correct sequence
+        while ($current <= $endDate) {
+            $labels[] = $current->format($format);
+            $dateKey = $current->format($dateFormat);
+
+            // Only add count for dates that exist in the dateMap
+            $peminjamanData[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
+
+            if ($interval == 'hour') {
+                $current->addHours($intervalValue);
+            } elseif ($interval == 'day') {
+                $current->addDays($intervalValue);
+            }
+        }
+
+        // Verifikasi jumlah peminjaman dalam grafik
+        $totalInChart = array_sum($peminjamanData);
+
+        // Kembalikan data dalam format JSON
+        return response()->json([
+            'labels' => $labels,
+            'peminjaman' => $peminjamanData,
+            'total' => $totalPeminjaman,
+            'totalInChart' => $totalInChart,
+            'actualData' => $peminjamanFromDB->map(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y');
+            })
+        ]);
+    }
 }
