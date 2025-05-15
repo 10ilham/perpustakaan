@@ -121,11 +121,21 @@ class AdminController extends Controller
         // Siapkan data untuk update (kecualikan foto untuk mencegah overwrite (fotonya nambah terus)
         $adminData = $request->except('foto');
 
-        // Update data di tabel users
+        // Cek apakah email diubah
+        $emailChanged = $admin->user->email != $request->email;
+        $oldEmail = $admin->user->email;
+        $newEmail = $request->email;
+
+        // Update nama user
         $admin->user->update([
             'nama' => $request->nama,
-            'email' => $request->email,
         ]);
+
+        // Jika email berubah, kirim email verifikasi menggunakan VerificationController
+        if ($emailChanged) {
+            $verificationController = new VerificationController();
+            return $verificationController->sendVerificationEmail($admin->user, $newEmail);
+        }
 
         // update password jika diisi
         if ($request->password) {

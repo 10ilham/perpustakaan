@@ -1159,6 +1159,18 @@
                 timerProgressBar: true
             });
         }
+
+        // Sweet Alert info
+        const infoMessage = "{{ session('info') }}";
+        if (infoMessage) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: infoMessage,
+                timer: 10000,
+                timerProgressBar: true
+            });
+        }
     </script>
 
     <script>

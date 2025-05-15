@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KirimEmailController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Middleware\LevelMiddleware;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
@@ -30,6 +31,9 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
+
+// Route untuk verifikasi email
+Route::get('/email/verify/{token}', [VerificationController::class, 'verify'])->name('email.verify');
 
 // Route untuk logout
 Route::post('/logout', function () {

@@ -100,11 +100,21 @@ class StaffController extends Controller
         // Siapkan data untuk update (kecualikan foto untuk mencegah overwrite (fotonya nambah terus)
         $staffData = $request->except('foto');
 
-        // Update data di tabel users
+        // Cek apakah email diubah
+        $emailChanged = $staff->user->email != $request->email;
+        $oldEmail = $staff->user->email;
+        $newEmail = $request->email;
+
+        // Update nama user
         $staff->user->update([
             'nama' => $request->nama,
-            'email' => $request->email,
         ]);
+
+        // Jika email berubah, kirim email verifikasi menggunakan VerificationController
+        if ($emailChanged) {
+            $verificationController = new VerificationController();
+            return $verificationController->sendVerificationEmail($staff->user, $newEmail);
+        }
 
         // update password jika diisi
         if ($request->password) {

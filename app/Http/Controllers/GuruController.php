@@ -100,11 +100,21 @@ class GuruController extends Controller
         // Siapkan data untuk update (kecualikan foto untuk mencegah overwrite (fotonya nambah terus)
         $guruData = $request->except('foto');
 
-        // Update data di tabel users
+        // Cek apakah email diubah
+        $emailChanged = $guru->user->email != $request->email;
+        $oldEmail = $guru->user->email;
+        $newEmail = $request->email;
+
+        // Update nama user
         $guru->user->update([
             'nama' => $request->nama,
-            'email' => $request->email,
         ]);
+
+        // Jika email berubah, kirim email verifikasi menggunakan VerificationController
+        if ($emailChanged) {
+            $verificationController = new VerificationController();
+            return $verificationController->sendVerificationEmail($guru->user, $newEmail);
+        }
 
         // update password jika diisi
         if ($request->password) {

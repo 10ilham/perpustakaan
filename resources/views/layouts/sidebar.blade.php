@@ -65,7 +65,7 @@
         </li>
 
         {{-- Kategori --}}
-        @if (Auth::user()->level === 'admin')
+        @if (Auth::user()->level === 'admin' || Auth::user()->level === 'staff' || Auth::user()->level === 'guru' || Auth::user()->level === 'siswa')
             <li class="{{ request()->is('kategori*') ? 'active' : '' }}" id="kategoriMenu">
                 <a href="#" class="{{ request()->is('kategori*') ? 'active' : '' }}">
                     <i class='bx bxs-category icon'></i> Kategori <i class='bx bx-chevron-right icon-right'></i>

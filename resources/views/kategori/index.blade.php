@@ -21,7 +21,7 @@
             <div class="content-data">
                 <div class="head">
                     <h3>Daftar Kategori Buku</h3>
-                    @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
+                    @if (auth()->user()->level == 'admin')
                         <div>
                             <a href="{{ route('kategori.tambah') }}" class="btn btn-success">
                                 <i class="bx bx-plus-circle"></i> Tambah Kategori
@@ -55,7 +55,7 @@
                                                 <i class="bx bx-info-circle"></i>
                                             </a>
 
-                                            @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
+                                            @if (auth()->user()->level == 'admin')
                                                 <a href="{{ route('kategori.edit', $item->id) }}"
                                                     class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bx bxs-edit"></i>

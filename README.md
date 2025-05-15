@@ -1,66 +1,155 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <img src="https://private-user-images.githubusercontent.com/128197332/318203316-29788684-29e3-4d02-b3ad-4fe637ba3923.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDcwMzEyMzEsIm5iZiI6MTc0NzAzMDkzMSwicGF0aCI6Ii8xMjgxOTczMzIvMzE4MjAzMzE2LTI5Nzg4Njg0LTI5ZTMtNGQwMi1iM2FkLTRmZTYzN2JhMzkyMy5naWY_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTEyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUxMlQwNjIyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00YjViN2QyNjRkZWRjODY4ODI5MTQ5ZjZlNjgwZDAwYTJmNTBhOTQ0YjA0MGI3OWVjYjVhZmY1NjQ4YTk2NWUyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.eWsGvmI9janBzin22nrJUQx4KBU9iFsUg-l8oR0o9uI" width="900" height="100"/>
+  <h1>Sistem Informasi Perpustakaan MTSN 6 Garut</h1>
+  <p>Aplikasi manajemen perpustakaan modern berbasis Laravel dengan sistem notifikasi email dan QR Code</p>
+  
+  <p>
+    <a href="#fitur"><img src="https://img.shields.io/badge/Fitur-Lengkap-brightgreen" alt="Fitur"></a>
+    <a href="#penggunaan"><img src="https://img.shields.io/badge/Status-Aktif-blue" alt="Status"></a>
+    <a href="#instalasi"><img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel"></a>
+    <a href="#lisensi"><img src="https://img.shields.io/badge/Lisensi-MIT-yellow" alt="License"></a>
+    <a href="#qr-code"><img src="https://img.shields.io/badge/QR%20Code-Terintegrasi-orange" alt="QR Code"></a>
+  </p>
+</div>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📚 Tentang Aplikasi
 
-## About Laravel
+Sistem Informasi Perpustakaan MTSN 6 Garut adalah aplikasi manajemen perpustakaan komprehensif yang dibuat untuk memudahkan pengelolaan koleksi buku, peminjaman, dan pelacakan koleksi perpustakaan. Aplikasi ini dirancang dengan fokus pada pengalaman pengguna yang intuitif dan dilengkapi dengan sistem notifikasi otomatis untuk pengembalian buku.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### ✨ Fitur Utama
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Manajemen Buku**
+  - Pencatatan lengkap data buku dengan gambar sampul
+  - Kategorisasi buku multi-kategori
+  - Pelacakan stok buku secara real-time
+  - QR Code untuk peminjaman cepat dengan logo sekolah
+  - Download QR Code untuk dicetak dan ditempelkan pada buku fisik
+  
+- **Sistem Peminjaman**
+  - Peminjaman dan pengembalian dengan antarmuka intuitif
+  - Peminjaman buku melalui scan QR Code
+  - Batasan peminjaman berdasarkan tipe pengguna (siswa/guru/staff)
+  - Pelacakan riwayat peminjaman dengan statistik lengkap
+  - Deteksi otomatis pengembalian terlambat
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Manajemen Pengguna**
+  - Akun untuk admin, guru, staff, dan siswa
+  - Profil pengguna yang dapat dikelola
+  - Hak akses berbasis peran
+  - Riwayat aktivitas peminjaman per pengguna
 
-## Learning Laravel
+- **Notifikasi & Pengingat**
+  - Sistem notifikasi email 24 jam berbasis Windows Service
+  - Pengingat otomatis untuk batas pengembalian buku
+  - Notifikasi terlambat untuk buku yang belum dikembalikan
+  - Pengiriman email dengan antrian asinkron
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Fitur Administrasi**
+  - Dashboard statistik lengkap dengan grafik interaktif
+  - Laporan peminjaman dan pengembalian real-time
+  - Data buku paling populer dan paling sering dipinjam
+  - Filter dan pencarian data multi-parameter
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 📊 Arsitektur Sistem
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Sistem notifikasi perpustakaan menggunakan arsitektur berikut:
 
-## Laravel Sponsors
+```
++-------------------+     +----------------+     +-----------------+
+| Laravel Scheduler |---->| Database Queue |---->| Laravel Queue   |
+| (Windows Service) |     | (MySQL/MariaDB)|     | Worker          |
++-------------------+     +----------------+     | (Windows Service)|
+                                |                +-----------------+
+                                |                        |
+                                v                        v
+                          +-----------+           +-------------+
+                          | Peminjaman|           | SMTP Server |
+                          | Database  |           | (Email)     |
+                          +-----------+           +-------------+
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🔧 Instalasi dan Pengaturan
 
-### Premium Partners
+### Prasyarat
+- PHP 8.1 atau lebih tinggi
+- Composer
+- MySQL/MariaDB
+- Node.js dan NPM
+- Server web (Apache/Nginx)
 
--   **[Vehikl](https://vehikl.com/)**
--   **[Tighten Co.](https://tighten.co)**
--   **[WebReinvent](https://webreinvent.com/)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
--   **[Cyber-Duck](https://cyber-duck.co.uk)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Jump24](https://jump24.co.uk)**
--   **[Redberry](https://redberry.international/laravel/)**
--   **[Active Logic](https://activelogic.com)**
--   **[byte5](https://byte5.de)**
--   **[OP.GG](https://op.gg)**
+### Langkah Instalasi
+1. Clone repositori ini
+   ```bash
+   git clone https://github.com/username/perpustakaan-mtsn6.git
+   cd perpustakaan-mtsn6
+   ```
 
-## Contributing
+2. Instal dependensi PHP
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Instal dependensi JavaScript
+   ```bash
+   npm install && npm run build
+   ```
 
-## Code of Conduct
+4. Atur file lingkungan
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. Konfigurasi database dan SMTP di file `.env`
 
-## Security Vulnerabilities
+6. Jalankan migrasi database
+   ```bash
+   php artisan migrate --seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+7. Konfigurasikan layanan notifikasi 24 jam
+   ```bash
+   php artisan queue:table
+   php artisan migrate
+   ```
 
-## License
+## 💡 Penggunaan
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Manajemen Buku
+- Tambahkan buku baru melalui menu "Tambah Buku"
+- Atur kategori, jumlah stok, dan detail lainnya
+- Unggah foto sampul buku (opsional)
+- Generate QR code untuk buku secara otomatis dengan logo sekolah terintegrasi
+- Download dan cetak QR code untuk ditempel pada buku fisik
+
+### <a name="qr-code"></a>Teknologi QR Code
+- QR Code dihasilkan menggunakan library SimpleSoftwareIO/simple-qrcode
+- Setiap QR code memiliki logo sekolah di tengahnya
+- Level koreksi kesalahan tinggi (H) memastikan QR code dapat dipindai meski ada kerusakan sebagian
+- QR code langsung mengarahkan ke halaman peminjaman buku yang sesuai
+- Dapat dipindai dengan aplikasi kamera standar atau aplikasi QR scanner
+- Format PNG dengan resolusi tinggi untuk pencetakan berkualitas
+
+### Peminjaman Buku
+- Pindai QR code atau pilih buku dari daftar katalog
+- Isi formulir peminjaman dengan batas waktu pengembalian (maksimal 3 hari)
+- Sistem secara otomatis menurunkan stok buku dan memperbarui status ketersediaan
+- Pantau status peminjaman melalui dashboard interaktif
+- Batasan satu buku per pengguna untuk memastikan pemerataan akses
+
+### Notifikasi & Pengingat
+- Pengingat email dikirim otomatis sebelum batas waktu pengembalian
+- Notifikasi terlambat dikirim untuk buku yang belum dikembalikan
+- Status buku berubah otomatis menjadi "Terlambat" saat melewati batas waktu
+- Antrian email menggunakan Laravel Queue untuk memastikan pengiriman yang andal
+- Service Windows berjalan 24/7 untuk memproses antrian notifikasi
+
+### Pemeliharaan Sistem
+- Pantau log aplikasi di direktori `storage/logs/`
+- Cek status layanan notifikasi Windows Service melalui panel NSSM
+- Ikuti panduan troubleshooting untuk mengatasi masalah umum
+- Dokumentasi lengkap untuk pemeliharaan jangka panjang sistem
+
+## 📝 Lisensi
+
+Sistem Informasi Perpustakaan MTSN 6 Garut dilisensikan di bawah [Lisensi MIT](LICENSE). Anda bebas menggunakan, memodifikasi, dan mendistribusikan kode dengan atribusi yang sesuai.
