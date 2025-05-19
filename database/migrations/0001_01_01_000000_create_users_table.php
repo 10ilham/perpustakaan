@@ -10,16 +10,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->string('nama', 80);
+            $table->string('email', 70)->unique();
+            $table->string('password', 64);
             $table->enum('level', ['admin', 'siswa', 'guru', 'staff']); // Ganti level
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('email', 70)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
@@ -38,12 +38,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            //$table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke users
-            $table->string('nip')->unique(); // Nomor Induk Pegawai
-            $table->string('tanggal_lahir');
-            $table->string('alamat');
-            $table->string('no_telepon');
-            $table->string('foto')->nullable();
+            $table->string('nip', 20)->unique(); // Nomor Induk Pegawai
+            $table->string('tanggal_lahir', 10);
+            $table->string('alamat', 100);
+            $table->string('no_telepon', 20);
+            $table->string('foto', 150)->nullable();
             $table->timestamps();
         });
 
@@ -51,13 +50,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            //$table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke users
-            $table->string('nis')->unique(); // Nomor Induk Siswa
-            $table->string('kelas'); // Kelas siswa
-            $table->string('tanggal_lahir');
-            $table->string('alamat');
-            $table->string('no_telepon');
-            $table->string('foto')->nullable();
+            $table->string('nis', 20)->unique(); // Nomor Induk Siswa
+            $table->string('kelas', 10); // Kelas siswa
+            $table->date('tanggal_lahir');
+            $table->string('alamat', 100);
+            $table->string('no_telepon', 20);
+            $table->string('foto', 150)->nullable();
             $table->timestamps();
         });
 
@@ -65,13 +63,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            // $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke users
-            $table->string('nip')->unique(); // Nomor Induk Pegawai
-            $table->string('mata_pelajaran'); // Mata pelajaran yang diajarkan
-            $table->string('tanggal_lahir');
-            $table->string('alamat');
-            $table->string('no_telepon');
-            $table->string('foto')->nullable();
+            $table->string('nip', 20)->unique(); // Nomor Induk Pegawai
+            $table->string('mata_pelajaran', 40); // Mata pelajaran yang diajarkan
+            $table->date('tanggal_lahir');
+            $table->string('alamat', 100);
+            $table->string('no_telepon', 20);
+            $table->string('foto', 150)->nullable();
             $table->timestamps();
         });
 
@@ -80,12 +77,12 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             // $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke users
-            $table->string('nip')->unique(); // Nomor Induk Pegawai
-            $table->string('jabatan'); // Jabatan staff
-            $table->string('tanggal_lahir');
-            $table->string('alamat');
-            $table->string('no_telepon');
-            $table->string('foto')->nullable();
+            $table->string('nip', 20)->unique(); // Nomor Induk Pegawai
+            $table->string('bagian', 30);
+            $table->date('tanggal_lahir');
+            $table->string('alamat', 100);
+            $table->string('no_telepon', 20);
+            $table->string('foto', 150)->nullable();
             $table->timestamps();
         });
     }

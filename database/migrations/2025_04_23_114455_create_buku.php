@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('buku', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_buku')->unique();
-            $table->string('judul');
-            $table->string('pengarang');
-            $table->string('penerbit');
-            $table->string('tahun_terbit');
+            $table->string('kode_buku', 20)->unique();
+            $table->string('judul', 60);
+            $table->string('pengarang', 50);
+            $table->string('penerbit', 50);
+            $table->string('tahun_terbit', 4);
             $table->text('deskripsi');
-            $table->string('foto')->nullable();
-            $table->unsignedInteger('total_buku')->default(0)->after('foto');
+            $table->string('foto', 150)->nullable();
+            $table->unsignedInteger('total_buku')->default(0);
             $table->integer('stok_buku')->default(0);
-            $table->string('status')->default('Tersedia');
-            $table->unsignedBigInteger('kategori_id');
-            $table->foreign('kategori_id')->references('id')->on('kategori')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('status', 20)->default('Tersedia');
             $table->timestamps();
         });
     }

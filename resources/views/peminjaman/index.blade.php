@@ -413,7 +413,8 @@
             <div class="data">
                 <div class="content-data">
                     <div class="head">
-                        <h3>Daftar Peminjaman {{ ucfirst(auth()->user()->level) }}</h3>
+                        {{-- <h3>Daftar Peminjaman {{ ucfirst(auth()->user()->level) }}</h3> --}}
+                        <h3>Daftar Peminjaman Anda</h3>
                     </div>
                     <div class="table-responsive p-3">
                         <table id="dataTable" class="table align-items-center table-flush table-hover">

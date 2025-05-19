@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PeminjamanModel;
 use App\Models\BukuModel;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Notifications\PeminjamanBukuAdminNotification;
 
 class PeminjamanController extends Controller
 {
@@ -237,7 +239,10 @@ class PeminjamanController extends Controller
 
         $buku->save();
 
-        return redirect()->route('peminjaman.index')->with('success', 'Buku berhasil dipinjam.');
+        // Kirim notifikasi ke admin tentang peminjaman baru
+        $this->kirimNotifikasiPeminjamanBaru($peminjaman);
+
+        return redirect()->route('peminjaman.index')->with('success', 'Buku berhasil dipinjam. Silahkan ambil buku di perpustakaan.');
     }
 
     // Menampilkan detail peminjaman
@@ -409,5 +414,22 @@ class PeminjamanController extends Controller
             ->get();
 
         return $bukuPopuler;
+    }
+
+    /**
+     * Mengirim notifikasi ke semua admin tentang peminjaman buku baru
+     * Terhubung ke Notifications/PeminjamanBukuAdminNotification
+     * @param PeminjamanModel $peminjaman - Model peminjaman yang baru dibuat
+     * @return void
+     */
+    private function kirimNotifikasiPeminjamanBaru(PeminjamanModel $peminjaman)
+    {
+        // Cari semua user dengan level admin
+        $admin = User::whereIn('level', ['admin'])->get();
+
+        foreach ($admin as $user) {
+            // Kirim notifikasi ke masing-masing admin
+            $user->notify(new PeminjamanBukuAdminNotification($peminjaman));
+        }
     }
 }

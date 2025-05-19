@@ -222,6 +222,27 @@ nav .toggle-sidebar {
     font-size: 18px;
     cursor: pointer;
 }
+
+/* Spacer to push profile to the right */
+nav .spacer {
+    flex-grow: 1;
+}
+
+nav .divider {
+    width: 0;
+    border-right: 1px solid #9e9e9e;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+}
+
+nav .profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
 nav form {
     max-width: 400px;
     width: 100%;
@@ -272,12 +293,7 @@ nav .nav-link .badge {
     font-size: 10px;
     font-weight: 700;
 }
-nav .divider {
-    width: 1px;
-    background: var(--grey);
-    height: 12px;
-    display: block;
-}
+
 nav .profile {
     position: relative;
 }

@@ -39,14 +39,14 @@
                             class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Daftar Buku</a>
                     </li>
                 @endif
-                @if (Auth::user()->level === 'siswa' || Auth::user()->level === 'guru' || Auth::user()->level === 'staff')
+                {{-- @if (Auth::user()->level === 'siswa' || Auth::user()->level === 'guru' || Auth::user()->level === 'staff')
                     <li>
                         <a href="{{ route('buku.index') }}"
                             class="{{ request()->fullUrl() == route('buku.index') . '?status=tersedia' ? 'active-menu-item' : '' }}">Buku
                             Favorit
                         </a>
                     </li>
-                @endif
+                @endif --}}
             </ul>
         </li>
 
@@ -94,14 +94,6 @@
                 </ul>
             </li>
         @endif
-        <!-- <li class="divider" data-text="table and forms">Table and forms</li> -->
-        <!-- <li><a href="#"><i class='bx bx-table icon'></i> Tables</a></li> -->
     </ul>
-    <div class="ads">
-        <div class="wrapper">
-            <a href="#" class="btn-upgrade">Upgrade</a>
-            <p>Become a <span>PRO</span> member and enjoy <span>All Features</span></p>
-        </div>
-    </div>
 </section>
 <!-- END SIDEBAR -->

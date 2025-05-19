@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email_verified_at')->nullable();
-            $table->string('email_verification_token')->nullable();
+            $table->string('email_verified_at', 30)->nullable();
+            $table->string('email_verification_token', 150)->nullable();
         });
     }
 

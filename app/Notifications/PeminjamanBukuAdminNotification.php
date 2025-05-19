@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
 /**
- * Kelas notifikasi untuk mengirimkan pengingat pengembalian buku
+ * Kelas notifikasi untuk mengirimkan pemberitahuan ke admin saat ada peminjaman buku baru
  * Implements ShouldQueue agar notifikasi dikirim secara asinkron (berjalan di latar belakang)
  */
-class PengembalianBukuNotification extends Notification implements ShouldQueue
+class PeminjamanBukuAdminNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -46,13 +46,13 @@ class PengembalianBukuNotification extends Notification implements ShouldQueue
         // Menggunakan StandardMailMessage standar Laravel yang lebih sederhana
         $mail = new MailMessage;
 
-        // Setting warna tombol ke hijau
-        $mail->level = 'success';
+        // Setting warna tombol ke biru
+        $mail->level = 'info';
 
-        $mail->subject('Pengingat: Batas Waktu Pengembalian Buku Hari Ini');
+        $mail->subject('Pemberitahuan: Peminjaman Buku Baru');
 
         // Menambahkan logo langsung dalam email sebagai HTML string
-        $mail->greeting('Halo ' . $notifiable->nama . ',');
+        $mail->greeting('Halo Petugas Perpustakaan,');
 
         // Menggunakan URL logo
         $logoUrl = url('https://belajar.mtsn6pasuruan.com/__statics/img/logo.png');
@@ -66,20 +66,28 @@ class PengembalianBukuNotification extends Notification implements ShouldQueue
 
         $mail->line(new HtmlString($logoHtml));
 
+        // Informasi user yang meminjam
+        $userInfo = $this->peminjaman->user;
+        $userName = $userInfo->nama ?? 'N/A';
+        $userLevel = $userInfo->level ?? 'N/A';
+
         // Tambahkan informasi peminjaman buku
-        $mail->line('Kami ingin mengingatkan bahwa Anda memiliki buku yang harus dikembalikan hari ini:');
-        $mail->line(new HtmlString('<strong>Judul Buku:</strong> ' . $this->peminjaman->buku->judul));
+        $mail->line('Ada permintaan peminjaman buku baru yang perlu Anda siapkan:');
         $mail->line(new HtmlString('<strong>No. Peminjaman:</strong> ' . $this->peminjaman->no_peminjaman));
+        $mail->line(new HtmlString('<strong>Judul Buku:</strong> ' . $this->peminjaman->buku->judul));
+        $mail->line(new HtmlString('<strong>Kode Buku:</strong> ' . $this->peminjaman->buku->kode_buku));
+        $mail->line(new HtmlString('<strong>Peminjam:</strong> ' . $userName . ' (' . ucfirst($userLevel) . ')'));
         $mail->line(new HtmlString('<strong>Tanggal Peminjaman:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_pinjam)->format('d F Y')));
-        $mail->line(new HtmlString('<strong>Batas Waktu Pengembalian:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_kembali)->format('d F Y')));
-        $mail->line('Mohon segera kembalikan buku tersebut sebagai bentuk tanggung jawab terhadap fasilitas perpustakaan bersama.');
+        $mail->line(new HtmlString('<strong>Tanggal Kembali:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_kembali)->format('d F Y')));
+
+        $mail->line('Mohon segera siapkan buku tersebut agar peminjam tidak perlu menunggu lama saat pengambilan.');
 
         // Tambahkan tombol action
-        $mail->action('Lihat Detail Peminjaman', url('/peminjaman'));
+        $mail->action('Lihat Detail Peminjaman', url('/admin/peminjaman'));
 
         // Tambahkan penutup
-        $mail->line('Terima kasih atas perhatian dan kerjasamanya.');
-        $mail->salutation("Petugas,  \nPerpustakaan MTSN 6 Garut");
+        $mail->line('Terima kasih atas kerjasamanya.');
+        $mail->salutation('Sistem Informasi Perpustakaan MTSN 6 Garut');
 
         return $mail;
     }

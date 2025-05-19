@@ -2,39 +2,63 @@
 
 namespace App\Models;
 
+// Menggunakan traits dan kelas dari framework - Konsep OOP: Reusability (menggunakan kembali kode yang sudah ada di laravel)
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// Mengimpor model-model terkait - Konsep OOP: Dependency
 use App\Models\BukuModel;
 use App\Models\User;
 
-class PeminjamanModel extends Model
+/**
+ * Kelas PeminjamanModel - Representasi transaksi peminjaman buku di perpustakaan
+ * Konsep OOP: Inheritance (Pewarisan) - Kelas ini mewarisi kelas Model dari Laravel
+ */
+class PeminjamanModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan metode dari kelas Model
 {
     use HasFactory;
 
-    protected $table = 'peminjaman';
+    /**
+     * Nama tabel yang digunakan dalam database
+     * Konsep OOP: Encapsulation - Menggunakan modifier protected untuk membatasi akses
+     */
+    protected $table = 'peminjaman'; // protected - hanya dapat diakses oleh kelas ini dan turunannya
 
+    /**
+     * Atribut yang dapat diisi secara massal (mass assignment)
+     * Konsep OOP: Encapsulation - Melindungi atribut dari modifikasi yang tidak diinginkan
+     */
     protected $fillable = [
-        'user_id',
-        'buku_id',
-        'no_peminjaman',
-        'tanggal_pinjam',
-        'tanggal_kembali',
-        'tanggal_pengembalian',
-        'status',
-        'catatan',
-        'is_terlambat',
-        'jumlah_hari_terlambat',
+        'user_id',               // ID pengguna yang meminjam buku
+        'buku_id',               // ID buku yang dipinjam
+        'no_peminjaman',         // Nomor peminjaman untuk tracking
+        'tanggal_pinjam',        // Tanggal buku dipinjam
+        'tanggal_kembali',       // Tanggal buku harus dikembalikan
+        'tanggal_pengembalian',  // Tanggal buku dikembalikan (aktual)
+        'status',                // Status peminjaman (Dipinjam, Dikembalikan, Terlambat)
+        'catatan',               // Catatan terkait peminjaman
+        'is_terlambat',          // Flag apakah peminjaman terlambat
+        'jumlah_hari_terlambat', // Jumlah hari keterlambatan
     ];
 
-    // Relasi dengan user (peminjam)
-    public function user()
+    /**
+     * Relasi dengan user (peminjam) - Menghubungkan PeminjamanModel dengan User
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan antara Peminjaman dan User
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user() // public - dapat diakses dari mana saja
     {
+        // Implementasi relasi many-to-one - Banyak peminjaman bisa dilakukan oleh satu user dan satu peminjaman hanya bisa dilakukan oleh satu user
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relasi dengan buku
-    public function buku()
+    /**
+     * Relasi dengan buku - Menghubungkan PeminjamanModel dengan BukuModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan antara Peminjaman dan Buku
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function buku() // public - dapat diakses dari mana saja
     {
+        // Implementasi relasi many-to-one - Banyak peminjaman bisa dilakukan terhadap satu buku (satu buku bisa dipinjam oleh beberapa orang) dan satu peminjaman hanya berisi satu buku
         return $this->belongsTo(BukuModel::class, 'buku_id');
     }
 }

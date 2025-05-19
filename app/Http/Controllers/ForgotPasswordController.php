@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -13,14 +12,6 @@ use App\Mail\ResetPasswordMail;
 
 class ForgotPasswordController extends Controller
 {
-    /**
-     * Menampilkan form lupa password
-     */
-    public function showLinkRequestForm()
-    {
-        return view('auth.passwords.email');
-    }
-
     /**
      * Memproses permintaan reset password
      */

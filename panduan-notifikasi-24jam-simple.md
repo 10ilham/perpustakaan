@@ -23,7 +23,7 @@ Sistem notifikasi perpustakaan MTSN 6 Garut menggunakan arsitektur berikut:
 -   **Fungsi**: Menjalankan command `app:send-pengembalian-reminders` setiap 1 jam
 -   **Implementasi**: Windows Service menggunakan NSSM
 -   **File Konfigurasi**: `scheduler.bat`, yang menjalankan `php artisan schedule:run` setiap menit
--   **Jadwal**: Diatur di `app\Console\Kernel.php` dengan metode `hourly(3)`
+-   **Jadwal**: Diatur di `routes\console.php`
 
 ### 2. Database Queue
 
@@ -46,7 +46,7 @@ Sistem notifikasi perpustakaan MTSN 6 Garut menggunakan arsitektur berikut:
 ## Alur Kerja
 
 1. **Scheduler** berjalan setiap menit untuk memeriksa jadwal
-2. Setiap 3 jam, **Scheduler** menjalankan perintah `app:send-pengembalian-reminders`
+2. Setiap 1 jam, **Scheduler** menjalankan perintah `app:send-pengembalian-reminders`
 3. Command `SendPengembalianReminders` mencari peminjaman yang perlu dinotifikasi
 4. Untuk setiap peminjaman, notifikasi `PengembalianBukuNotification` dibuat
 5. Notifikasi tersebut dimasukkan ke **Database Queue** untuk diproses asinkron
@@ -141,6 +141,10 @@ Dokumen ini berisi panduan singkat untuk menjalankan sistem notifikasi perpustak
     type D:\web\TA\perpustakaan\storage\logs\pengembalian-reminders.log
     type D:\web\TA\perpustakaan\storage\logs\pengembalian-reminders-hourly.log
     type D:\web\TA\perpustakaan\storage\logs\test-notification.log
+    ```
+3. Perintah untuk melihat nssm yang terinstall :
+    ```
+    reg query HKLM\SYSTEM\CurrentControlSet\Services /s /f "nssm.exe"
     ```
 
 ## Mengatur Service Untuk Mulai Otomatis Saat Windows Restart

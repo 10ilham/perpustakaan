@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('buku_id');
-            $table->string('no_peminjaman')->unique();
+            $table->string('no_peminjaman', 50)->unique();
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');
             $table->date('tanggal_pengembalian')->nullable();
             $table->enum('status', ['Dipinjam', 'Dikembalikan', 'Terlambat'])->default('Dipinjam');
-            $table->boolean('is_terlambat')->default(false)->after('status');
-            $table->integer('jumlah_hari_terlambat')->default(0)->after('is_terlambat');
             $table->text('catatan')->nullable();
+            $table->boolean('is_terlambat')->default(false);
+            $table->integer('jumlah_hari_terlambat')->default(0);
             $table->timestamps();
 
             // Foreign keys
