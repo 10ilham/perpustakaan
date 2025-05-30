@@ -72,14 +72,36 @@
                         <h3>Filter Peminjaman</h3>
                     </div>
                     <form action="{{ route('peminjaman.index') }}" method="GET" class="form-group"
-                        style="margin-top: 10px; display: flex; gap: 10px;">
-                        <select name="user_type" id="user_type" class="form-control" onchange="this.form.submit()"
-                            style="max-width: 180px;">
+                        style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                        <select name="user_type" id="user_type" class="form-control" style="max-width: 180px;">
                             <option value="">Semua Anggota</option>
                             <option value="siswa" {{ request('user_type') == 'siswa' ? 'selected' : '' }}>Siswa</option>
                             <option value="guru" {{ request('user_type') == 'guru' ? 'selected' : '' }}>Guru</option>
                             <option value="staff" {{ request('user_type') == 'staff' ? 'selected' : '' }}>Staff</option>
                         </select>
+
+                        <!-- Filter Rentang Waktu -->
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="start_date">Dari:</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                value="{{ request('start_date') }}" style="width: 150px;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="end_date">Sampai:</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control"
+                                value="{{ request('end_date') }}" style="width: 150px;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="padding: 5px 15px;">
+                            <i class='bx bx-filter'></i> Filter
+                        </button>
+
+                        @if (request('user_type') || request('start_date') || request('end_date'))
+                            <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary" style="padding: 5px 15px;">
+                                <i class='bx bx-reset'></i> Reset
+                            </a>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -102,10 +124,10 @@
                                                 <th>No.</th>
                                                 <th>No. Peminjaman</th>
                                                 <th>Judul Buku</th>
-                                                <th>Peminjam</th>
-                                                <th>Tgl Pinjam</th>
-                                                <th>Tgl Batas Kembali</th>
-                                                <th>Tgl Pengembalian</th>
+                                                <th>Nama Peminjam</th>
+                                                <th>Tanggal Pinjam</th>
+                                                <th>Tanggal Batas Kembali</th>
+                                                <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -194,7 +216,8 @@
                 @endif
 
                 @if (!request('user_type') || request('user_type') == 'guru')
-                    <div class="tab-pane fade show active" id="guru-peminjaman" role="tabpanel" aria-labelledby="guru-tab">
+                    <div class="tab-pane fade show active" id="guru-peminjaman" role="tabpanel"
+                        aria-labelledby="guru-tab">
                         <div class="data">
                             <div class="content-data">
                                 <div class="head">
@@ -208,10 +231,10 @@
                                                 <th>No.</th>
                                                 <th>No. Peminjaman</th>
                                                 <th>Judul Buku</th>
-                                                <th>Peminjam</th>
-                                                <th>Tgl Pinjam</th>
-                                                <th>Tgl Batas Kembali</th>
-                                                <th>Tgl Pengembalian</th>
+                                                <th>Nama Peminjam</th>
+                                                <th>Tanggal Pinjam</th>
+                                                <th>Tanggal Batas Kembali</th>
+                                                <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -316,10 +339,10 @@
                                                 <th>No.</th>
                                                 <th>No. Peminjaman</th>
                                                 <th>Judul Buku</th>
-                                                <th>Peminjam</th>
-                                                <th>Tgl Pinjam</th>
-                                                <th>Tgl Batas Kembali</th>
-                                                <th>Tgl Pengembalian</th>
+                                                <th>Nama Peminjam</th>
+                                                <th>Tanggal Pinjam</th>
+                                                <th>Tanggal Batas Kembali</th>
+                                                <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -409,6 +432,41 @@
                 @endif
             </div>
         @else
+            <!-- Filter untuk non-admin -->
+            <div class="filter">
+                <div class="card">
+                    <div class="head">
+                        <h3>Filter Rentang Waktu</h3>
+                    </div>
+                    <form action="{{ route('peminjaman.index') }}" method="GET" class="form-group"
+                        style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="start_date">Dari:</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                value="{{ request('start_date') }}" style="width: 150px;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="end_date">Sampai:</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control"
+                                value="{{ request('end_date') }}" style="width: 150px;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="padding: 5px 15px;">
+                            <i class='bx bx-filter'></i> Filter
+                        </button>
+
+                        @if (request('start_date') || request('end_date'))
+                            <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary"
+                                style="padding: 5px 15px;">
+                                <i class='bx bx-reset'></i> Reset
+                            </a>
+                        @endif
+                    </form>
+                </div>
+            </div>
+
             <!-- Tampilan untuk user non-admin -->
             <div class="data">
                 <div class="content-data">
@@ -423,10 +481,10 @@
                                     <th>No.</th>
                                     <th>No. Peminjaman</th>
                                     <th>Judul Buku</th>
-                                    <th>Peminjam</th>
-                                    <th>Tgl Pinjam</th>
-                                    <th>Tgl Batas Kembali</th>
-                                    <th>Tgl Pengembalian</th>
+                                    <th>Nama Peminjam</th>
+                                    <th>Tanggal Pinjam</th>
+                                    <th>Tanggal Batas Kembali</th>
+                                    <th>Tanggal Pengembalian</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -559,6 +617,35 @@
                     document.getElementById('delete-form').setAttribute('action', actionUrl);
                 });
             });
+
+            // Handler untuk date inputs
+            const startDate = document.getElementById('start_date');
+            const endDate = document.getElementById('end_date');
+
+            if (startDate && endDate) {
+                // Set max date untuk startDate menjadi endDate jika ada
+                startDate.addEventListener('change', function() {
+                    if (startDate.value) {
+                        endDate.min = startDate.value;
+                    }
+                });
+
+                // Set min date untuk endDate menjadi startDate jika ada
+                endDate.addEventListener('change', function() {
+                    if (endDate.value) {
+                        startDate.max = endDate.value;
+                    }
+                });
+
+                // Set nilai awal jika sudah ada
+                if (startDate.value) {
+                    endDate.min = startDate.value;
+                }
+
+                if (endDate.value) {
+                    startDate.max = endDate.value;
+                }
+            }
         });
 
         // Inisialisasi DataTable untuk tabel siswa
@@ -584,5 +671,7 @@
                 url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
             }
         });
+
+        // Inisialisasi DataTable untuk tabel user biasa di inisiasi di layout utama yaitu app.blade.php
     </script>
 @endsection

@@ -8,20 +8,28 @@
         <li>
             @if (Auth::user()->level === 'admin')
                 <a href="{{ route('admin.dashboard') }}"
-                    class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
-                    Dashboard</a>
+                    class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <i class='bx bxs-home icon'></i>
+                    Dashboard
+                </a>
             @elseif(Auth::user()->level === 'siswa')
                 <a href="{{ route('anggota.dashboard') }}"
-                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
-                    Dashboard</a>
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
+                    <i class='bx bxs-home icon'></i>
+                    Dashboard
+                </a>
             @elseif(Auth::user()->level === 'guru')
                 <a href="{{ route('anggota.dashboard') }}"
-                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
-                    Dashboard</a>
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
+                    <i class='bx bxs-home icon'></i>
+                    Dashboard
+                </a>
             @elseif(Auth::user()->level === 'staff')
                 <a href="{{ route('anggota.dashboard') }}"
-                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}"><i class='bx bxs-home icon'></i>
-                    Dashboard</a>
+                    class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
+                    <i class='bx bxs-home icon'></i>
+                    Dashboard
+                </a>
             @endif
         </li>
         <li class="divider" data-text="main">Main</li>
@@ -65,7 +73,10 @@
         </li>
 
         {{-- Kategori --}}
-        @if (Auth::user()->level === 'admin' || Auth::user()->level === 'staff' || Auth::user()->level === 'guru' || Auth::user()->level === 'siswa')
+        @if (Auth::user()->level === 'admin' ||
+                Auth::user()->level === 'staff' ||
+                Auth::user()->level === 'guru' ||
+                Auth::user()->level === 'siswa')
             <li class="{{ request()->is('kategori*') ? 'active' : '' }}" id="kategoriMenu">
                 <a href="#" class="{{ request()->is('kategori*') ? 'active' : '' }}">
                     <i class='bx bxs-category icon'></i> Kategori <i class='bx bx-chevron-right icon-right'></i>
@@ -88,9 +99,12 @@
                     <i class='bx bxs-group icon'></i> Anggota <i class='bx bx-chevron-right icon-right'></i>
                 </a>
                 <ul class="side-dropdown {{ request()->is('anggota*') ? 'show' : '' }}">
-                    <li><a href="{{ route('anggota.index') }}"
+                    <li>
+                        <a href="{{ route('anggota.index') }}"
                             class="{{ request()->routeIs('anggota.index') ? 'active-menu-item' : '' }}">Lihat
-                            Anggota</a></li>
+                            Anggota
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endif

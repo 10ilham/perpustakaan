@@ -55,7 +55,7 @@ Sistem notifikasi perpustakaan MTSN 6 Garut menggunakan arsitektur berikut:
 
 # Panduan Menjalankan Notifikasi 24 Jam
 
-Dokumen ini berisi panduan singkat untuk menjalankan sistem notifikasi perpustakaan 24 jam meski laptop dimatikan.
+Dokumen ini berisi panduan singkat untuk menjalankan sistem notifikasi perpustakaan 24 jam.
 
 -   Akun Windows dengan hak administrator
 

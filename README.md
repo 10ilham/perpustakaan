@@ -79,6 +79,7 @@ Sistem notifikasi perpustakaan menggunakan arsitektur berikut:
 -   MySQL/MariaDB
 -   Node.js dan NPM
 -   Server web (Apache/Nginx)
+-   Php Imagick
 
 ### Langkah Instalasi
 

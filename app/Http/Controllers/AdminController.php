@@ -27,7 +27,9 @@ class AdminController extends Controller
         $totalPeminjaman = PeminjamanModel::count();
 
         // Total anggota tidak termasuk admin
-        $totalAnggota = User::where('level', '!=', 'admin')->count();
+        // $totalAnggota = User::where('level', '!=', 'admin')->count();
+        // Total semua anggota termasuk admin
+        $totalAnggota = User::count();
 
         // Mendapatkan 10 buku terpopuler
         $bukuPopuler = PeminjamanController::getBukuPopuler(10);

@@ -25,6 +25,10 @@ class PeminjamanController extends Controller
         // Filter berdasarkan user_type jika ada
         $userType = $request->input('user_type');
 
+        // Filter berdasarkan rentang tanggal jika ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         // Base query untuk statistik dan daftar peminjaman
         $baseQuery = PeminjamanModel::with(['user', 'buku']);
 
@@ -33,78 +37,130 @@ class PeminjamanController extends Controller
                 // Jika ada filter, tambahkan where clause
                 $peminjaman = $baseQuery->whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
-                })->orderBy('created_at', 'desc')->get();
+                });
+
+                // Tambahkan filter rentang tanggal jika ada
+                if ($startDate && $endDate) {
+                    $peminjaman = $peminjaman->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                }
+
+                $peminjaman = $peminjaman->orderBy('created_at', 'desc')->get();
 
                 // Query untuk statistik berdasarkan filter
-                $totalPeminjaman = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
+                $totalQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
-                })->count();
+                });
 
-                // Dipinjam sekarang termasuk yang sedang dipinjam (status Dipinjam) dan yang terlambat (status Terlambat)
-                $dipinjam = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
+                $dipinjamQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
                 })->where(function ($query) {
                     $query->where('status', 'Dipinjam')
                         ->orWhere('status', 'Terlambat');
-                })->count();
+                });
 
-                $dikembalikan = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
+                $dikembalikanQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
-                })->where('status', 'Dikembalikan')->count();
+                })->where('status', 'Dikembalikan');
 
-                // Terlambat termasuk yang sudah dikembalikan tapi terlambat dan yang masih dipinjam tapi terlambat
-                $terlambat = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
+                $terlambatQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
                 })->where(function ($query) {
                     $query->where('status', 'Terlambat')
                         ->orWhere('is_terlambat', true);
-                })->count();
+                });
+
+                // Tambahkan filter rentang tanggal jika ada
+                if ($startDate && $endDate) {
+                    $totalQuery = $totalQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $dipinjamQuery = $dipinjamQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $dikembalikanQuery = $dikembalikanQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $terlambatQuery = $terlambatQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                }
+
+                $totalPeminjaman = $totalQuery->count();
+                $dipinjam = $dipinjamQuery->count();
+                $dikembalikan = $dikembalikanQuery->count();
+                $terlambat = $terlambatQuery->count();
             } else {
-                // Admin dapat melihat semua peminjaman jika tidak ada filter
-                $peminjaman = $baseQuery->orderBy('created_at', 'desc')->get();
+                // Admin dapat melihat semua peminjaman jika tidak ada filter user type
+                $peminjaman = $baseQuery;
+
+                // Tambahkan filter rentang tanggal jika ada
+                if ($startDate && $endDate) {
+                    $peminjaman = $peminjaman->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                }
+
+                $peminjaman = $peminjaman->orderBy('created_at', 'desc')->get();
 
                 // Statistik untuk semua peminjaman
-                $totalPeminjaman = PeminjamanModel::count();
+                $totalQuery = PeminjamanModel::query();
 
-                // Dipinjam sekarang termasuk yang sedang dipinjam (status Dipinjam) dan yang terlambat (status Terlambat)
-                $dipinjam = PeminjamanModel::where(function ($query) {
+                $dipinjamQuery = PeminjamanModel::where(function ($query) {
                     $query->where('status', 'Dipinjam')
                         ->orWhere('status', 'Terlambat');
-                })->count();
+                });
 
-                $dikembalikan = PeminjamanModel::where('status', 'Dikembalikan')->count();
+                $dikembalikanQuery = PeminjamanModel::where('status', 'Dikembalikan');
 
-                // Terlambat termasuk yang sudah dikembalikan tapi terlambat dan yang masih dipinjam tapi terlambat
-                $terlambat = PeminjamanModel::where(function ($query) {
+                $terlambatQuery = PeminjamanModel::where(function ($query) {
                     $query->where('status', 'Terlambat')
                         ->orWhere('is_terlambat', true);
-                })->count();
+                });
+
+                // Tambahkan filter rentang tanggal jika ada
+                if ($startDate && $endDate) {
+                    $totalQuery = $totalQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $dipinjamQuery = $dipinjamQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $dikembalikanQuery = $dikembalikanQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                    $terlambatQuery = $terlambatQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                }
+
+                $totalPeminjaman = $totalQuery->count();
+                $dipinjam = $dipinjamQuery->count();
+                $dikembalikan = $dikembalikanQuery->count();
+                $terlambat = $terlambatQuery->count();
             }
         } else {
             // Siswa, staff dan guru hanya melihat peminjaman mereka sendiri
-            $peminjaman = $baseQuery->where('user_id', Auth::id())
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $peminjaman = $baseQuery->where('user_id', Auth::id());
+
+            // Tambahkan filter rentang tanggal jika ada
+            if ($startDate && $endDate) {
+                $peminjaman = $peminjaman->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+            }
+
+            $peminjaman = $peminjaman->orderBy('created_at', 'desc')->get();
 
             // Statistik untuk peminjaman pengguna sendiri
-            $totalPeminjaman = PeminjamanModel::where('user_id', Auth::id())->count();
+            $totalQuery = PeminjamanModel::where('user_id', Auth::id());
 
-            // Dipinjam sekarang termasuk yang sedang dipinjam (status Dipinjam) dan yang terlambat (status Terlambat)
-            $dipinjam = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
+            $dipinjamQuery = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
                 $query->where('status', 'Dipinjam')
                     ->orWhere('status', 'Terlambat');
-            })->count();
+            });
 
-            $dikembalikan = PeminjamanModel::where('user_id', Auth::id())->where('status', 'Dikembalikan')->count();
+            $dikembalikanQuery = PeminjamanModel::where('user_id', Auth::id())->where('status', 'Dikembalikan');
 
-            // Terlambat termasuk yang sudah dikembalikan tapi terlambat dan yang masih dipinjam tapi terlambat
-            $terlambat = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
+            $terlambatQuery = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
                 $query->where('status', 'Terlambat')
                     ->orWhere('is_terlambat', true);
-            })->count();
+            });
+
+            // Tambahkan filter rentang tanggal jika ada
+            if ($startDate && $endDate) {
+                $totalQuery = $totalQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                $dipinjamQuery = $dipinjamQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                $dikembalikanQuery = $dikembalikanQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+                $terlambatQuery = $terlambatQuery->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
+            }
+
+            $totalPeminjaman = $totalQuery->count();
+            $dipinjam = $dipinjamQuery->count();
+            $dikembalikan = $dikembalikanQuery->count();
+            $terlambat = $terlambatQuery->count();
         }
 
-        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'dipinjam', 'dikembalikan', 'terlambat'));
+        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'dipinjam', 'dikembalikan', 'terlambat', 'startDate', 'endDate'));
     }
 
     // Method untuk memperbarui status peminjaman yang terlambat

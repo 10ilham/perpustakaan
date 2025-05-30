@@ -24,10 +24,7 @@
             --gray-2: #757575;
             --cyan-light: #03e9f4;
 
-            /* Panda colors */
-            --panda-black: #000;
-            --panda-white: #fff;
-            --panda-gray: #222;
+
 
             --facebook-color: #4267B2;
             --google-color: #DB4437;
@@ -58,98 +55,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .loading-panda {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .loading-panda-face {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .loading-panda-ear {
-            width: 24px;
-            height: 24px;
-            background: black;
-            border-radius: 12px;
-            position: absolute;
-            top: 0;
-        }
-
-        .loading-panda-ear.left {
-            left: 12px;
-        }
-
-        .loading-panda-ear.right {
-            right: 12px;
-        }
-
-        .loading-panda-eye {
-            width: 12px;
-            height: 12px;
-            background: black;
-            position: absolute;
-            border-radius: 50%;
-            top: 30px;
-        }
-
-        .loading-panda-eye.left {
-            left: 22px;
-            animation: blinkEye 2.5s infinite;
-        }
-
-        .loading-panda-eye.right {
-            right: 22px;
-            animation: blinkEye 2.5s infinite;
-        }
-
-        @keyframes blinkEye {
-
-            0%,
-            100% {
-                height: 12px;
-            }
-
-            15% {
-                height: 2px;
-            }
-
-            20% {
-                height: 12px;
-            }
-        }
-
-        .loading-panda-nose {
-            width: 16px;
-            height: 10px;
-            background: black;
-            border-radius: 10px 10px 5px 5px;
-            position: absolute;
-            bottom: 22px;
-            left: calc(50% - 8px);
         }
 
         .loading-spinner {
@@ -210,16 +115,6 @@
             .spinner-container {
                 width: 120px;
                 height: 120px;
-            }
-
-            .loading-panda {
-                width: 100px;
-                height: 100px;
-            }
-
-            .loading-panda-face {
-                width: 70px;
-                height: 70px;
             }
 
             .loading-spinner {
@@ -284,29 +179,44 @@
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             transform: scale(0);
             transition: .5s ease-in-out;
-            transition-delay: 1s;
+            transition-delay: 0.5s;
             position: relative;
             z-index: 10;
-            /* Increased z-index to ensure it's above panda */
-            margin-top: 80px;
-            /* Add space for panda face */
-            transform-origin: center top;
-            /* Form bergerak dari tengah atas */
+        }
+        
+        /* Set initial state for forms */
+        .sign-in .form.sign-in {
+            transform: scale(0);
+        }
+        
+        .forgot-password .form.forgot-password {
+            transform: scale(0);
+        }
+        
+        /* Animation for form activation */
+        .container.sign-in .form.sign-in {
+            transform: scale(1);
+            transition-delay: 0.5s;
+        }
+        
+        .container.forgot-password .form.forgot-password {
+            transform: scale(1);
+            transition-delay: 0.5s;
         }
 
-        /* Fixed animation when form covers panda eyes */
-        .form.password-focus {
-            transform: translateY(-80px) scale(1) !important;
-            transition: all 0.4s ease-in-out !important;
-        }
+        /* Mobile responsiveness for form */
+        @media only screen and (max-width: 425px) {
+            .form-wrapper {
+                width: 100%;
+                max-width: 28rem;
+                position: relative;
+            }
 
-        /* Ensure correct display of forms during toggle */
-        .container.sign-in .col.forgot-password .form {
-            display: none;
-        }
-
-        .container.forgot-password .col.sign-in .form {
-            display: none;
+            .form {
+                width: 100%;
+                padding: 1rem;
+                border-radius: 1rem;
+            }
         }
 
         .input-group {
@@ -454,6 +364,38 @@
                 bottom: 100%;
             }
         }
+        
+        /* Subtle floating animation for active form */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        /* Subtle heartbeat effect for form entrance */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.04);
+            }
+            28% {
+                transform: scale(1);
+            }
+            42% {
+                transform: scale(1.02);
+            }
+            70% {
+                transform: scale(1);
+            }
+        }
 
         .form p {
             margin: 1rem 0;
@@ -468,14 +410,7 @@
             cursor: pointer;
         }
 
-        .container.sign-in .form.sign-in,
-        .container.sign-in .social-list.sign-in,
-        .container.sign-in .social-list.sign-in>div,
-        .container.forgot-password .form.forgot-password,
-        .container.forgot-password .social-list.forgot-password,
-        .container.forgot-password .social-list.forgot-password>div {
-            transform: scale(1);
-        }
+        /* Removed duplicate styles that were moved to specific selectors */
 
         .content-row {
             position: absolute;
@@ -559,282 +494,14 @@
             right: 50%;
         }
 
-        /* PANDA STYLING */
-        .panda-container {
-            position: fixed;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 5;
-            /* Reduced z-index so the form appears on top */
-            transition: all 1s ease-in-out;
-        }
 
-        .follow-form-left {
-            left: 25% !important;
-        }
-
-        .follow-form-right {
-            left: 75% !important;
-        }
-
-        .panda {
-            position: relative;
-            width: 200px;
-            margin: 0 auto;
-        }
-
-        .face {
-            width: 200px;
-            height: 200px;
-            background: #fff;
-            border-radius: 100%;
-            margin: 50px auto;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, .15);
-            z-index: 50;
-            position: relative;
-        }
-
-        /* Important: this is for the form element inside the panda, not the login form */
-        .panda .form {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hand {
-            width: 40px;
-            height: 30px;
-            border-radius: 50px;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, .15);
-            background: #000;
-            margin: 5px;
-            position: absolute;
-            top: 160px;
-            z-index: 30;
-            transition: .3s ease-in-out;
-            transform-origin: bottom;
-        }
-
-        .hand:after,
-        .hand:before {
-            content: '';
-            width: 40px;
-            height: 30px;
-            border-radius: 50px;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, .15);
-            background: #000;
-            margin: 5px;
-            position: absolute;
-            left: -5px;
-            top: 11px;
-        }
-
-        .hand:before {
-            top: 26px;
-        }
-
-        .eye-shade {
-            background: #000;
-            width: 50px;
-            height: 80px;
-            margin: 10px;
-            position: absolute;
-            top: 35px;
-            left: 25px;
-            transform: rotate(220deg);
-            border-radius: 25px / 20px 30px 35px 40px;
-        }
-
-        .eye-shade.rgt {
-            transform: rotate(140deg);
-            left: 105px;
-        }
-
-        .eye-white {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 100%;
-            background: #fff;
-            z-index: 500;
-            left: 40px;
-            top: 80px;
-            overflow: hidden;
-        }
-
-        .eye-white.rgt {
-            right: 40px;
-            left: auto;
-        }
-
-        .eye-ball {
-            position: absolute;
-            width: 0px;
-            height: 0px;
-            left: 20px;
-            top: 20px;
-            max-width: 10px;
-            max-height: 10px;
-            transition: .1s;
-        }
-
-        .eye-ball:after {
-            content: '';
-            background: #000;
-            position: absolute;
-            border-radius: 100%;
-            right: 0;
-            bottom: 0px;
-            width: 20px;
-            height: 20px;
-        }
-
-        .nose {
-            position: absolute;
-            height: 20px;
-            width: 35px;
-            bottom: 40px;
-            left: 0;
-            right: 0;
-            margin: auto;
-            border-radius: 50px 20px / 30px 15px;
-            transform: rotate(15deg);
-            background: #000;
-        }
-
-        .body {
-            background: #fff;
-            position: absolute;
-            top: 200px;
-            left: -20px;
-            border-radius: 100px 100px 100px 100px / 126px 126px 96px 96px;
-            width: 250px;
-            height: 282px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, .3);
-        }
-
-        .hand.rgt:after,
-        .hand.rgt:before {
-            left: auto;
-            right: -5px;
-        }
-
-        #leftHand {
-            left: -140px;
-            transform: rotate(-30deg) translateX(-5px) translateY(60px);
-            transition: all 0.4s ease-in-out;
-        }
-
-        #rightHand {
-            right: -140px;
-            transform: rotate(30deg) translateX(5px) translateY(60px);
-            transition: all 0.4s ease-in-out;
-        }
-
-        /* These classes are now handled directly by JavaScript for better precision */
-        .form.sign-in.up+.panda-container .hand,
-        .form.sign-in.up~.panda-container .hand {
-            /* Animation now controlled by JS */
-        }
-
-        .form.sign-in.up+.panda-container .hand.rgt,
-        .form.sign-in.up~.panda-container .hand.rgt {
-            /* Animation now controlled by JS */
-        }
-
-        /* Ukuran panda saat berada di form login */
-        .container.sign-in .panda {
-            transform: scale(1.2);
-        }
-
-        /* Ukuran panda saat berada di form lupa password */
-        .container.forgot-password .panda {
-            transform: scale(1);
-        }
-
-        .foot {
-            top: 360px;
-            left: -80px;
-            position: absolute;
-            background: #000;
-            z-index: 1400;
-            box-shadow: 0 5px 5px rgba(0, 0, 0, .2);
-            border-radius: 40px 40px 39px 40px / 26px 26px 63px 63px;
-            width: 82px;
-            height: 120px;
-        }
-
-        .foot:after {
-            content: '';
-            width: 55px;
-            height: 65px;
-            background: #222;
-            border-radius: 100%;
-            position: absolute;
-            bottom: 10px;
-            left: 0;
-            right: 0;
-            margin: auto;
-        }
-
-        .finger {
-            position: absolute;
-            width: 25px;
-            height: 35px;
-            background: #222;
-            border-radius: 100%;
-            top: 10px;
-            right: 5px;
-        }
-
-        .finger:after,
-        .finger:before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 35px;
-            background: #222;
-            border-radius: 100%;
-            top: 0;
-            right: 30px;
-        }
-
-        .finger:before {
-            right: 55px;
-            top: 5px;
-        }
-
-        .foot.rgt {
-            left: auto;
-            right: -80px;
-        }
-
-        .foot.rgt .finger {
-            left: 5px;
-            right: auto;
-        }
-
-        .foot.rgt .finger:after {
-            left: 30px;
-            right: auto;
-        }
-
-        .foot.rgt .finger:before {
-            left: 55px;
-            right: auto;
-        }
 
         /* Error animation */
         .form.sign-in.wrong-entry {
             animation: wrong-log 0.3s;
         }
 
-        @keyframes eye-blink {
-            to {
-                height: 30px;
-            }
-        }
+
 
         @keyframes wrong-log {
 
@@ -903,8 +570,6 @@
                 box-shadow: none;
                 margin: 0;
                 padding: 0;
-                margin-top: 180px;
-                /* Add more space for panda on mobile */
             }
 
             .text {
@@ -919,34 +584,6 @@
                 margin: .5rem;
                 font-size: 2rem;
             }
-
-            .panda-container {
-                top: 100px !important;
-                transform: translate(-50%, 0) !important;
-                z-index: 5;
-            }
-
-            .follow-form-left {
-                left: 25% !important;
-            }
-
-            .follow-form-right {
-                left: 75% !important;
-            }
-
-            /* Hand position optimization for mobile */
-            #leftHand {
-                left: -120px;
-            }
-
-            #rightHand {
-                right: -120px;
-            }
-
-            /* Reduce panda size on mobile */
-            .panda {
-                transform: scale(0.8) !important;
-            }
         }
     </style>
 </head>
@@ -956,15 +593,6 @@
     <div id="loading-screen">
         <div class="spinner-container">
             <div class="loading-spinner"></div>
-            <div class="loading-panda">
-                <div class="loading-panda-ear left"></div>
-                <div class="loading-panda-ear right"></div>
-                <div class="loading-panda-face">
-                    <div class="loading-panda-eye left"></div>
-                    <div class="loading-panda-eye right"></div>
-                    <div class="loading-panda-nose"></div>
-                </div>
-            </div>
         </div>
         <div class="loading-text">Memuat<span class="loading-dots"></span></div>
     </div>
@@ -1042,33 +670,7 @@
                 </div>
             </div>
             <!-- END SIGN IN -->
-            <!-- PANDA ANIMATION -->
-            <div class="panda-container">
-                <div class="panda">
-                    <div class="ear"></div>
-                    <div class="face">
-                        <div class="eye-shade"></div>
-                        <div class="eye-white">
-                            <div class="eye-ball"></div>
-                        </div>
-                        <div class="eye-shade rgt"></div>
-                        <div class="eye-white rgt">
-                            <div class="eye-ball"></div>
-                        </div>
-                        <div class="nose"></div>
-                        <div class="mouth"></div>
-                    </div>
-                    <div class="body"></div>
-                    <div class="foot">
-                        <div class="finger"></div>
-                    </div>
-                    <div class="foot rgt">
-                        <div class="finger"></div>
-                    </div>
-                    <div class="hand" id="leftHand"></div>
-                    <div class="hand rgt" id="rightHand"></div>
-                </div>
-            </div>
+
         </div>
         <!-- END FORM SECTION -->
 
@@ -1175,327 +777,20 @@
 
     <script>
         $(document).ready(function() {
-            // Penempatan awal panda - pastikan posisinya benar
+            // Initialize login page with a slight delay
             setTimeout(() => {
+                // Set the initial state to login form
                 container.classList.add('sign-in');
-                $('.panda-container').addClass('follow-form-right');
-                $('.panda-container').removeClass('follow-form-left');
-
-                // Pastikan form login terlihat dan form lupa password tersembunyi saat awal
-                $('.col.sign-in .form').css('display', 'block');
-                $('.col.forgot-password .form').css('display', 'none');
-
-                // Posisikan panda untuk memegang form - coba beberapa kali untuk memastikan bekerja dengan baik
-                positionPandaHands();
-
-                // Set posisi awal tangan - memegang form di bawah (posisi default)
-                holdForm();
-
-                // Pastikan form tidak menutupi mata pada awalnya
-                $('.form').removeClass('password-focus');
-
-                // Pastikan form berada di posisi yang tepat
-                setTimeout(function() {
-                    positionPandaHands();
-
-                    // Animasikan kemunculan form dengan halus
-                    $('.form.sign-in').css({
-                        'transition': 'all 0.6s ease-in-out',
-                        'transform': 'scale(1)'
-                    });
-
-                    // Pastikan tangan berada di posisi bawah
-                    holdForm();
-                }, 300);
-
-                setTimeout(function() {
-                    positionPandaHands();
-                    holdForm();
-                }, 800);
-            }, 200); // Efek ketika field password mendapat fokus - panda menutupi matanya
-            $('#password').focusin(function() {
-                $('.form.sign-in').addClass('up');
-
-                // Gerakkan tangan untuk mengangkat formulir menutupi mata panda
-                coverPandaEyes();
-
-                // Pastikan panda tetap di posisi normal
-                $('.panda-container').css({
-                    'transform': 'translate(-50%, -50%)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-            });
-
-            // Efek ketika field password kehilangan fokus - tangan kembali memegang form
-            $('#password').focusout(function() {
-                $('.form.sign-in').removeClass('up');
-
-                // Kembalikan tangan ke posisi normal dan turunkan formulir kembali
-                holdForm();
-
-                // Panda tetap di posisi normal
-                $('.panda-container').css({
-                    'transform': 'translate(-50%, -50%)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-            }); // Efek ketika pointer mouse masuk ke kolom password - panda siap menutupi mata
-            $('#password').mouseenter(function() {
-                // Jika belum dalam fokus, persiapkan tangan untuk mengangkat form
-                if (!$(this).is(':focus')) {
-                    // Gerakkan tangan panda untuk persiapan menutupi mata
-                    $('#leftHand').css({
-                        'transform': 'rotate(80deg) translateX(20px) translateY(0px)',
-                        'transition': 'all 0.3s ease-in-out'
-                    });
-                    $('#rightHand').css({
-                        'transform': 'rotate(-80deg) translateX(-20px) translateY(0px)',
-                        'transition': 'all 0.3s ease-in-out'
-                    });
-
-                    // Tidak lagi mengubah posisi form saat hover
-                    // Form berubah hanya saat fokus, tidak saat hover
-                } else {
-                    // Jika sudah fokus, terapkan efek penuh
-                    coverPandaEyes();
-                }
-
-                // Panda tetap di posisi normal
-                $('.panda-container').css({
-                    'transform': 'translate(-50%, -50%)',
-                    'transition': 'all 0.3s ease-in-out'
-                });
-            });
-
-            // Efek ketika pointer mouse meninggalkan kolom password - tangan kembali normal
-            $('#password').mouseleave(function() {
-                // Jika password tidak sedang dalam fokus, kembalikan tangan ke posisi memegang form
-                if (!$(this).is(':focus')) {
-                    holdForm();
-
-                    // Panda tetap di posisi normal
-                    $('.panda-container').css({
-                        'transform': 'translate(-50%, -50%)',
-                        'transition': 'all 0.3s ease-in-out'
-                    });
-                }
-            });
-
-            // Function untuk menutupi mata panda ketika password field diklik
-            // Tangan panda mengangkat form ke atas
-            function coverPandaEyes() {
-                // Gerakkan tangan panda ke atas untuk mengangkat formulir
-                $('#leftHand').css({
-                    'transform': 'rotate(120deg) translateX(40px) translateY(-90px)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-                $('#rightHand').css({
-                    'transform': 'rotate(-120deg) translateX(-40px) translateY(-90px)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-
-                // Formulir diangkat ke atas untuk menutupi mata panda
-                let activeForm;
-                if (container.classList.contains('sign-in')) {
-                    activeForm = $('.col.sign-in .form');
-                    // Pastikan form aktif terlihat dan yang lain tersembunyi
-                    $('.col.forgot-password .form').css('display', 'none');
-                } else {
-                    activeForm = $('.col.forgot-password .form');
-                    // Pastikan form aktif terlihat dan yang lain tersembunyi
-                    $('.col.sign-in .form').css('display', 'none');
-                }
-
-                // Display form before applying animation
-                activeForm.css('display', 'block');
-
-                // Apply animation with a slight delay to ensure display is set first
-                setTimeout(function() {
-                    activeForm.addClass('password-focus');
-                }, 10);
-            }
-
-            // Function untuk memegang form (posisi default ketika tidak di password field)
-            // Tangan panda menurunkan form ke badan
-            function holdForm() {
-                // Posisikan tangan untuk memegang form di bawah
-                $('#leftHand').css({
-                    'transform': 'rotate(-30deg) translateX(-5px) translateY(60px)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-                $('#rightHand').css({
-                    'transform': 'rotate(30deg) translateX(5px) translateY(60px)',
-                    'transition': 'all 0.4s ease-in-out'
-                });
-
-                // Turunkan formulir kembali ke posisi normal
-                $('.form').removeClass('password-focus');
-            }
-
-            // Alias untuk kompatibilitas dengan kode lama
-            function restoreHandPosition() {
-                holdForm();
-            }
-
-            // Efek ketika pointer mouse masuk ke kolom email - pastikan tangan memegang form
-            $('input[type="email"]').mouseenter(function() {
-                // Jika password tidak sedang dalam fokus, kembalikan tangan ke posisi memegang form
-                if (!$('#password').is(':focus')) {
-                    holdForm();
-                }
-            });
-
-            // Efek ketika field email mendapat fokus - tangan memegang form
-            $('input[type="email"]').focusin(function() {
-                holdForm();
-            });
-
-            // Mengatur ulang posisi panda saat ukuran layar berubah
-            $(window).resize(function() {
-                // Reposisi panda berdasarkan status form saat ini
-                if (container.classList.contains('sign-in')) {
-                    $('.panda-container').removeClass('follow-form-left');
-                    $('.panda-container').addClass('follow-form-right');
-                } else {
-                    $('.panda-container').removeClass('follow-form-right');
-                    $('.panda-container').addClass('follow-form-left');
-                }
-
-                // Hitung ulang posisi tangan panda agar sesuai dengan form
-                positionPandaHands();
-            });
-
-            // Gerakan mata panda mengikuti pergerakan mouse
-            $(document).on("mousemove", function(event) {
-                var dw = $(document).width() / 15;
-                var dh = $(document).height() / 15;
-                var x = event.pageX / dw;
-                var y = event.pageY / dh;
-                $('.eye-ball').css({
-                    width: x,
-                    height: y
-                });
-            });
-
-            // Posisikan panda saat semua aset telah dimuat
-            $(window).on('load', function() {
-                positionPandaHands();
-                setTimeout(positionPandaHands, 200);
-            });
+            }, 200);
         });
 
-        // Fungsi toggle antara login dan lupa password
+        // Simple toggle function matching the template
         let container = document.getElementById('container');
-
+        
         function toggle() {
-            // Tambahkan animasi halus pada panda selama transisi
-            $('.panda-container').css('transition', 'all 1s ease-in-out');
-
-            // Toggle kelas terlebih dahulu
+            // Toggle between sign-in and forgot-password classes
             container.classList.toggle('sign-in');
             container.classList.toggle('forgot-password');
-
-            // Kemudian update posisi panda setelah toggle
-            if (container.classList.contains('sign-in')) {
-                // Berpindah ke sign-in (login) - panda di kanan
-                $('.panda-container').removeClass('follow-form-left');
-                $('.panda-container').addClass('follow-form-right');
-
-                // Pastikan form yang tepat terlihat
-                $('.col.sign-in .form').css('display', 'block');
-                $('.col.forgot-password .form').css('display', 'none');
-            } else {
-                // Berpindah ke forgot-password (lupa password) - panda di kiri
-                $('.panda-container').removeClass('follow-form-right');
-                $('.panda-container').addClass('follow-form-left');
-
-                // Pastikan form yang tepat terlihat
-                $('.col.sign-in .form').css('display', 'none');
-                $('.col.forgot-password .form').css('display', 'block');
-            }
-
-            // Reset status fokus saat beralih form
-            $('.form.sign-in').removeClass('up');
-            $('.form').removeClass('password-focus');
-
-            // Reset posisi tangan ke posisi bawah (memegang form)
-            holdForm();
-
-            // Reposisi panda setelah beberapa penundaan untuk membiarkan transisi form selesai
-            setTimeout(function() {
-                positionPandaHands();
-                holdForm(); // Pastikan tangan memegang form setelah toggle
-            }, 100);
-            setTimeout(function() {
-                positionPandaHands();
-                holdForm(); // Pastikan tangan memegang form setelah toggle
-            }, 500);
-            setTimeout(function() {
-                positionPandaHands();
-                holdForm(); // Pastikan tangan memegang form setelah toggle
-            }, 1000);
-        } // Fungsi untuk memposisikan panda dan form dengan benar
-        function positionPandaHands() {
-            // Hitung posisi form - khususnya target elemen form
-            let formElement;
-
-            if (container.classList.contains('sign-in')) {
-                // Untuk form login (sisi kanan)
-                formElement = $('.col.sign-in .form-wrapper .form');
-
-                // Pastikan form yang tepat terlihat
-                $('.col.sign-in .form').css('display', 'block');
-                $('.col.forgot-password .form').css('display', 'none');
-            } else {
-                // Untuk form lupa password (sisi kiri)
-                formElement = $('.col.forgot-password .form-wrapper .form');
-
-                // Pastikan form yang tepat terlihat
-                $('.col.sign-in .form').css('display', 'none');
-                $('.col.forgot-password .form').css('display', 'block');
-            }
-
-            if (formElement.length) {
-                // Cek apakah tampilan mobile atau desktop
-                if ($(window).width() <= 425) {
-                    // Mobile view - pastikan panda berada di posisi yang tepat di atas form
-                    $('.panda-container').css({
-                        'top': '80px',
-                        'transform': 'translate(-50%, 0)'
-                    });
-
-                    // Sesuaikan margin form pada mobile - buat lebih besar agar form berada di badan panda
-                    formElement.css({
-                        'margin-top': '200px',
-                        'transition': 'all 0.4s ease-in-out'
-                    });
-                } else {
-                    // Desktop view - panda di tengah layar, form di bawah mata panda
-                    $('.panda-container').css({
-                        'top': '30%',
-                        'transform': 'translate(-50%, -50%)'
-                    });
-
-                    // Sesuaikan margin-top dari form untuk berada di badan panda
-                    formElement.css({
-                        'margin-top': '180px',
-                        'transition': 'all 0.4s ease-in-out'
-                    });
-                }
-
-                // Tampilkan form aktif dengan scale yang benar
-                formElement.css('transform', 'scale(1)');
-
-                // Handle password field focus
-                if ($('#password').is(':focus')) {
-                    // Delay sedikit untuk pastikan form sudah visible sebelum diangkat
-                    setTimeout(function() {
-                        coverPandaEyes();
-                    }, 10);
-                } else {
-                    // Pastikan tangan di posisi default (mengarah ke bawah)
-                    holdForm();
-                }
-            }
         }
     </script>
 </body>
