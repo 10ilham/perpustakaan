@@ -32,6 +32,11 @@
                 <div class="card-body">
                     <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        {{-- Parameter referensi yang akan digunakan di controller --}}
+                        @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
+                            <input type="hidden" name="ref" value="{{ $ref }}">
+                            <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
+                        @endif
 
                         <div class="row" style="display: flex; flex-wrap: nowrap;">
                             <div class="col-md-6">
@@ -144,7 +149,8 @@
                                     <label for="total_buku">Total Buku</label>
                                     <input type="number" name="total_buku" id="total_buku" class="form-control"
                                         value="{{ old('total_buku', $buku->total_buku ?? 0) }}" required>
-                                    <small class="form-text text-muted">Jumlah keseluruhan buku. Stok buku akan otomatis diperbarui.</small>
+                                    <small class="form-text text-muted">Jumlah keseluruhan buku. Stok buku akan otomatis
+                                        diperbarui.</small>
                                     @error('total_buku')
                                         <div class="custom-alert" role="alert">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -219,9 +225,15 @@
                         </div>
 
                         <div class="form-group mt-4 text-end">
-                            <a href="{{ route('buku.index') }}" class="btn btn-secondary me-2">
-                                <i class="bx bx-arrow-back"></i> Kembali
-                            </a>
+                            @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
+                                <a href="{{ route('kategori.detail', $kategori_id) }}" class="btn btn-secondary me-2">
+                                    <i class="bx bx-arrow-back"></i> Kembali ke Kategori
+                                </a>
+                            @else
+                                <a href="{{ route('buku.index') }}" class="btn btn-secondary me-2">
+                                    <i class="bx bx-arrow-back"></i> Kembali
+                                </a>
+                            @endif
                             <button type="submit" class="btn btn-success">
                                 <i class="bx bx-save"></i> Simpan Perubahan
                             </button>

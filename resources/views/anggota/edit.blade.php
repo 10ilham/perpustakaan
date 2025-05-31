@@ -303,9 +303,17 @@
 
                         <!-- Tombol Submit -->
                         <div class="form-group text-end">
-                            <a href="{{ route('anggota.index', $user->id) }}" class="btn btn-secondary">
-                                <i class="bx bx-arrow-back"></i> Batal
-                            </a>
+                            @if (isset($ref) && $ref == 'detail')
+                                <a href="{{ route('anggota.detail', $user->id) }}" class="btn btn-secondary">
+                                    <i class="bx bx-arrow-back"></i> Batal
+                                </a>
+                                <!-- Menyimpan parameter ref untuk redirect setelah update -->
+                                <input type="hidden" name="ref" value="{{ $ref }}">
+                            @else
+                                <a href="{{ route('anggota.index') }}" class="btn btn-secondary">
+                                    <i class="bx bx-arrow-back"></i> Batal
+                                </a>
+                            @endif
                             <button type="submit" class="btn btn-success">
                                 <i class="bx bx-save"></i> Simpan Perubahan
                             </button>

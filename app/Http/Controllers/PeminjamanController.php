@@ -307,6 +307,10 @@ class PeminjamanController extends Controller
         // Perbarui status terlambat terlebih dahulu
         $this->updateLateStatus();
 
+        // Ambil parameter referensi jika ada
+        $ref = request('ref');
+        $anggota_id = request('anggota_id');
+
         $peminjaman = PeminjamanModel::with(['user', 'buku'])->findOrFail($id);
 
         // Tambahkan informasi keterlambatan ke data peminjaman
@@ -335,7 +339,7 @@ class PeminjamanController extends Controller
             $showReturnButton = true;
         }
 
-        return view('peminjaman.detail', compact('peminjaman', 'showReturnButton'));
+        return view('peminjaman.detail', compact('peminjaman', 'showReturnButton', 'ref', 'anggota_id'));
     }
 
     // Memeriksa apakah peminjaman terlambat dikembalikan
@@ -422,9 +426,21 @@ class PeminjamanController extends Controller
 
         $buku->save();
 
-        return redirect()->route('peminjaman.index')->with('success', $isTerlambat ?
+        // Cek parameter referensi dari halaman anggota
+        $ref = request('ref');
+        $anggota_id = request('anggota_id');
+
+        // Pesan sukses berdasarkan status keterlambatan
+        $successMessage = $isTerlambat ?
             'Buku berhasil dikembalikan dengan status terlambat ' . $peminjaman->jumlah_hari_terlambat . ' hari.' :
-            'Buku berhasil dikembalikan tepat waktu.');
+            'Buku berhasil dikembalikan tepat waktu.';
+
+        // Redirect berdasarkan parameter referensi
+        if ($ref == 'anggota' && $anggota_id) {
+            return redirect()->route('anggota.detail', $anggota_id)->with('success', $successMessage);
+        } else {
+            return redirect()->route('peminjaman.index')->with('success', $successMessage);
+        }
     }
 
     // Hapus data peminjaman (khusus Admin)

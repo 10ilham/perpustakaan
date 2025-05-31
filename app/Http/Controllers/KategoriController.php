@@ -70,7 +70,11 @@ class KategoriController extends Controller
     {
         // Ambil data kategori berdasarkan ID
         $kategori = KategoriModel::findOrFail($id);
-        return view('kategori.edit', compact('kategori'));
+
+        // Ambil parameter referensi
+        $ref = request('ref');
+
+        return view('kategori.edit', compact('kategori', 'ref'));
     }
 
     public function update(Request $request, $id)
@@ -97,7 +101,12 @@ class KategoriController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui');
+        // Redirect berdasarkan referensi
+        if ($request->has('ref') && $request->ref == 'detail') {
+            return redirect()->route('kategori.detail', $id)->with('success', 'Kategori berhasil diperbarui');
+        } else {
+            return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui');
+        }
     }
 
     public function hapus($id)

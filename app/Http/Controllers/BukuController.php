@@ -159,7 +159,12 @@ class BukuController extends Controller
         // Total stok buku sebelum dikurangi peminjaman (menggunakan kolom total_buku)
         $totalStokBuku = $buku->total_buku;
 
-        return view('buku.detail', compact('buku', 'totalStokBuku'));
+        // Ambil referensi dari mana pengguna berasal
+        $ref = request('ref');
+        $kategori_id = request('kategori_id'); // id referensi untuk kembali ke halaman kategori
+        $dashboard = request('dashboard'); // id referensi untuk kembali ke halaman dashboard
+
+        return view('buku.detail', compact('buku', 'totalStokBuku', 'ref', 'kategori_id', 'dashboard'));
     }
 
     // Menampilkan form edit buku
@@ -167,7 +172,12 @@ class BukuController extends Controller
     {
         $buku = BukuModel::findOrFail($id);
         $kategori = KategoriModel::all();
-        return view('buku.edit', compact('buku', 'kategori'));
+
+        // Ambil referensi dari mana pengguna berasal
+        $ref = request('ref');
+        $kategori_id = request('kategori_id');
+
+        return view('buku.edit', compact('buku', 'kategori', 'ref', 'kategori_id'));
     }
 
     // Mengupdate data buku
@@ -271,7 +281,12 @@ class BukuController extends Controller
             $buku->kategori()->sync($request->kategori_id);
         }
 
-        return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
+        // Cek apakah ada referensi ke halaman kategori
+        if ($request->has('ref') && $request->ref == 'kategori' && $request->has('kategori_id')) {
+            return redirect()->route('kategori.detail', $request->kategori_id)->with('success', 'Buku berhasil diperbarui.');
+        } else {
+            return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
+        }
     }
 
     // Menghapus data buku

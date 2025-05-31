@@ -141,9 +141,26 @@
 
                                 <!-- Tombol Aksi -->
                                 <div class="form-group text-end">
-                                    <a href="{{ route('buku.index') }}" class="btn btn-secondary">
-                                        <i class="bx bx-arrow-back"></i> Kembali
-                                    </a>
+                                    {{-- Parameter referensi yang akan digunakan di controller --}}
+                                    @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
+                                        <a href="{{ route('kategori.detail', $kategori_id) }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali ke Kategori
+                                        </a>
+                                    @elseif (isset($dashboard) && $dashboard == 'admin')
+                                        {{-- 'admin' penamaan url dari file dashboard admin --}}
+                                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali ke Dashboard
+                                        </a>
+                                    @elseif (isset($dashboard) && $dashboard == 'anggota')
+                                        {{-- 'anggota' penamaan url dari file dashboard anggota --}}
+                                        <a href="{{ route('anggota.dashboard') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali ke Dashboard
+                                        </a>
+                                    @else
+                                        <a href="{{ route('buku.index') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali
+                                        </a>
+                                    @endif
                                 </div>
                             </form>
                         </div>

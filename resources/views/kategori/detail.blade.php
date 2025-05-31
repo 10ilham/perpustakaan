@@ -46,7 +46,8 @@
                                 </a>
 
                                 @if (auth()->user()->level == 'admin')
-                                    <a href="{{ route('kategori.edit', $kategori->id) }}" class="btn btn-success">
+                                    <a href="{{ route('kategori.edit', ['id' => $kategori->id, 'ref' => 'detail']) }}"
+                                        class="btn btn-success">
                                         <i class="bx bx-edit"></i> Edit
                                     </a>
                                 @endif
@@ -116,7 +117,8 @@
                                                             {{ $kategori->nama }}
                                                         </p>
                                                         <p class="card-text m-0"
-                                                            style="text-align: justify; display: block; width: 100%;">Status:
+                                                            style="text-align: justify; display: block; width: 100%;">
+                                                            Status:
                                                             @if ($item->status === 'Tersedia')
                                                                 <span
                                                                     class="badge badge-outline-success">{{ $item->status }}</span>
@@ -130,11 +132,11 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-area mt-3">
-                                                        <a href="{{ route('buku.detail', $item->id) }}"
+                                                        <a href="{{ route('buku.detail', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id]) }}"
                                                             class="btn btn-sm btn-info px-2"
                                                             style="text-decoration: none; color: white;">Detail</a>
                                                         @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
-                                                            <a href="{{ route('buku.edit', $item->id) }}"
+                                                            <a href="{{ route('buku.edit', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id]) }}"
                                                                 class="btn btn-sm btn-warning px-2"
                                                                 style="text-decoration: none; color: white;">Edit</a>
                                                             <button class="btn btn-sm btn-danger px-3 delete-btn"

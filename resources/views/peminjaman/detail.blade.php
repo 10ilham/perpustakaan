@@ -179,14 +179,20 @@
 
                             <div class="form-group text-end" style="margin-top: auto;">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary">
-                                        <i class="bx bx-arrow-back"></i> Kembali
-                                    </a>
+                                    @if (isset($ref) && $ref == 'anggota' && isset($anggota_id))
+                                        <a href="{{ route('anggota.detail', $anggota_id) }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali
+                                        </a>
+                                    @else
+                                        <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali
+                                        </a>
+                                    @endif
 
                                     @if (auth()->user()->level == 'admin' && $showReturnButton)
                                         <button type="button" class="btn btn-success return-btn" data-bs-toggle="modal"
                                             data-bs-target="#returnModal"
-                                            data-action="{{ route('peminjaman.kembalikan', $peminjaman->id) }}">
+                                            data-action="{{ route('peminjaman.kembalikan', ['id' => $peminjaman->id, 'ref' => $ref ?? null, 'anggota_id' => $anggota_id ?? null]) }}">
                                             <i class="bx bx-check"></i> Konfirmasi Pengembalian
                                         </button>
                                     @endif

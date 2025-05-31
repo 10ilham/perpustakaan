@@ -114,7 +114,7 @@
                                         <td>{{ $item->buku->pengarang }}</td>
                                         <td>{{ $item->total_peminjaman }} kali</td>
                                         <td>
-                                            <a href="{{ route('buku.detail', $item->buku->id) }}"
+                                            <a href="{{ route('buku.detail', ['id' => $item->buku->id, 'dashboard' => 'admin']) }}" {{-- 'admin' penamaan url bebas karena hanya sebagai referensi --}}
                                                 class="btn btn-sm btn-info">
                                                 <i class="bx bx-info-circle"></i> Detail
                                             </a>

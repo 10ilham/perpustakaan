@@ -162,6 +162,10 @@
                                         <a href="{{ route('anggota.index') }}" class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali
                                         </a>
+                                        <a href="{{ route('anggota.edit', ['id' => $user->id, 'ref' => 'detail']) }}"
+                                            class="btn btn-success">
+                                            <i class="bx bx-edit"></i> Edit
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -233,7 +237,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a href="{{ route('peminjaman.detail', $item->id) }}"
+                                                    <a href="{{ route('peminjaman.detail', ['id' => $item->id, 'ref' => 'anggota', 'anggota_id' => $user->id]) }}"
                                                         class="btn btn-sm btn-info" title="Detail">
                                                         <i class="bx bx-info-circle"></i>
                                                     </a>

@@ -41,6 +41,9 @@ class AnggotaController extends Controller
         $user = User::findOrFail($id);
         $profileData = null;
 
+        // Ambil parameter referensi jika ada
+        $ref = request('ref');
+
         // Ambil data profil sesuai level
         if ($user->level === 'admin') {
             $profileData = AdminModel::where('user_id', $user->id)->first();
@@ -58,7 +61,7 @@ class AnggotaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('anggota.detail', compact('user', 'profileData', 'peminjaman'));
+        return view('anggota.detail', compact('user', 'profileData', 'peminjaman', 'ref'));
     }
 
     // Tambah anggota
@@ -182,6 +185,9 @@ class AnggotaController extends Controller
         $user = User::findOrFail($id);
         $profileData = null;
 
+        // Ambil parameter referensi jika ada
+        $ref = request('ref');
+
         // Ambil data profil sesuai level
         if ($user->level === 'admin') {
             $profileData = AdminModel::where('user_id', $user->id)->first();
@@ -193,7 +199,7 @@ class AnggotaController extends Controller
             $profileData = StaffModel::where('user_id', $user->id)->first();
         }
 
-        return view('anggota.edit', compact('user', 'profileData'));
+        return view('anggota.edit', compact('user', 'profileData', 'ref'));
     }
 
     // Update anggota
@@ -310,7 +316,12 @@ class AnggotaController extends Controller
             $profileData->save();
         }
 
-        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil diperbarui.');
+        // Cek apakah ada referensi ke halaman detail
+        if ($request->has('ref') && $request->ref == 'detail') {
+            return redirect()->route('anggota.detail', $id)->with('success', 'Anggota berhasil diperbarui.');
+        } else {
+            return redirect()->route('anggota.index')->with('success', 'Anggota berhasil diperbarui.');
+        }
     }
 
     // Hapus anggota
