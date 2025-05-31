@@ -1,6 +1,6 @@
 <!-- SIDEBAR -->
 <section id="sidebar">
-    <a href="#" class="brand">
+    <a href="#" class="brand" style="display: flex; align-items: center; gap: 10px;">
         <img src="{{ asset('assets/img/logo_mts.png') }}" class="brand" style="width: 50px; height: auto;">
         MTSN 6 Garut
     </a>

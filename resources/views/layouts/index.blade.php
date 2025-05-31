@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/templatemo-style.css') }}">
+    <!-- Responsive CSS Extensions -->
+    <link rel="stylesheet" href="{{ asset('assets/css/landing-responsive.css') }}">
 
 </head>
 
@@ -313,8 +315,6 @@
             });
         }
     </script>
-
-
 </body>
 
 </html>

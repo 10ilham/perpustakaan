@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login - Perpustakaan MTSN 6 GARUT</title>
     <link href="{{ asset('assets/img/logo_mts.png') }}" rel="icon" type="image/x-icon">
 
@@ -146,12 +146,41 @@
             position: relative;
             min-height: 100vh;
             overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Add desktop specific styles */
+        @media only screen and (min-width: 426px) {
+            .container .col {
+                display: flex !important; /* Desktop always shows both columns */
+            }
+        }
+        
+        /* Desktop specific styles */
+        @media only screen and (min-width: 426px) {
+            .container.sign-in.forgot-password {
+                /* Reset to sign-in if both classes exist somehow */
+                animation: reset-container 0.1s forwards;
+            }
+            
+            @keyframes reset-container {
+                to {
+                    transform: translateX(0);
+                }
+            }
+            
+            /* Make sure columns are visible on desktop */
+            .col.sign-in, .col.forgot-password {
+                display: flex;
+            }
         }
 
         .row {
             display: flex;
             flex-wrap: wrap;
             height: 100vh;
+            width: 100%;
         }
 
         .col {
@@ -183,39 +212,79 @@
             position: relative;
             z-index: 10;
         }
-        
+
         /* Set initial state for forms */
-        .sign-in .form.sign-in {
-            transform: scale(0);
-        }
-        
+        .sign-in .form.sign-in,
         .forgot-password .form.forgot-password {
             transform: scale(0);
         }
-        
+
         /* Animation for form activation */
         .container.sign-in .form.sign-in {
             transform: scale(1);
             transition-delay: 0.5s;
         }
-        
+
         .container.forgot-password .form.forgot-password {
             transform: scale(1);
             transition-delay: 0.5s;
+        }
+        
+        /* Mobile-only column visibility rules */
+        @media only screen and (max-width: 425px) {
+            .col.sign-in, 
+            .col.forgot-password {
+                display: none;
+            }
+            
+            .container.sign-in .col.sign-in {
+                display: flex;
+            }
+            
+            .container.forgot-password .col.forgot-password {
+                display: flex;
+            }
         }
 
         /* Mobile responsiveness for form */
         @media only screen and (max-width: 425px) {
             .form-wrapper {
-                width: 100%;
+                width: 90%;
                 max-width: 28rem;
                 position: relative;
+                margin: 0 auto;
             }
 
             .form {
                 width: 100%;
-                padding: 1rem;
+                padding: 1.2rem;
                 border-radius: 1rem;
+                transform: scale(1) !important;
+                margin-top: 0;
+                margin-bottom: 20px;
+            }
+            
+            /* Fix input size */
+            .input-group input {
+                padding: 0.8rem 2.5rem;
+                font-size: 0.9rem;
+            }
+            
+            /* Fix button size */
+            .btn-animated {
+                padding: 8px 15px;
+                font-size: 14px;
+                letter-spacing: 2px;
+            }
+        }
+        
+        /* Fix for extra small screens */
+        @media only screen and (max-width: 320px) {
+            .form {
+                padding: 1rem;
+            }
+            .input-group input {
+                font-size: 0.8rem;
             }
         }
 
@@ -364,7 +433,7 @@
                 bottom: 100%;
             }
         }
-        
+
         /* Subtle floating animation for active form */
         @keyframes float {
             0% {
@@ -377,7 +446,7 @@
                 transform: translateY(0px);
             }
         }
-        
+
         /* Subtle heartbeat effect for form entrance */
         @keyframes heartbeat {
             0% {
@@ -533,11 +602,24 @@
                 z-index: 0;
                 transform: none;
                 right: 0;
+                position: fixed;
+                top: 0;
             }
 
             .container.sign-in .col.sign-in,
             .container.forgot-password .col.forgot-password {
                 transform: translateY(0);
+                top: 0;
+                margin-top: 50px;
+                height: calc(100vh - 50px);
+                overflow-y: auto;
+                display: flex !important; /* Force display only on mobile */
+            }
+            
+            /* Ensure the inactive form is completely hidden on mobile */
+            .container.sign-in .col.forgot-password,
+            .container.forgot-password .col.sign-in {
+                display: none !important;
             }
 
             .content-row {
@@ -552,28 +634,35 @@
             .col {
                 width: 100%;
                 position: absolute;
-                padding: 2rem;
-                background-color: var(--white);
+                padding: 0.5rem;
+                background-color: transparent;
                 border-top-left-radius: 2rem;
                 border-top-right-radius: 2rem;
-                transform: translateY(100%);
-                transition: 1s ease-in-out;
+                transform: translateY(0);
+                transition: 0.5s ease-in-out;
             }
 
             .row {
-                align-items: flex-end;
-                justify-content: flex-end;
+                align-items: flex-start;
+                justify-content: center;
+                height: 100vh;
+                overflow-y: auto;
             }
 
             .form,
             .social-list {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                margin: 10px auto;
+                padding: 15px;
+                border-radius: 1rem;
+                background-color: var(--white);
+                max-width: 90%;
             }
 
             .text {
                 margin: 0;
+                position: relative;
+                text-align: center;
             }
 
             .text p {
@@ -582,7 +671,13 @@
 
             .text h2 {
                 margin: .5rem;
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+            
+            /* Fix form visible area */
+            .form-wrapper {
+                width: 90%;
+                margin: 0 auto;
             }
         }
     </style>
@@ -779,19 +874,66 @@
         $(document).ready(function() {
             // Initialize login page with a slight delay
             setTimeout(() => {
+                // Make sure we start with a clean state
+                container.classList.remove('sign-in');
+                container.classList.remove('forgot-password');
+                
                 // Set the initial state to login form
                 container.classList.add('sign-in');
+                
+                // Specific mobile adjustments
+                if (window.innerWidth <= 425) {
+                    // Fix any scrolling issues
+                    window.scrollTo(0, 0);
+                    
+                    // Make sure inputs don't zoom the page on focus
+                    const inputs = document.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        input.setAttribute('autocomplete', 'off');
+                        input.setAttribute('autocorrect', 'off');
+                        input.setAttribute('autocapitalize', 'off');
+                        input.setAttribute('spellcheck', 'false');
+                    });
+                } 
+                // Add desktop specific class if needed
+                else {
+                    document.body.classList.add('desktop-view');
+                }
             }, 200);
         });
 
         // Simple toggle function matching the template
         let container = document.getElementById('container');
-        
+
         function toggle() {
-            // Toggle between sign-in and forgot-password classes
-            container.classList.toggle('sign-in');
-            container.classList.toggle('forgot-password');
+            // Handle desktop vs mobile toggle differently
+            if (window.innerWidth <= 425) {
+                // Mobile: ensure only one form is visible
+                if (container.classList.contains('sign-in')) {
+                    // Switch to forgot password
+                    container.classList.remove('sign-in');
+                    container.classList.add('forgot-password');
+                } else {
+                    // Switch to sign in
+                    container.classList.remove('forgot-password');
+                    container.classList.add('sign-in');
+                }
+                
+                // Reset scroll position on mobile
+                window.scrollTo(0, 0);
+            } else {
+                // Desktop: simple toggle
+                container.classList.toggle('sign-in');
+                container.classList.toggle('forgot-password');
+            }
         }
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 200);
+        });
     </script>
 </body>
 

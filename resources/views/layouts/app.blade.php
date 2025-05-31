@@ -18,6 +18,10 @@
     <!-- APP CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-modal.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+    <!-- Responsive CSS Extensions -->
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <!-- Page Specific CSS -->
+    @yield('styles')
     <title>MTSN 6 Garut</title>
 </head>
 
@@ -168,6 +172,9 @@
 
     <!-- Tambahkan ini untuk merender scripts dari halaman lain, pastikan letaknya diakhir kode javascript -->
     @yield('scripts')
+
+    <!-- Responsive JS Enhancements -->
+    <script src="{{ asset('assets/js/responsive.js') }}"></script>
 </body>
 
 </html>

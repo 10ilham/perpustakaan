@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+@endsection
+
 @section('content')
     <!-- MAIN -->
     <main>
@@ -19,8 +23,8 @@
                     </div>
                     <i class='bx bx-book icon'></i>
                 </div>
-                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                    <a href="{{ route('buku.index') }}" class="label" style="color: #6f737b;">Lihat Detail</a>
+                <div class="detail-link-container">
+                    <a href="{{ route('buku.index') }}" class="label detail-link">Lihat Detail</a>
                 </div>
             </div>
 
@@ -33,8 +37,8 @@
                     </div>
                     <i class='bx bxs-book-open icon'></i>
                 </div>
-                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                    <a href="{{ route('peminjaman.index') }}" class="label" style="color: #6f737b;">Lihat Detail</a>
+                <div class="detail-link-container">
+                    <a href="{{ route('peminjaman.index') }}" class="label detail-link">Lihat Detail</a>
                 </div>
             </div>
 
@@ -152,7 +156,6 @@
 @endsection
 
 @section('scripts')
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadChart('day'); // Default load 1 hari
@@ -236,97 +239,3 @@
         }
     </script>
 @endsection
-
-<style>
-    .info-data .card {
-        padding: 20px;
-        border-radius: 10px;
-        background-color: var(--light);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .info-data .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .info-data .card .head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .info-data .card .count {
-        font-size: 28px;
-        font-weight: 600;
-        color: var(--primary);
-        margin: 15px 0 5px;
-    }
-
-    .info-data .card .label {
-        display: block;
-        text-align: right;
-        font-size: 14px;
-        color: var(--primary);
-        text-decoration: none;
-        margin-top: 10px;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-
-    .info-data .card .label:hover {
-        color: var(--dark);
-    }
-
-    .info-data .card .icon {
-        font-size: 30px;
-        color: var(--primary);
-        background-color: rgba(var(--primary-rgb), 0.1);
-        padding: 8px;
-        border-radius: 50%;
-    }
-
-    /* Leaderboard Styling */
-    .leaderboard {
-        margin-top: 20px;
-        overflow-x: auto;
-    }
-
-    .leaderboard table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .leaderboard th,
-    .leaderboard td {
-        padding: 12px 15px;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-
-    .leaderboard th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-    }
-
-    .leaderboard tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    .leaderboard .btn-info {
-        background-color: #17a2b8;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        font-size: 12px;
-        border-radius: 4px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .leaderboard .btn-info:hover {
-        background-color: #138496;
-    }
-</style>

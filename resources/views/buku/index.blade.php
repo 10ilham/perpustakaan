@@ -56,18 +56,15 @@
                 <div class="head">
                     <h3>Filter Buku</h3>
                 </div>
-                <form action="{{ route('buku.index') }}" method="GET" class="form-group"
-                    style="margin-top: 10px; display: flex; gap: 10px;">
-                    <select name="kategori" id="kategori" class="form-control" onchange="this.form.submit()"
-                        style="max-width: 180px;">
+                <form action="{{ route('buku.index') }}" method="GET" class="form-group">
+                    <select name="kategori" id="kategori" class="form-control" onchange="this.form.submit()">
                         <option value="">Semua Kategori</option>
                         @foreach ($kategori as $kat)
                             <option value="{{ $kat->id }}" {{ request('kategori') == $kat->id ? 'selected' : '' }}>
                                 {{ $kat->nama }}</option>
                         @endforeach
                     </select>
-                    <select name="status" id="status" class="form-control" onchange="this.form.submit()"
-                        style="max-width: 150px;">
+                    <select name="status" id="status" class="form-control" onchange="this.form.submit()">
                         <option value="">Semua Status</option>
                         <option value="Tersedia" {{ request('status') == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
                         <option value="Habis" {{ request('status') == 'Habis' ? 'selected' : '' }}>Habis</option>
