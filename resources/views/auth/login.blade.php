@@ -149,29 +149,31 @@
             width: 100%;
             max-width: 100%;
         }
-        
+
         /* Add desktop specific styles */
         @media only screen and (min-width: 426px) {
             .container .col {
-                display: flex !important; /* Desktop always shows both columns */
+                display: flex !important;
+                /* Desktop always shows both columns */
             }
         }
-        
+
         /* Desktop specific styles */
         @media only screen and (min-width: 426px) {
             .container.sign-in.forgot-password {
                 /* Reset to sign-in if both classes exist somehow */
                 animation: reset-container 0.1s forwards;
             }
-            
+
             @keyframes reset-container {
                 to {
                     transform: translateX(0);
                 }
             }
-            
+
             /* Make sure columns are visible on desktop */
-            .col.sign-in, .col.forgot-password {
+            .col.sign-in,
+            .col.forgot-password {
                 display: flex;
             }
         }
@@ -198,6 +200,7 @@
             width: 100%;
             max-width: 28rem;
             position: relative;
+            padding-top: 15px;
         }
 
         .form {
@@ -229,20 +232,28 @@
             transform: scale(1);
             transition-delay: 0.5s;
         }
-        
+
         /* Mobile-only column visibility rules */
         @media only screen and (max-width: 425px) {
-            .col.sign-in, 
+
+            .col.sign-in,
             .col.forgot-password {
                 display: none;
             }
-            
-            .container.sign-in .col.sign-in {
+
+            .container.sign-in .col.sign-in,
+            .container.sign-in .col.sign-in .form-title {
                 display: flex;
             }
-            
-            .container.forgot-password .col.forgot-password {
+
+            .container.forgot-password .col.forgot-password,
+            .container.forgot-password .col.forgot-password .form-title {
                 display: flex;
+            }
+
+            /* Ensure titles are hidden initially on mobile */
+            .form-title {
+                display: none;
             }
         }
 
@@ -263,26 +274,26 @@
                 margin-top: 0;
                 margin-bottom: 20px;
             }
-            
-            /* Fix input size */
+
+
             .input-group input {
                 padding: 0.8rem 2.5rem;
                 font-size: 0.9rem;
             }
-            
-            /* Fix button size */
+
+
             .btn-animated {
                 padding: 8px 15px;
                 font-size: 14px;
                 letter-spacing: 2px;
             }
         }
-        
-        /* Fix for extra small screens */
+
         @media only screen and (max-width: 320px) {
             .form {
                 padding: 1rem;
             }
+
             .input-group input {
                 font-size: 0.8rem;
             }
@@ -439,9 +450,11 @@
             0% {
                 transform: translateY(0px);
             }
+
             50% {
                 transform: translateY(-8px);
             }
+
             100% {
                 transform: translateY(0px);
             }
@@ -452,15 +465,19 @@
             0% {
                 transform: scale(1);
             }
+
             14% {
                 transform: scale(1.04);
             }
+
             28% {
                 transform: scale(1);
             }
+
             42% {
                 transform: scale(1.02);
             }
+
             70% {
                 transform: scale(1);
             }
@@ -610,12 +627,13 @@
             .container.forgot-password .col.forgot-password {
                 transform: translateY(0);
                 top: 0;
-                margin-top: 50px;
-                height: calc(100vh - 50px);
+                margin-top: 20px;
+                height: calc(100vh - 20px);
                 overflow-y: auto;
-                display: flex !important; /* Force display only on mobile */
+                display: flex !important;
+                /* Force display only on mobile */
             }
-            
+
             /* Ensure the inactive form is completely hidden on mobile */
             .container.sign-in .col.forgot-password,
             .container.forgot-password .col.sign-in {
@@ -672,12 +690,62 @@
             .text h2 {
                 margin: .5rem;
                 font-size: 1.8rem;
+            }        .form-wrapper {
+            width: 90%;
+            margin: 0 auto;
             }
-            
-            /* Fix form visible area */
-            .form-wrapper {
-                width: 90%;
-                margin: 0 auto;
+        }
+
+        /* Title styling */
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 11;
+            transform: scale(0);
+            transition: .5s ease-in-out;
+            transition-delay: 0.5s;
+        }
+
+        /* Animation for title activation - match form animation */
+        .container.sign-in .sign-in .form-title,
+        .container.forgot-password .forgot-password .form-title {
+            transform: scale(1);
+            transition-delay: 0.5s;
+        }
+
+        .form-title h2 {
+            color: #57B894;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            font-style: bold;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Create title specific position */
+        .form-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @media only screen and (max-width: 425px) {
+            .form-title h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+                color: #ffffff; /* Change title to white on mobile */
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Stronger shadow for better readability */
+            }
+
+            .form-title {
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -698,6 +766,9 @@
             <!-- FORGOT PASSWORD -->
             <div class="col align-items-center flex-col forgot-password">
                 <div class="form-wrapper align-items-center">
+                    <div class="form-title">
+                        <h2>SISTEM PERPUSTAKAAN BERBASIS WEB</h2>
+                    </div>
                     <div class="form forgot-password">
                         <form method="POST" action="{{ route('password.email') }}">
                             @csrf
@@ -729,6 +800,9 @@
             <!-- SIGN IN (LOGIN) -->
             <div class="col align-items-center flex-col sign-in">
                 <div class="form-wrapper align-items-center">
+                    <div class="form-title">
+                        <h2>SISTEM PERPUSTAKAAN BERBASIS WEB</h2>
+                    </div>
                     <div class="form sign-in" id="login-form">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
@@ -877,15 +951,15 @@
                 // Make sure we start with a clean state
                 container.classList.remove('sign-in');
                 container.classList.remove('forgot-password');
-                
+
                 // Set the initial state to login form
                 container.classList.add('sign-in');
-                
+
                 // Specific mobile adjustments
                 if (window.innerWidth <= 425) {
-                    // Fix any scrolling issues
+
                     window.scrollTo(0, 0);
-                    
+
                     // Make sure inputs don't zoom the page on focus
                     const inputs = document.querySelectorAll('input');
                     inputs.forEach(input => {
@@ -894,7 +968,7 @@
                         input.setAttribute('autocapitalize', 'off');
                         input.setAttribute('spellcheck', 'false');
                     });
-                } 
+                }
                 // Add desktop specific class if needed
                 else {
                     document.body.classList.add('desktop-view');
@@ -918,7 +992,7 @@
                     container.classList.remove('forgot-password');
                     container.classList.add('sign-in');
                 }
-                
+
                 // Reset scroll position on mobile
                 window.scrollTo(0, 0);
             } else {
@@ -927,7 +1001,7 @@
                 container.classList.toggle('forgot-password');
             }
         }
-        
+
         // Handle orientation change
         window.addEventListener('orientationchange', function() {
             setTimeout(() => {
