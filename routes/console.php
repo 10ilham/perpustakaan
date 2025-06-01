@@ -36,8 +36,9 @@ Schedule::command('app:send-pengembalian-reminders')
     ->appendOutputTo(storage_path('logs/scheduler-pengembalian-reminders.log'))
     ->description('Pengiriman notifikasi pengembalian pagi hari');
 
-// Menjalankan command notifikasi setiap jam untuk memastikan berjalan 24 jam
+// Menjalankan command notifikasi setiap jam
 Schedule::command('app:send-pengembalian-reminders')
+    //->everyTwoHours() menjalankan setiap 2 jam
     ->hourly()
     ->appendOutputTo(storage_path('logs/scheduler-pengembalian-reminders.log'))
     ->description('Pengiriman notifikasi pengembalian setiap jam');
