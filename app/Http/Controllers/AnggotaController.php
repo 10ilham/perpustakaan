@@ -423,83 +423,105 @@ class AnggotaController extends Controller
      */
     public function getChartData(Request $request)
     {
-        $period = $request->query('period', 'day'); // menentukan periode default ke 'day' yang ditampilkan di dashboard
+        $period = $request->query('period', 'day');
         $userId = Auth::id();
 
         // Tentukan rentang waktu berdasarkan periode
-        $startDate = now();
-        $endDate = now();
-
         if ($period == 'day') {
             $startDate = now()->startOfDay();
             $endDate = now()->endOfDay();
-            $format = 'H:i';
-            $interval = 'hour';
-            $intervalValue = 2; // setiap 2 jam
+            $format = 'H:i'; // Format untuk menampilkan jam dan menit
+            $intervalHours = 1; // Interval 1 jam untuk detail lebih baik
         } elseif ($period == 'week') {
             $startDate = now()->subDays(6)->startOfDay();
             $endDate = now()->endOfDay();
             $format = 'd/m';
-            $interval = 'day';
-            $intervalValue = 1; // setiap hari
         } elseif ($period == 'month') {
             $startDate = now()->subDays(29)->startOfDay();
             $endDate = now()->endOfDay();
             $format = 'd/m';
-            $interval = 'day';
-            $intervalValue = 1; // setiap 1 hari
         }
 
         // Ambil data peminjaman aktual dari database untuk periode yang dipilih
         $peminjamanFromDB = PeminjamanModel::where('user_id', $userId)
-            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
-            ->select('tanggal_pinjam')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select('created_at')
             ->get();
 
         // Dapatkan total peminjaman user
         $totalPeminjaman = PeminjamanModel::where('user_id', $userId)->count();
 
-        // Generate labels untuk chart (tanggal)
         $labels = [];
         $peminjamanData = [];
-        $current = clone $startDate;
-        $dateFormat = 'd/m/Y'; // Format for displaying and debugging dates
 
-        // Initialize empty array with correct date keys based on periods
-        $dateMap = [];
-        $tempCurrent = clone $startDate;
-        while ($tempCurrent <= $endDate) {
-            $dateKey = $tempCurrent->format($dateFormat);
-            $dateMap[$dateKey] = 0;
+        if ($period == 'day') {
+            // Untuk periode hari, buat slot per jam dengan menit
+            $timeSlots = [];
+            for ($hour = 0; $hour < 24; $hour += $intervalHours) {
+                // Format jam dengan menit yang jelas
+                $timeLabel = sprintf('%02d:00', $hour);
+                $labels[] = $timeLabel;
+                $timeSlots[] = ['hour' => $hour];
+                $peminjamanData[] = 0; // inisialisasi dengan 0
+            }
 
-            if ($interval == 'hour') {
-                $tempCurrent->addHours($intervalValue);
-            } elseif ($interval == 'day') {
-                $tempCurrent->addDays($intervalValue);
+            // Hitung peminjaman untuk setiap slot waktu
+            foreach ($peminjamanFromDB as $peminjaman) {
+                $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
+                $hour = (int) $createdAt->format('H');
+                $minute = (int) $createdAt->format('i');
+
+                // Temukan slot jam yang sesuai
+                $slotIndex = $hour;
+                if ($slotIndex >= 0 && $slotIndex < count($peminjamanData)) {
+                    $peminjamanData[$slotIndex]++;
+                }
+            }
+        } else {
+            // Untuk periode week dan month (logika existing)
+            $current = clone $startDate;
+            $dateMap = [];
+
+            // Initialize date map
+            while ($current <= $endDate) {
+                $dateKey = $current->format('Y-m-d');
+                $dateMap[$dateKey] = 0;
+                $current->addDay();
+            }
+
+            // Count peminjaman per hari
+            foreach ($peminjamanFromDB as $peminjaman) {
+                $dateKey = \Carbon\Carbon::parse($peminjaman->created_at)->format('Y-m-d');
+                if (isset($dateMap[$dateKey])) {
+                    $dateMap[$dateKey]++;
+                }
+            }
+
+            // Generate labels dan data
+            $current = clone $startDate;
+            while ($current <= $endDate) {
+                $labels[] = $current->format($format);
+                $dateKey = $current->format('Y-m-d');
+                $peminjamanData[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
+                $current->addDay();
             }
         }
 
-        // Count actual loans for each date
-        foreach ($peminjamanFromDB as $peminjaman) {
-            $dateKey = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format($dateFormat);
-            if (isset($dateMap[$dateKey])) {
-                $dateMap[$dateKey]++;
+        // Tambahkan detail menit pada label
+        if ($period == 'day' && count($peminjamanFromDB) > 0) {
+            // Temukan jam yang ada peminjaman dan tambahkan menit ke label
+            $detailedLabels = $labels;
+            foreach ($peminjamanFromDB as $peminjaman) {
+                $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
+                $hour = (int) $createdAt->format('H');
+                $minute = (int) $createdAt->format('i');
+
+                // Jika ada peminjaman pada jam tersebut, ubah label dengan menit yang tepat
+                if ($hour >= 0 && $hour < count($detailedLabels)) {
+                    $detailedLabels[$hour] = sprintf('%02d:%02d', $hour, $minute);
+                }
             }
-        }
-
-        // Generate labels and populate data array in the correct sequence
-        while ($current <= $endDate) {
-            $labels[] = $current->format($format);
-            $dateKey = $current->format($dateFormat);
-
-            // Only add count for dates that exist in the dateMap
-            $peminjamanData[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
-
-            if ($interval == 'hour') {
-                $current->addHours($intervalValue);
-            } elseif ($interval == 'day') {
-                $current->addDays($intervalValue);
-            }
+            $labels = $detailedLabels;
         }
 
         // Verifikasi jumlah peminjaman dalam grafik
@@ -512,7 +534,7 @@ class AnggotaController extends Controller
             'total' => $totalPeminjaman,
             'totalInChart' => $totalInChart,
             'actualData' => $peminjamanFromDB->map(function ($item) {
-                return \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y');
+                return \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s');
             })
         ]);
     }
