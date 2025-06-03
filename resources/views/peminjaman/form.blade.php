@@ -94,7 +94,7 @@
                                     <label for="nama">Nama Peminjam</label>
                                     <input type="text" name="nama" id="nama" class="form-control"
                                         placeholder="Masukkan nama Anda sebagai peminjam"
-                                        value="{{ auth()->user()->nama }}" disabled>
+                                        value="{{ auth()->user()->nama }}" readonly>
                                     <small class="form-text" style="color: #6c757d; opacity: 0.7;">
                                         *Nama peminjam otomatis terisi sesuai akun Anda.
                                     </small>
