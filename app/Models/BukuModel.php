@@ -5,6 +5,10 @@ namespace App\Models;
 // Menggunakan traits dan kelas dari framework - Konsep OOP: Reusability (menggunakan kembali kode yang sudah ada di laravel)
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+// Mengimpor model-model terkait - Konsep OOP: Dependency
+use App\Models\KategoriModel;
+use App\Models\AdminModel;
+use App\Models\PeminjamanModel;
 
 /**
  * Kelas BukuModel - Representasi data buku di perpustakaan
@@ -35,7 +39,19 @@ class BukuModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan me
         'total_buku',   // Total jumlah buku yang dimiliki perpustakaan
         'stok_buku',    // Jumlah buku yang tersedia untuk dipinjam
         'status',       // Status ketersediaan buku
+        'id_admin',     // Foreign key ke tabel admin
     ];
+
+    /**
+     * Relasi ke tabel admin - Menghubungkan BukuModel dengan AdminModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan many-to-one antara Buku dan Admin
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function admin()
+    {
+        // Implementasi relasi many-to-one - Banyak buku bisa dimiliki oleh satu admin
+        return $this->belongsTo(AdminModel::class, 'id_admin');
+    }
 
     /**
      * Relasi ke tabel kategori - Menghubungkan BukuModel dengan KategoriModel
@@ -48,5 +64,16 @@ class BukuModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan me
         // dan satu kategori bisa dimiliki oleh banyak buku
         // Menggunakan tabel pivot (tabel perantara) 'kategori_buku' untuk menyimpan relasi antara buku dan kategori
         return $this->belongsToMany(KategoriModel::class, 'kategori_buku', 'buku_id', 'kategori_id');
+    }
+
+    /**
+     * Relasi ke tabel peminjaman - Menghubungkan BukuModel dengan PeminjamanModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan one-to-many antara Buku dan Peminjaman
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function peminjaman()
+    {
+        // Implementasi relasi one-to-many - Satu buku bisa banyak dipinjam (tegantung stok buku)
+        return $this->hasMany(PeminjamanModel::class, 'buku_id');
     }
 }

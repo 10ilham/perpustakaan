@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 // Menggunakan traits dan kelas dari framework - Konsep OOP: Reusability (menggunakan kembali kode yang sudah ada di laravel)
@@ -26,7 +27,19 @@ class KategoriModel extends Model // Konsep OOP: Inheritance - mewarisi sifat da
     protected $fillable = [
         'nama',      // Nama kategori buku
         'deskripsi', // Deskripsi kategori buku
+        'id_admin',  // Foreign key ke tabel admin
     ];
+
+    /**
+     * Relasi ke tabel admin - Menghubungkan KategoriModel dengan AdminModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan many-to-one antara Kategori dan Admin
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function admin()
+    {
+        // Implementasi relasi many-to-one - Banyak kategori bisa dimiliki oleh satu admin
+        return $this->belongsTo(AdminModel::class, 'id_admin');
+    }
 
     /**
      * Relasi ke tabel buku - Menghubungkan KategoriModel dengan BukuModel

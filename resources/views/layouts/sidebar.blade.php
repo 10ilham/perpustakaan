@@ -47,14 +47,6 @@
                             class="{{ request()->routeIs('buku.index') ? 'active-menu-item' : '' }}">Daftar Buku</a>
                     </li>
                 @endif
-                {{-- @if (Auth::user()->level === 'siswa' || Auth::user()->level === 'guru' || Auth::user()->level === 'staff')
-                    <li>
-                        <a href="{{ route('buku.index') }}"
-                            class="{{ request()->fullUrl() == route('buku.index') . '?status=tersedia' ? 'active-menu-item' : '' }}">Buku
-                            Favorit
-                        </a>
-                    </li>
-                @endif --}}
             </ul>
         </li>
 
@@ -69,6 +61,13 @@
                         Peminjaman
                     </a>
                 </li>
+                @if (Auth::user()->level === 'admin')
+                    <li><a href="{{ route('peminjaman.manual') }}"
+                            class="{{ request()->routeIs('peminjaman.manual') ? 'active-menu-item' : '' }}">Peminjaman
+                            Manual
+                        </a>
+                    </li>
+                @endif
             </ul>
         </li>
 

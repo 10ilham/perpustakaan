@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('buku', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_admin')->nullable();
             $table->string('kode_buku', 20)->unique();
             $table->string('judul', 60);
             $table->string('pengarang', 50);
@@ -24,6 +25,9 @@ return new class extends Migration
             $table->integer('stok_buku')->default(0);
             $table->string('status', 20)->default('Tersedia');
             $table->timestamps();
+
+            // Foreign key
+            $table->foreign('id_admin')->references('id')->on('admin')->onDelete('set null');
         });
     }
 

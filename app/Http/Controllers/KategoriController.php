@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\KategoriModel;
+use App\Models\AdminModel;
+use Illuminate\Support\Facades\Auth;
 
 class KategoriController extends Controller
 {
@@ -57,11 +59,21 @@ class KategoriController extends Controller
             'deskripsi' => 'nullable|string',
         ], $messages);
 
-        // Simpan kategori baru
-        KategoriModel::create([
+        // Ambil data admin yang sedang login
+        $adminModel = AdminModel::where('user_id', Auth::id())->first();
+
+        // Simpan kategori baru dengan id_admin
+        $kategoriData = [
             'nama' => $request->nama,
             'deskripsi' => $request->deskripsi,
-        ]);
+        ];
+
+        // Set id_admin berdasarkan admin yang sedang login
+        if ($adminModel) {
+            $kategoriData['id_admin'] = $adminModel->id;
+        }
+
+        KategoriModel::create($kategoriData);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan');
     }
@@ -94,12 +106,22 @@ class KategoriController extends Controller
             'deskripsi' => 'nullable|string',
         ], $messages);
 
+        // Ambil data admin yang sedang login, untuk mengisi id_admin
+        $adminModel = AdminModel::where('user_id', Auth::id())->first();
+
         // Update kategori
         $kategori = KategoriModel::findOrFail($id);
-        $kategori->update([
+        $updateData = [
             'nama' => $request->nama,
             'deskripsi' => $request->deskripsi,
-        ]);
+        ];
+
+        // Update id_admin berdasarkan admin yang sedang melakukan edit
+        if ($adminModel) {
+            $updateData['id_admin'] = $adminModel->id;
+        }
+
+        $kategori->update($updateData);
 
         // Redirect berdasarkan referensi
         if ($request->has('ref') && $request->ref == 'detail') {

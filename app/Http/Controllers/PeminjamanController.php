@@ -504,4 +504,179 @@ class PeminjamanController extends Controller
             $user->notify(new PeminjamanBukuAdminNotification($peminjaman));
         }
     }
+
+    /**
+     * Menampilkan form peminjaman manual untuk admin
+     * @return \Illuminate\Http\Response
+     */
+    public function formManual()
+    {
+        // Hanya admin yang bisa akses
+        if (Auth::user()->level !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk halaman ini.');
+        }
+
+        // Ambil semua buku yang tersedia
+        $buku = BukuModel::where('status', 'Tersedia')->where('stok_buku', '>', 0)->get();
+
+        return view('peminjaman.manual', compact('buku'));
+    }
+
+    /**
+     * Mendapatkan daftar anggota berdasarkan level
+     * @param string $level
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAnggotaByLevel($level)
+    {
+        // Hanya admin yang bisa akses
+        if (Auth::user()->level !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $anggota = [];
+
+        if ($level === 'siswa') {
+            $anggota = User::where('level', 'siswa')
+                ->with('siswa')
+                ->get()
+                ->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'nama' => $user->nama,
+                        'info' => $user->siswa ? 'NIS: ' . $user->siswa->nis . ' - Kelas: ' . $user->siswa->kelas : 'Data tidak lengkap'
+                    ];
+                });
+        } elseif ($level === 'guru') {
+            $anggota = User::where('level', 'guru')
+                ->with('guru')
+                ->get()
+                ->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'nama' => $user->nama,
+                        'info' => $user->guru ? 'NIP: ' . $user->guru->nip . ' - Mapel: ' . $user->guru->mata_pelajaran : 'Data tidak lengkap'
+                    ];
+                });
+        } elseif ($level === 'staff') {
+            $anggota = User::where('level', 'staff')
+                ->with('staff')
+                ->get()
+                ->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'nama' => $user->nama,
+                        'info' => $user->staff ? 'NIP: ' . $user->staff->nip . ' - Bagian: ' . $user->staff->bagian : 'Data tidak lengkap'
+                    ];
+                });
+        }
+
+        return response()->json($anggota);
+    }
+
+    /**
+     * Menyimpan peminjaman manual yang diinput oleh admin
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function simpanManual(Request $request)
+    {
+        // Hanya admin yang bisa akses
+        if (Auth::user()->level !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk fitur ini.');
+        }
+
+        $request->validate(
+            [
+                'buku_id' => 'required|exists:buku,id',
+                'user_level' => 'required|in:siswa,guru,staff',
+                'user_id' => 'required|exists:users,id',
+                'tanggal_pinjam' => 'required|date|after_or_equal:today',
+                'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
+                'catatan' => 'nullable|string|max:500'
+            ],
+            [
+                'buku_id.required' => 'Buku harus dipilih.',
+                'buku_id.exists' => 'Buku tidak ditemukan.',
+
+                'user_level.required' => 'Level anggota harus dipilih.',
+                'user_level.in' => 'Level anggota tidak valid.',
+
+                'user_id.required' => 'Anggota harus dipilih.',
+                'user_id.exists' => 'Anggota tidak ditemukan.',
+
+                'tanggal_pinjam.required' => 'Tanggal pinjam harus diisi.',
+                'tanggal_pinjam.date' => 'Format tanggal pinjam tidak valid.',
+                'tanggal_pinjam.after_or_equal' => 'Tanggal pinjam minimal hari ini.',
+
+                'tanggal_kembali.required' => 'Tanggal kembali harus diisi.',
+                'tanggal_kembali.date' => 'Format tanggal kembali tidak valid.',
+                'tanggal_kembali.after' => 'Tanggal kembali harus setelah tanggal pinjam.',
+
+                'catatan.max' => 'Catatan tidak boleh lebih dari 500 karakter.'
+            ]
+        );
+
+        // Validasi level user sesuai dengan user yang dipilih
+        $user = User::findOrFail($request->user_id);
+        if ($user->level !== $request->user_level) {
+            return redirect()->back()->with('error', 'Level anggota tidak sesuai dengan anggota yang dipilih.')->withInput();
+        }
+
+        $buku = BukuModel::findOrFail($request->buku_id);
+
+        // Cek stok buku
+        if ($buku->stok_buku <= 0) {
+            return redirect()->back()->with('error', 'Stok buku tidak tersedia untuk dipinjam.')->withInput();
+        }
+
+        // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan
+        $sudahPinjam = PeminjamanModel::where('user_id', $request->user_id)
+            ->where('buku_id', $request->buku_id)
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->first();
+
+        if ($sudahPinjam) {
+            return redirect()->back()->with('error', 'Anggota sudah meminjam buku ini dan belum mengembalikannya.')->withInput();
+        }
+
+        // Cek jumlah buku yang sedang dipinjam oleh user
+        $jumlahPinjam = PeminjamanModel::where('user_id', $request->user_id)
+            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->count();
+
+        // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
+        if ($jumlahPinjam >= 1) {
+            return redirect()->back()->with('error', 'Anggota sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu.')->withInput();
+        }
+
+        // Generate nomor peminjaman
+        $no_peminjaman = 'PJM-' . date('YmdHis') . '-' . Str::random(5);
+
+        // Buat record peminjaman
+        $peminjaman = new PeminjamanModel();
+        $peminjaman->user_id = $request->user_id;
+        $peminjaman->buku_id = $request->buku_id;
+        $peminjaman->no_peminjaman = $no_peminjaman;
+        $peminjaman->tanggal_pinjam = $request->tanggal_pinjam;
+        $peminjaman->tanggal_kembali = $request->tanggal_kembali;
+        $peminjaman->status = 'Dipinjam';
+        $peminjaman->catatan = $request->catatan;
+        $peminjaman->save();
+
+        // Kurangi stok buku
+        $buku->stok_buku -= 1;
+
+        // Update status buku jika stok habis
+        if ($buku->stok_buku <= 0) {
+            $buku->status = 'Habis';
+        }
+
+        $buku->save();
+
+        // Kirim notifikasi ke admin tentang peminjaman baru
+        $this->kirimNotifikasiPeminjamanBaru($peminjaman);
+
+        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman manual berhasil disimpan untuk anggota: ' . $user->nama);
+    }
 }

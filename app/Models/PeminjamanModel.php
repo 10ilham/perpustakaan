@@ -47,7 +47,7 @@ class PeminjamanModel extends Model // Konsep OOP: Inheritance - mewarisi sifat 
      */
     public function user() // public - dapat diakses dari mana saja
     {
-        // Implementasi relasi many-to-one - Banyak peminjaman bisa dilakukan oleh satu user dan satu peminjaman hanya bisa dilakukan oleh satu user
+        // Implementasi relasi many-to-one - 1 User bisa memiliki banyak Peminjaman (record historis semua peminjaman) dan satu peminjaman hanya milik satu user
         return $this->belongsTo(User::class, 'user_id');
     }
 
@@ -58,7 +58,7 @@ class PeminjamanModel extends Model // Konsep OOP: Inheritance - mewarisi sifat 
      */
     public function buku() // public - dapat diakses dari mana saja
     {
-        // Implementasi relasi many-to-one - Banyak peminjaman bisa dilakukan terhadap satu buku (satu buku bisa dipinjam oleh beberapa orang) dan satu peminjaman hanya berisi satu buku
+        // Implementasi relasi many-to-one - Banyak peminjaman bisa dilakukan terhadap satu buku (tergantung stok buku) dan satu peminjaman hanya berisi satu buku
         return $this->belongsTo(BukuModel::class, 'buku_id');
     }
 }

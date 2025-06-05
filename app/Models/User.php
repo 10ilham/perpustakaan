@@ -98,4 +98,16 @@ class User extends Authenticatable implements MustVerifyEmail
         // Implementasi relasi one-to-one - User memiliki satu Staff
         return $this->hasOne(StaffModel::class, 'user_id');
     }
+
+    /**
+     * Relasi ke tabel peminjaman
+     * Konsep OOP: Association - Menunjukkan hubungan antara objek User dan PeminjamanModel
+     * Konsep OOP: Composition - User "memiliki" banyak peminjaman
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function peminjaman()
+    {
+        // Implementasi relasi one-to-many - User bisa memiliki banyak peminjaman (historis peminjaman)
+        return $this->hasMany(PeminjamanModel::class, 'user_id');
+    }
 }

@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('kategori', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_admin')->nullable();
             $table->string('nama', 40);
             $table->text('deskripsi')->nullable();
             $table->timestamps();
+
+            // Foreign key
+            $table->foreign('id_admin')->references('id')->on('admin')->onDelete('set null');
         });
     }
 

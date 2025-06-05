@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BukuModel;
 use App\Models\KategoriModel;
+use App\Models\AdminModel;
+use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BukuController extends Controller
@@ -118,6 +120,9 @@ class BukuController extends Controller
             'kategori_id' => 'required|min:1',
         ], $messages);
 
+        // Ambil data admin yang sedang login, untuk mengisi id_admin
+        $adminModel = AdminModel::where('user_id', Auth::id())->first();
+
         $buku = new BukuModel();
         $buku->kode_buku = $request->kode_buku;
         $buku->judul = $request->judul;
@@ -127,6 +132,11 @@ class BukuController extends Controller
         $buku->deskripsi = $request->deskripsi;
         $buku->total_buku = $request->total_buku;
         $buku->stok_buku = $request->total_buku; // Stok awal sama dengan total buku
+
+        // Set id_admin berdasarkan admin yang sedang login
+        if ($adminModel) {
+            $buku->id_admin = $adminModel->id;
+        }
 
         // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >=0, set status "Tersedia"
         if ($buku->stok_buku <= 0) {
@@ -239,6 +249,9 @@ class BukuController extends Controller
         // Hitung selisih antara stok saat ini dengan total (untuk melihat berapa buku yang sedang dipinjam)
         $bukuDipinjam = $oldTotal - $oldStok;
 
+        // Ambil data admin yang sedang login dan update id_admin pada tabel buku
+        $adminModel = AdminModel::where('user_id', Auth::id())->first();
+
         $buku->kode_buku = $request->kode_buku;
         $buku->judul = $request->judul;
         $buku->pengarang = $request->pengarang;
@@ -246,6 +259,11 @@ class BukuController extends Controller
         $buku->tahun_terbit = $request->tahun_terbit;
         $buku->deskripsi = $request->deskripsi;
         $buku->total_buku = $request->total_buku;
+
+        // Update id_admin berdasarkan admin yang sedang melakukan edit
+        if ($adminModel) {
+            $buku->id_admin = $adminModel->id;
+        }
 
         // Perbarui stok berdasarkan total buku baru dikurangi buku yang sedang dipinjam
         $newStok = $request->total_buku - $bukuDipinjam;

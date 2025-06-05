@@ -43,4 +43,26 @@ class AdminModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan m
         // Implementasi relasi one-to-one (inverse) - Admin milik satu User (satu akun milik satu orang)
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Relasi ke tabel kategori - Menghubungkan AdminModel dengan KategoriModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan one-to-many antara Admin dan Kategori
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function kategori()
+    {
+        // Implementasi relasi one-to-many - Satu admin bisa mengelola banyak kategori
+        return $this->hasMany(KategoriModel::class, 'id_admin');
+    }
+
+    /**
+     * Relasi ke tabel buku - Menghubungkan AdminModel dengan BukuModel
+     * Konsep OOP: Association (Asosiasi) - Menunjukkan hubungan one-to-many antara Admin dan Buku
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function buku()
+    {
+        // Implementasi relasi one-to-many - Satu admin bisa mengelola banyak buku
+        return $this->hasMany(BukuModel::class, 'id_admin');
+    }
 }
