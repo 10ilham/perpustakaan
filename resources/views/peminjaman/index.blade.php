@@ -19,7 +19,6 @@
 
         <!-- Info Cards -->
         <div class="info-data">
-            <!-- Card Total Peminjaman -->
             <div class="card">
                 <div class="head">
                     <div>
@@ -106,6 +105,41 @@
                 </div>
             </div>
 
+            <!-- Global Export Section for All Tables Combined -->
+            <div class="global-export-section">
+                <div class="data">
+                    <div class="content-data">
+                        <div class="head">
+                            <h3>Export Semua Data Peminjaman</h3>
+                            <div class="menu">
+                                <span style="color: var(--dark-grey); font-size: 14px;">
+                                    <i class='bx bx-info-circle'></i> Export data dari semua tabel (Siswa, Guru, Staff)
+                                    dalam satu file
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="export-all-buttons-container">
+                            <button id="exportAllToExcel" class="btn btn-outline-success export-btn">
+                                <i class="bx bx-file-blank"></i><span>Excel Semua Data</span>
+                            </button>
+                            <button id="exportAllToWord" class="btn btn-outline-info export-btn">
+                                <i class="bx bxs-file-doc"></i><span>Word Semua Data</span>
+                            </button>
+                            <button id="exportAllToPDF" class="btn btn-outline-danger export-btn">
+                                <i class="bx bxs-file-pdf"></i><span>PDF Semua Data</span>
+                            </button>
+                            <button id="exportAllToCSV" class="btn btn-outline-success export-btn">
+                                <i class="bx bx-file"></i><span>CSV Semua Data</span>
+                            </button>
+                            <button id="printAllData" class="btn btn-outline-warning export-btn">
+                                <i class="bx bx-printer"></i><span>Print Semua Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tampilan tabel untuk Halaman Admin -->
             <div class="tab-content" id="userTypesContent">
                 @if (!request('user_type') || request('user_type') == 'siswa')
@@ -115,6 +149,12 @@
                             <div class="content-data">
                                 <div class="head">
                                     <h3>Daftar Peminjaman Siswa</h3>
+                                    <div class="menu">
+                                        <span style="color: var(--dark-grey); font-size: 14px;">
+                                            <i class='bx bx-info-circle'></i> Gunakan tombol export di bawah tabel untuk
+                                            mengunduh data
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive p-3">
@@ -129,6 +169,7 @@
                                                 <th>Tanggal Batas Kembali</th>
                                                 <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
+                                                <th style="display: none;">Catatan</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -178,6 +219,7 @@
                                                                 </span>
                                                             @endif
                                                         </td>
+                                                        <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
                                                         <td>
                                                             <div class="btn-group">
                                                                 <a href="{{ route('peminjaman.detail', $item->id) }}"
@@ -188,7 +230,8 @@
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
                                                                         class="btn btn-sm btn-success-peminjaman"
-                                                                        data-bs-toggle="modal" data-bs-target="#returnModal"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#returnModal"
                                                                         data-action="{{ route('peminjaman.kembalikan', $item->id) }}"
                                                                         title="Konfirmasi Pengembalian">
                                                                         <i class="bx bx-check"></i>
@@ -222,6 +265,12 @@
                             <div class="content-data">
                                 <div class="head">
                                     <h3>Daftar Peminjaman Guru</h3>
+                                    <div class="menu">
+                                        <span style="color: var(--dark-grey); font-size: 14px;">
+                                            <i class='bx bx-info-circle'></i> Gunakan tombol export di bawah tabel untuk
+                                            mengunduh data
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive p-3">
@@ -236,6 +285,7 @@
                                                 <th>Tanggal Batas Kembali</th>
                                                 <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
+                                                <th style="display: none;">Catatan</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -285,6 +335,7 @@
                                                                 </span>
                                                             @endif
                                                         </td>
+                                                        <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
                                                         <td>
                                                             <div class="btn-group">
                                                                 <a href="{{ route('peminjaman.detail', $item->id) }}"
@@ -330,6 +381,12 @@
                             <div class="content-data">
                                 <div class="head">
                                     <h3>Daftar Peminjaman Staff</h3>
+                                    <div class="menu">
+                                        <span style="color: var(--dark-grey); font-size: 14px;">
+                                            <i class='bx bx-info-circle'></i> Gunakan tombol export di bawah tabel untuk
+                                            mengunduh data
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive p-3">
@@ -344,6 +401,7 @@
                                                 <th>Tanggal Batas Kembali</th>
                                                 <th>Tanggal Pengembalian</th>
                                                 <th>Status</th>
+                                                <th style="display: none;">Catatan</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -393,6 +451,7 @@
                                                                 </span>
                                                             @endif
                                                         </td>
+                                                        <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
                                                         <td>
                                                             <div class="btn-group">
                                                                 <a href="{{ route('peminjaman.detail', $item->id) }}"
@@ -471,7 +530,6 @@
             <div class="data">
                 <div class="content-data">
                     <div class="head">
-                        {{-- <h3>Daftar Peminjaman {{ ucfirst(auth()->user()->level) }}</h3> --}}
                         <h3>Daftar Peminjaman Anda</h3>
                     </div>
                     <div class="table-responsive p-3">
@@ -597,16 +655,19 @@
 @endsection
 
 @section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handler untuk tombol pengembalian
-            const returnModal = document.getElementById('returnModal');
-            const returnForm = document.getElementById('return-form');
+    <!-- Additional library for Word export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            // Handler untuk tombol pengembalian
             document.querySelectorAll('.btn-success-peminjaman').forEach(button => {
                 button.addEventListener('click', function() {
                     const actionUrl = this.getAttribute('data-action');
-                    returnForm.setAttribute('action', actionUrl);
+                    document.getElementById('return-form').setAttribute('action', actionUrl);
                 });
             });
 
@@ -623,21 +684,18 @@
             const endDate = document.getElementById('end_date');
 
             if (startDate && endDate) {
-                // Set max date untuk startDate menjadi endDate jika ada
                 startDate.addEventListener('change', function() {
                     if (startDate.value) {
                         endDate.min = startDate.value;
                     }
                 });
 
-                // Set min date untuk endDate menjadi startDate jika ada
                 endDate.addEventListener('change', function() {
                     if (endDate.value) {
                         startDate.max = endDate.value;
                     }
                 });
 
-                // Set nilai awal jika sudah ada
                 if (startDate.value) {
                     endDate.min = startDate.value;
                 }
@@ -646,32 +704,362 @@
                     startDate.max = endDate.value;
                 }
             }
-        });
 
-        // Inisialisasi DataTable untuk tabel siswa
-        $('#tableSiswa').DataTable({
-            responsive: true,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
+            // Fungsi Global Export untuk Gabungan Semua Tabel
+            function getAllTableData() {
+                const allData = [];
+                let no = 1;
+
+                // Fungsi helper untuk membersihkan teks dari HTML
+                const getCleanText = (element) => {
+                    if (typeof element === 'string') {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = element;
+                        return tempDiv.textContent || tempDiv.innerText || element;
+                    }
+                    return element;
+                };
+
+                // Fungsi untuk mengumpulkan data dari tabel
+                const collectDataFromTable = (tableId, userLevel) => {
+                    if ($.fn.DataTable.isDataTable(tableId)) {
+                        const table = $(tableId).DataTable();
+                        table.rows().every(function() {
+                            const row = this.data();
+                            const rowData = [
+                                no++,
+                                getCleanText(row[1]), // No. Peminjaman
+                                getCleanText(row[2]), // Judul Buku
+                                getCleanText(row[3]), // Nama Peminjam
+                                getCleanText(row[4]), // Tanggal Pinjam
+                                getCleanText(row[5]), // Tanggal Batas Kembali
+                                getCleanText(row[6]), // Tanggal Pengembalian
+                                getCleanText(row[7]), // Status
+                                getCleanText(row[8]), // Catatan
+                                userLevel
+                            ];
+                            allData.push(rowData);
+                        });
+                    }
+                };
+
+                // Kumpulkan data dari semua tabel
+                collectDataFromTable('#tableSiswa', 'Siswa');
+                collectDataFromTable('#tableGuru', 'Guru');
+                collectDataFromTable('#tableStaff', 'Staff');
+
+                return allData;
             }
-        });
 
-        // Inisialisasi DataTable untuk tabel guru
-        $('#tableGuru').DataTable({
-            responsive: true,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
-            }
-        });
+            // Konfigurasi dan Data Export
+            const exportConfig = {
+                headers: ['No', 'No. Peminjaman', 'Judul Buku', 'Nama Peminjam', 'Tanggal Pinjam',
+                    'Tanggal Batas Kembali', 'Tanggal Pengembalian', 'Status', 'Catatan', 'Level'
+                ],
+                fileName: 'Data_Peminjaman_Semua_{{ date('d-m-Y') }}',
+                dateExport: '{{ date('d/m/Y H:i:s') }}'
+            };
 
-        // Inisialisasi DataTable untuk tabel staff
-        $('#tableStaff').DataTable({
-            responsive: true,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
-            }
-        });
+            // Validasi Data Export
+            const validateExportData = () => {
+                const data = getAllTableData();
+                if (data.length === 0) {
+                    alert('Tidak ada data untuk diekspor!');
+                    return null;
+                }
+                return data;
+            };
 
-        // Inisialisasi DataTable untuk tabel user biasa di inisiasi di layout utama yaitu app.blade.php
+            // Export ke Excel
+            $('#exportAllToExcel').on('click', function() {
+                const data = validateExportData();
+                if (!data) return;
+
+                const ws = XLSX.utils.aoa_to_sheet([exportConfig.headers, ...data]);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data Peminjaman Semua');
+                XLSX.writeFile(wb, exportConfig.fileName + '.xlsx');
+            });
+
+            // Export ke Word dengan format yang diperbaiki
+            $('#exportAllToWord').on('click', function() {
+                const data = validateExportData();
+                if (!data) return;
+
+                // Template HTML untuk Word dengan orientasi landscape
+                const wordTemplate = `
+                <!DOCTYPE html>
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+                <head>
+                    <meta charset="utf-8">
+                    <title>Data Peminjaman Semua Anggota</title>
+                    <!--[if gte mso 9]>
+                    <xml><w:WordDocument><w:View>Print</w:View><w:Zoom>90</w:Zoom><w:Orientation>Landscape</w:Orientation></w:WordDocument></xml>
+                    <![endif]-->
+                    <style>
+                        @page { size: A4 landscape; margin: 0.5in; }
+                        body { font-family: Arial, sans-serif; font-size: 10px; margin: 0; }
+                        .header { text-align: center; margin-bottom: 15px; }
+                        .header h2 { font-size: 14px; margin: 0 0 5px 0; }
+                        .date { text-align: center; margin-bottom: 15px; color: #666; font-size: 9px; }
+                        table { border-collapse: collapse; width: 100%; font-size: 8px; table-layout: fixed; }
+                        th, td { border: 1px solid #ddd; padding: 4px; text-align: left; word-wrap: break-word; vertical-align: top; }
+                        th { background-color: #f2f2f2; font-weight: bold; font-size: 9px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header"><h2>Data Peminjaman Semua Anggota</h2></div>
+                    <div class="date"><p>Total Data: ${data.length} Peminjaman - Tanggal Export: ${exportConfig.dateExport}</p></div>
+                    <table><thead><tr>${exportConfig.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                    <tbody>${data.map(row => `<tr>${row.map(cell => `<td>${(cell || '').toString().replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() || '-'}</td>`).join('')}</tr>`).join('')}</tbody>
+                    </table>
+                </body>
+                </html>`;
+
+                // Blob buat word kegunaan untuk menyimpan file
+                const blob = new Blob([wordTemplate], {
+                    type: 'application/msword'
+                });
+                saveAs(blob, exportConfig.fileName + '.doc');
+            });
+
+            // Export ke PDF
+            $('#exportAllToPDF').on('click', function() {
+                const data = validateExportData();
+                if (!data) return;
+
+                const {
+                    jsPDF
+                } = window.jspdf;
+                const doc = new jsPDF('l', 'mm', 'a4'); // landscape
+
+                // Header PDF
+                doc.setFontSize(16);
+                doc.text('Data Peminjaman Semua Anggota', doc.internal.pageSize.getWidth() / 2, 15, {
+                    align: 'center'
+                });
+                doc.setFontSize(10);
+                doc.text(`Total Data: ${data.length} Peminjaman`, doc.internal.pageSize.getWidth() / 2,
+                    25, {
+                        align: 'center'
+                    });
+                doc.text(`Tanggal Export: ${exportConfig.dateExport}`, doc.internal.pageSize.getWidth() / 2,
+                    30, {
+                        align: 'center'
+                    });
+
+                // Tabel PDF
+                doc.autoTable({
+                    head: [exportConfig.headers],
+                    body: data,
+                    startY: 35,
+                    styles: {
+                        fontSize: 8
+                    },
+                    headStyles: {
+                        fillColor: [66, 139, 202]
+                    },
+                    margin: {
+                        top: 35
+                    }
+                });
+
+                doc.save(exportConfig.fileName + '.pdf');
+            });
+
+            // Export ke CSV
+            $('#exportAllToCSV').on('click', function() {
+                const data = validateExportData();
+                if (!data) return;
+
+                const csvContent = [exportConfig.headers.join(',')]
+                    .concat(data.map(row => row.map(cell => `"${cell || '-'}"`).join(',')))
+                    .join('\n');
+
+                const blob = new Blob([csvContent], {
+                    type: 'text/csv'
+                });
+                saveAs(blob, exportConfig.fileName + '.csv');
+            });
+
+            // Print Semua Data
+            $('#printAllData').on('click', function() {
+                const data = validateExportData();
+                if (!data) return;
+
+                const printWindow = window.open('', '_blank');
+                const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Data Peminjaman Semua</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h2 { text-align: center; margin-bottom: 10px; }
+                        .info { text-align: center; margin-bottom: 20px; color: #666; }
+                        table { border-collapse: collapse; width: 100%; font-size: 12px; }
+                        th, td { border: 1px solid black; padding: 6px; text-align: left; }
+                        th { background-color: #f2f2f2; font-weight: bold; }
+                        @media print { body { margin: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <h2>Data Peminjaman Semua Anggota</h2>
+                    <div class="info">
+                        <p>Total Data: ${data.length} Peminjaman</p>
+                        <p>Tanggal Print: ${exportConfig.dateExport}</p>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>${exportConfig.headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `<tr>${row.map(cell => `<td>${cell || '-'}</td>`).join('')}</tr>`).join('')}
+                        </tbody>
+                    </table>
+                </body>
+                </html>`;
+
+                printWindow.document.write(printContent);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            });
+
+            @if (auth()->user()->level == 'admin')
+                // Fungsi untuk ekspor data tabel ke format Word
+                function exportToWord(dt) {
+                    // Ambil data tabel termasuk kolom catatan yang tersembunyi
+                    const data = dt.buttons.exportData({
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Semua kolom kecuali Aksi (indeks 9)
+                    });
+
+                    // Template HTML untuk dokumen Word dengan orientasi landscape
+                    const wordTemplate = `
+                    <!DOCTYPE html>
+                    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Data Peminjaman Buku</title>
+                        <!--[if gte mso 9]>
+                        <xml><w:WordDocument><w:View>Print</w:View><w:Zoom>90</w:Zoom><w:Orientation>Landscape</w:Orientation></w:WordDocument></xml>
+                        <![endif]-->
+                        <style>
+                            @page { size: A4 landscape; margin: 0.5in; }
+                            body { font-family: Arial, sans-serif; font-size: 10px; margin: 0; }
+                            .header { text-align: center; margin-bottom: 15px; }
+                            .header h2 { font-size: 14px; margin: 0 0 5px 0; }
+                            .date { text-align: center; margin-bottom: 15px; color: #666; font-size: 9px; }
+                            table { border-collapse: collapse; width: 100%; font-size: 8px; table-layout: fixed; }
+                            th, td { border: 1px solid #ddd; padding: 4px; text-align: left; word-wrap: break-word; vertical-align: top; }
+                            th { background-color: #f2f2f2; font-weight: bold; font-size: 9px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header"><h2>Data Peminjaman Buku</h2></div>
+                        <div class="date"><p>Data per tanggal {{ date('d/m/Y') }}</p></div>
+                        <table><thead><tr>${data.header.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                        <tbody>${data.body.map(row => `<tr>${row.map(cell => `<td>${cell.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()}</td>`).join('')}</tr>`).join('')}</tbody>
+                        </table>
+                    </body>
+                    </html>`;
+
+                    const blob = new Blob([wordTemplate], {
+                        type: 'application/msword'
+                    });
+                    saveAs(blob, 'Data_Peminjaman_Buku_{{ date('d-m-Y') }}.doc');
+                }
+
+                // Konfigurasi standar untuk DataTable
+                const dataTableConfig = {
+                    responsive: true,
+                    order: [
+                        [0, 'asc']
+                    ],
+                    dom: '<"export-buttons-container"B>frtip',
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
+                    },
+                    columnDefs: [{
+                            responsivePriority: 1,
+                            targets: [0, 1, 2, 3, 7]
+                        }, // Prioritas kolom utama
+                        {
+                            responsivePriority: 2,
+                            targets: [9]
+                        }, // Kolom aksi
+                        {
+                            orderable: false,
+                            targets: [-1]
+                        }, // Kolom aksi tidak dapat diurutkan
+                        {
+                            visible: false,
+                            targets: [8]
+                        } // Sembunyikan kolom catatan
+                    ]
+                };
+
+                // Fungsi untuk membuat tombol export DataTable
+                const createExportButtons = (userType) => ([{
+                        extend: 'copy',
+                        text: '<i class="bx bx-copy"></i><span>Copy</span>',
+                        className: 'btn btn-outline-primary btn-sm export-btn',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i class="bx bx-file"></i><span>CSV</span>',
+                        className: 'btn btn-outline-success btn-sm export-btn',
+                        filename: `Data_Peminjaman_${userType}_{{ date('d-m-Y') }}`,
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="bx bx-file-blank"></i><span>Excel</span>',
+                        className: 'btn btn-outline-success btn-sm export-btn',
+                        filename: `Data_Peminjaman_${userType}_{{ date('d-m-Y') }}`,
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    },
+                    {
+                        text: '<i class="bx bxs-file-doc"></i><span>Word</span>',
+                        className: 'btn btn-outline-info btn-sm export-btn',
+                        action: (e, dt) => exportToWord(dt)
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="bx bxs-file-pdf"></i><span>PDF</span>',
+                        className: 'btn btn-outline-danger btn-sm export-btn',
+                        filename: `Data_Peminjaman_${userType}_{{ date('d-m-Y') }}`,
+                        orientation: 'landscape',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="bx bx-printer"></i><span>Print</span>',
+                        className: 'btn btn-outline-warning btn-sm export-btn',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    }
+                ]);
+
+                // Inisialisasi DataTable untuk semua tabel
+                ['Siswa', 'Guru', 'Staff'].forEach(userType => {
+                    $(`#table${userType}`).DataTable({
+                        ...dataTableConfig,
+                        buttons: createExportButtons(userType)
+                    });
+                });
+            @endif
+        });
     </script>
 @endsection

@@ -524,3 +524,62 @@
                 margin-bottom: 15px !important;
             }
         }
+
+
+
+/* Css halaman peminjaman */
+ .global-export-section {
+            margin-bottom: 30px;
+        }
+
+        .export-all-buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dee2e6;
+            flex-wrap: wrap;
+        }
+
+        .export-all-buttons-container .export-btn {
+            padding: 12px 20px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            border: 2px solid !important;
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+            min-width: 140px;
+            height: 45px;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .export-all-buttons-container .export-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .export-all-buttons-container .export-btn i {
+            font-size: 16px !important;
+        }
+
+        @media (max-width: 768px) {
+            .export-all-buttons-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .export-all-buttons-container .export-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }

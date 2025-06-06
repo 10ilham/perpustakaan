@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
     <main>
         <h1 class="title">Dashboard Laporan</h1>
