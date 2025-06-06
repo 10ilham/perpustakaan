@@ -69,6 +69,7 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::post('/buku/hapus/{id}', [BukuController::class, 'hapus'])->name('buku.hapus');
     Route::post('/buku/pinjam/{id}', [BukuController::class, 'pinjamBuku'])->name('buku.pinjam');
     Route::get('/buku/{id}/qrcode-download', [BukuController::class, 'downloadQrCode'])->name('buku.qrcode.download');
+    Route::get('/buku/export/all', [BukuController::class, 'getAllBooksForExport'])->name('buku.export.all');
 
     // Route untuk kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -91,6 +92,13 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::get('/peminjaman/manual', [PeminjamanController::class, 'formManual'])->name('peminjaman.manual');
     Route::post('/peminjaman/manual/simpan', [PeminjamanController::class, 'simpanManual'])->name('peminjaman.manual.simpan');
     Route::get('/peminjaman/manual/get-anggota/{level}', [PeminjamanController::class, 'getAnggotaByLevel'])->name('peminjaman.manual.anggota');
+
+    // Route untuk laporan
+    Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/belum-kembali', [App\Http\Controllers\LaporanController::class, 'belumKembali'])->name('laporan.belum-kembali');
+    Route::get('/laporan/sudah-kembali', [App\Http\Controllers\LaporanController::class, 'sudahKembali'])->name('laporan.sudah-kembali');
+    Route::get('/laporan/chart-data', [App\Http\Controllers\LaporanController::class, 'getChartData'])->name('laporan.chart-data');
+    Route::get('/laporan/pie-chart-data', [App\Http\Controllers\LaporanController::class, 'getPieChartData'])->name('laporan.pie-chart-data');
 
     // Route untuk profile
     Route::get('/admin/profile', [AdminController::class, 'showProfile'])->name('admin.profile');

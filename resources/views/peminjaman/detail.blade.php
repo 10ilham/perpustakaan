@@ -183,6 +183,14 @@
                                         <a href="{{ route('anggota.detail', $anggota_id) }}" class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali
                                         </a>
+                                    @elseif (isset($ref) && $ref == 'laporan_belum_kembali')
+                                        <a href="{{ route('laporan.belum-kembali') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali ke Laporan
+                                        </a>
+                                    @elseif (isset($ref) && $ref == 'laporan_sudah_kembali')
+                                        <a href="{{ route('laporan.sudah-kembali') }}" class="btn btn-secondary">
+                                            <i class="bx bx-arrow-back"></i> Kembali ke Laporan
+                                        </a>
                                     @else
                                         <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali

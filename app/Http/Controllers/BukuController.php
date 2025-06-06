@@ -365,4 +365,57 @@ class BukuController extends Controller
         }
         return redirect()->route('buku.index')->with('error', 'Stok buku habis.');
     }
+
+    // Method untuk mengambil semua buku untuk ekspor
+    public function getAllBooksForExport(Request $request)
+    {
+        // Ambil parameter filter dan pencarian
+        $kategoriId = $request->get('kategori');
+        $status = $request->get('status');
+        $search = $request->get('search');
+
+        // Base query untuk ngeloading data buku dengan relasinya
+        $query = BukuModel::with('kategori');
+
+        // Terapkan filter kategori jika ada
+        if ($kategoriId) {
+            $query->whereHas('kategori', function ($q) use ($kategoriId) {
+                $q->where('kategori.id', $kategoriId);
+            });
+        }
+
+        // Terapkan filter status jika ada
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        // Terapkan pencarian judul jika ada
+        if ($search) {
+            $query->where('judul', 'like', '%' . $search . '%');
+        }
+
+        // Ambil semua buku yang sesuai dengan filter (tanpa pagination)
+        $buku = $query->get();
+
+        // Format data untuk respons
+        $formattedBooks = $buku->map(function ($book) {
+            return [
+                'kode_buku' => $book->kode_buku,
+                'judul' => $book->judul,
+                'pengarang' => $book->pengarang,
+                'penerbit' => $book->penerbit,
+                'tahun_terbit' => $book->tahun_terbit,
+                'kategori' => $book->kategori->pluck('nama')->implode(', '),
+                'total_buku' => $book->total_buku,
+                'stok_buku' => $book->stok_buku,
+                'status' => $book->status,
+                'deskripsi' => $book->deskripsi,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedBooks
+        ]);
+    }
 }
