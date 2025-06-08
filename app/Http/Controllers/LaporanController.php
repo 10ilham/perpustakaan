@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PeminjamanModel;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LaporanController extends Controller
 {
@@ -54,9 +55,15 @@ class LaporanController extends Controller
 
     public function belumKembali()
     {
-        $peminjamanBelumKembali = PeminjamanModel::with(['user', 'buku'])
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
-            ->orderBy('tanggal_kembali', 'asc')
+        $query = PeminjamanModel::with(['user', 'buku'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat']);
+
+        // Filter data untuk non-admin: hanya tampilkan data peminjaman mereka sendiri
+        if (Auth::user()->level !== 'admin') {
+            $query->where('user_id', Auth::id());
+        }
+
+        $peminjamanBelumKembali = $query->orderBy('tanggal_kembali', 'asc')
             ->get()
             ->map(function ($peminjaman) {
                 $tanggalKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
@@ -77,13 +84,18 @@ class LaporanController extends Controller
                 return $peminjaman;
             });
 
-        return view('laporan.belum-kembali', compact('peminjamanBelumKembali'));
+        return view('laporan.belum_kembali', compact('peminjamanBelumKembali'));
     }
 
     public function sudahKembali(Request $request)
     {
         $query = PeminjamanModel::with(['user', 'buku'])
             ->where('status', 'Dikembalikan');
+
+        // Filter data untuk non-admin: hanya tampilkan data peminjaman mereka sendiri
+        if (Auth::user()->level !== 'admin') {
+            $query->where('user_id', Auth::id());
+        }
 
         // Filter berdasarkan tanggal jika ada
         if ($request->has('tanggal_mulai') && $request->tanggal_mulai) {
@@ -94,8 +106,8 @@ class LaporanController extends Controller
             $query->whereDate('tanggal_pengembalian', '<=', $request->tanggal_selesai);
         }
 
-        // Filter berdasarkan level user jika ada
-        if ($request->has('level') && $request->level) {
+        // Filter berdasarkan level user jika ada (hanya untuk admin)
+        if (Auth::user()->level === 'admin' && $request->has('level') && $request->level) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('level', $request->level);
             });
@@ -103,10 +115,10 @@ class LaporanController extends Controller
 
         $peminjamanSudahKembali = $query->orderBy('tanggal_pengembalian', 'desc')->get();
 
-        // Data untuk filter
+        // Data untuk filter (hanya untuk admin)
         $levels = ['siswa', 'guru', 'staff'];
 
-        return view('laporan.sudah-kembali', compact('peminjamanSudahKembali', 'levels'));
+        return view('laporan.sudah_kembali', compact('peminjamanSudahKembali', 'levels'));
     }
 
     public function getChartData(Request $request)

@@ -110,16 +110,18 @@
                     </form>
 
                     <!-- Tombol untuk ekspor data -->
-                    <div class="export-container">
-                        <div class="export-buttons-container">
-                            <button id="exportExcel" class="export-btn btn-outline-success">
-                                <i class="bx bx-file-blank"></i><span>Excel</span>
-                            </button>
-                            <button id="exportWord" class="export-btn btn-outline-info">
-                                <i class="bx bxs-file-doc"></i><span>Word</span>
-                            </button>
+                    @if (auth()->user()->level == 'admin')
+                        <div class="export-container">
+                            <div class="export-buttons-container">
+                                <button id="exportExcel" class="export-btn btn-outline-success">
+                                    <i class="bx bx-file-blank"></i><span>Excel</span>
+                                </button>
+                                <button id="exportWord" class="export-btn btn-outline-info">
+                                    <i class="bx bxs-file-doc"></i><span>Word</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
 
                 <div class="row d-flex flex-wrap justify-content-center">

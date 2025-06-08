@@ -69,7 +69,7 @@
                             <p style="color: var(--dark-grey); margin-bottom: 20px;">Lihat daftar buku yang belum
                                 dikembalikan oleh peminjam</p>
                             <div style="display: flex; gap: 10px; justify-content: center;">
-                                <a href="{{ route('laporan.belum-kembali') }}" class="btn-download">
+                                <a href="{{ route('laporan.belum_kembali') }}" class="btn-download">
                                     <i class='bx bx-show'></i> Lihat Laporan
                                 </a>
                             </div>
@@ -85,7 +85,7 @@
                             <p style="color: var(--dark-grey); margin-bottom: 20px;">Lihat riwayat buku yang sudah
                                 dikembalikan</p>
                             <div style="display: flex; gap: 10px; justify-content: center;">
-                                <a href="{{ route('laporan.sudah-kembali') }}" class="btn-download">
+                                <a href="{{ route('laporan.sudah_kembali') }}" class="btn-download">
                                     <i class='bx bx-show'></i> Lihat Laporan
                                 </a>
                             </div>

@@ -189,7 +189,7 @@
             }
         }
 
-        .btn-secondary {
+        .btn-secondary-laporan {
             margin-top: 20px;
             background: #777878;
             color: white;
@@ -206,7 +206,7 @@
             text-align: center;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary-laporan:hover {
             background: var(--dark-grey);
             color: var(--light);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -422,12 +422,32 @@
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            padding-right: 0;
         }
 
         .content-data .head h3 {
             margin: 0;
             font-size: 1.5rem;
             color: #333;
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
+        }
+
+        .content-data .head .menu {
+            flex-shrink: 0;
+            max-width: 50%;
+            text-align: right;
+        }
+
+        .content-data .head .menu span {
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
         }
 
         /* Chart Container Styling */
@@ -493,6 +513,23 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
+                padding-right: 0;
+                width: 100%;
+            }
+
+            .content-data .head h3 {
+                font-size: 1.2rem;
+                width: 100%;
+            }
+
+            .content-data .head .menu {
+                max-width: 100%;
+                text-align: left;
+                width: 100%;
+            }
+
+            .content-data .head .menu span {
+                font-size: 13px;
             }
 
             .period-filter {
@@ -522,6 +559,60 @@
             div[style*="text-align: center;"] p {
                 font-size: 0.9rem !important;
                 margin-bottom: 15px !important;
+            }
+        }
+
+        /* Desktop and Large Tablet Responsive */
+        @media (min-width: 1200px) {
+            .content-data .head {
+                padding-right: 20px;
+                margin-right: 0;
+            }
+
+            .content-data .head h3 {
+                font-size: 1.6rem;
+            }
+
+            .content-data .head .menu {
+                max-width: 60%;
+            }
+        }
+
+        @media (min-width: 992px) and (max-width: 1199px) {
+            .content-data .head {
+                gap: 10px;
+                padding-right: 15px;
+            }
+
+            .content-data .head h3 {
+                font-size: 1.4rem;
+            }
+
+            .content-data .head .menu {
+                max-width: 45%;
+            }
+
+            .content-data .head .menu span {
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 991px) {
+            .content-data .head {
+                gap: 8px;
+                padding-right: 10px;
+            }
+
+            .content-data .head h3 {
+                font-size: 1.3rem;
+            }
+
+            .content-data .head .menu {
+                max-width: 40%;
+            }
+
+            .content-data .head .menu span {
+                font-size: 12px;
             }
         }
 
@@ -582,4 +673,42 @@
                 width: 100%;
                 max-width: 300px;
             }
+        }
+
+        /* Content Data Container Fixes */
+        .content-data {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .data {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Admin Dashboard Specific Fixes */
+        @media (min-width: 768px) {
+            .content-data .head {
+                align-items: flex-start;
+            }
+
+            .content-data .head h3 {
+                margin-bottom: 5px;
+            }
+
+            .content-data .head .menu span {
+                display: block;
+                white-space: normal;
+                line-height: 1.5;
+            }
+        }
+
+        /* Ensure proper text wrapping for long content */
+        .content-data .head .menu span i {
+            margin-right: 5px;
+            flex-shrink: 0;
         }

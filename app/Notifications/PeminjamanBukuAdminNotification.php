@@ -10,6 +10,8 @@ use App\Models\PeminjamanModel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
+\Carbon\Carbon::setLocale('id'); //agar format tanggal bulan tahun menggunakan indonesia
+
 /**
  * Kelas notifikasi untuk mengirimkan pemberitahuan ke admin saat ada peminjaman buku baru
  * Implements ShouldQueue agar notifikasi dikirim secara asinkron (berjalan di latar belakang)
@@ -77,8 +79,8 @@ class PeminjamanBukuAdminNotification extends Notification implements ShouldQueu
         $mail->line(new HtmlString('<strong>Judul Buku:</strong> ' . $this->peminjaman->buku->judul));
         $mail->line(new HtmlString('<strong>Kode Buku:</strong> ' . $this->peminjaman->buku->kode_buku));
         $mail->line(new HtmlString('<strong>Peminjam:</strong> ' . $userName . ' (' . ucfirst($userLevel) . ')'));
-        $mail->line(new HtmlString('<strong>Tanggal Peminjaman:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_pinjam)->format('d F Y')));
-        $mail->line(new HtmlString('<strong>Tanggal Kembali:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_kembali)->format('d F Y')));
+        $mail->line(new HtmlString('<strong>Tanggal Peminjaman:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_pinjam)->translatedFormat('d F Y'))); //translatedFormat untuk ubah format eng to indonesia
+        $mail->line(new HtmlString('<strong>Tanggal Kembali:</strong> ' . \Carbon\Carbon::parse($this->peminjaman->tanggal_kembali)->translatedFormat('d F Y')));
 
         $mail->line('Mohon segera siapkan buku tersebut agar peminjam tidak perlu menunggu lama saat pengambilan.');
 

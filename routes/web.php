@@ -95,8 +95,8 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
 
     // Route untuk laporan
     Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/belum-kembali', [App\Http\Controllers\LaporanController::class, 'belumKembali'])->name('laporan.belum-kembali');
-    Route::get('/laporan/sudah-kembali', [App\Http\Controllers\LaporanController::class, 'sudahKembali'])->name('laporan.sudah-kembali');
+    Route::get('/laporan/belum_kembali', [App\Http\Controllers\LaporanController::class, 'belumKembali'])->name('laporan.belum_kembali');
+    Route::get('/laporan/sudah_kembali', [App\Http\Controllers\LaporanController::class, 'sudahKembali'])->name('laporan.sudah_kembali');
     Route::get('/laporan/chart-data', [App\Http\Controllers\LaporanController::class, 'getChartData'])->name('laporan.chart-data');
     Route::get('/laporan/pie-chart-data', [App\Http\Controllers\LaporanController::class, 'getPieChartData'])->name('laporan.pie-chart-data');
 

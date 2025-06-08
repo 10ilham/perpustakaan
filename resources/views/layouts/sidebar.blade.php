@@ -72,30 +72,33 @@
         </li>
 
         {{-- Laporan --}}
-        @if (Auth::user()->level === 'admin')
-            <li class="{{ request()->is('laporan*') ? 'active' : '' }}" id="laporanMenu">
-                <a href="#" class="{{ request()->is('laporan*') ? 'active' : '' }}">
-                    <i class='bx bxs-report icon'></i> Laporan <i class='bx bx-chevron-right icon-right'></i>
-                </a>
-                <ul class="side-dropdown {{ request()->is('laporan*') ? 'show' : '' }}">
+        <li class="{{ request()->is('laporan*') ? 'active' : '' }}" id="laporanMenu">
+            <a href="#" class="{{ request()->is('laporan*') ? 'active' : '' }}">
+                <i class='bx bxs-report icon'></i> Laporan <i class='bx bx-chevron-right icon-right'></i>
+            </a>
+            <ul class="side-dropdown {{ request()->is('laporan*') ? 'show' : '' }}">
+                @if (Auth::user()->level === 'admin')
                     <li><a href="{{ route('laporan.index') }}"
                             class="{{ request()->routeIs('laporan.index') ? 'active-menu-item' : '' }}">Dashboard
                             Laporan
                         </a>
                     </li>
-                    {{-- <li><a href="{{ route('laporan.belum-kembali') }}"
-                            class="{{ request()->routeIs('laporan.belum-kembali') ? 'active-menu-item' : '' }}">Belum
+                @endif
+
+                @if (Auth::user()->level !== 'admin')
+                    <li><a href="{{ route('laporan.belum_kembali') }}"
+                            class="{{ request()->routeIs('laporan.belum_kembali') ? 'active-menu-item' : '' }}">Belum
                             Dikembalikan
                         </a>
                     </li>
-                    <li><a href="{{ route('laporan.sudah-kembali') }}"
-                            class="{{ request()->routeIs('laporan.sudah-kembali') ? 'active-menu-item' : '' }}">Sudah
+                    <li><a href="{{ route('laporan.sudah_kembali') }}"
+                            class="{{ request()->routeIs('laporan.sudah_kembali') ? 'active-menu-item' : '' }}">Sudah
                             Dikembalikan
                         </a>
-                    </li> --}}
-                </ul>
-            </li>
-        @endif
+                    </li>
+                @endif
+            </ul>
+        </li>
 
         {{-- Kategori --}}
         @if (Auth::user()->level === 'admin' ||

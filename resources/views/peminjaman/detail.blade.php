@@ -184,11 +184,11 @@
                                             <i class="bx bx-arrow-back"></i> Kembali
                                         </a>
                                     @elseif (isset($ref) && $ref == 'laporan_belum_kembali')
-                                        <a href="{{ route('laporan.belum-kembali') }}" class="btn btn-secondary">
+                                        <a href="{{ route('laporan.belum_kembali') }}" class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali ke Laporan
                                         </a>
                                     @elseif (isset($ref) && $ref == 'laporan_sudah_kembali')
-                                        <a href="{{ route('laporan.sudah-kembali') }}" class="btn btn-secondary">
+                                        <a href="{{ route('laporan.sudah_kembali') }}" class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali ke Laporan
                                         </a>
                                     @else

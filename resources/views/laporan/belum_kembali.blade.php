@@ -2,135 +2,113 @@
 
 @section('content')
     <main>
-        <h1 class="title">Laporan Sudah Dikembalikan</h1>
+        <h1 class="title">Laporan Belum Dikembalikan</h1>
         <ul class="breadcrumbs">
-            <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+            @if (auth()->user()->level == 'admin')
+                <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+            @else
+                <li><a href="{{ route('anggota.dashboard') }}">Dashboard</a></li>
+            @endif
             <li class="divider">/</li>
             <li><a href="{{ route('laporan.index') }}">Laporan</a></li>
             <li class="divider">/</li>
-            <li><a class="active">Sudah Dikembalikan</a></li>
+            <li><a class="active">Belum Dikembalikan</a></li>
         </ul>
 
         {{-- Button untuk kembali ke dashboard laporan --}}
-        <div class="back-button">
-            <a href="{{ route('laporan.index') }}" class="btn-secondary">
-                <i class='bx bx-arrow-back'></i> Kembali
-            </a>
-        </div>
-
-        <!-- Filter Form -->
-        <div class="data">
-            <div class="content-data">
-                <div class="head">
-                    <h3>Filter Laporan</h3>
-                </div>
-                <form method="GET" action="{{ route('laporan.sudah-kembali') }}" class="filter-form-grid">
-                    <div class="filter-form-group">
-                        <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
-                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}"
-                            class="filter-form-input">
-                    </div>
-                    <div class="filter-form-group">
-                        <label for="tanggal_selesai" class="filter-form-label">Tanggal Selesai</label>
-                        <input type="date" id="tanggal_selesai" name="tanggal_selesai"
-                            value="{{ request('tanggal_selesai') }}" class="filter-form-input">
-                    </div>
-                    <div class="filter-form-group">
-                        <label for="level" class="filter-form-label">Level User</label>
-                        <select id="level" name="level" class="filter-form-input">
-                            <option value="">Semua Level</option>
-                            @foreach ($levels as $level)
-                                <option value="{{ $level }}" {{ request('level') === $level ? 'selected' : '' }}>
-                                    {{ ucfirst($level) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="filter-buttons-container">
-                        <button type="submit" class="btn-download btn-filter">
-                            <i class='bx bx-search'></i> Filter
-                        </button>
-                        <a href="{{ route('laporan.sudah-kembali') }}" class="btn-download btn-reset">
-                            <i class='bx bx-refresh'></i> Reset
-                        </a>
-                    </div>
-                </form>
+        @if (auth()->user()->level == 'admin')
+            <div class="back-button">
+                <a href="{{ route('laporan.index') }}" class="btn-secondary-laporan">
+                    <i class='bx bx-arrow-back'></i> Kembali
+                </a>
             </div>
-        </div>
+        @endif
 
-        <!-- Results Table -->
         <div class="data">
             <div class="content-data">
                 <div class="head">
-                    <h3>Daftar Buku Sudah Dikembalikan</h3>
+                    <h3>
+                        @if (auth()->user()->level == 'admin')
+                            Daftar Buku Belum Dikembalikan (Semua Anggota)
+                        @else
+                            Daftar Buku Belum Dikembalikan Anda
+                        @endif
+                    </h3>
                     <div class="menu">
                         <span style="color: var(--dark-grey); font-size: 14px;">
-                            <i class='bx bx-info-circle'></i> Gunakan tombol export di bawah tabel untuk mengunduh data
+                            <i class='bx bx-info-circle'></i>
+                            @if (auth()->user()->level == 'admin')
+                                Gunakan tombol export di bawah untuk mengunduh data semua anggota
+                            @else
+                                Daftar peminjaman Anda yang belum dikembalikan
+                            @endif
                         </span>
                     </div>
                 </div>
 
-                <p style="color: var(--dark-grey); margin-bottom: 20px;">Total: {{ $peminjamanSudahKembali->count() }}
+                <p style="color: var(--dark-grey); margin-bottom: 20px;">Total: {{ $peminjamanBelumKembali->count() }}
                     peminjaman</p>
 
-                @if ($peminjamanSudahKembali->count() > 0)
+                @if ($peminjamanBelumKembali->count() > 0)
                     <div class="table-responsive p-3">
                         <table id="dataTableExport" class="table align-items-center table-flush table-hover">
                             <thead class="thead-light">
                                 <tr>
                                     <th>No</th>
-                                    <th>Peminjam</th>
-                                    <th>Email</th>
-                                    <th>Level</th>
+                                    @if (auth()->user()->level == 'admin')
+                                        <th>Peminjam</th>
+                                        <th>Email</th>
+                                        <th>Level</th>
+                                    @endif
                                     <th>Buku</th>
                                     <th>Tanggal Pinjam</th>
                                     <th>Tanggal Kembali</th>
-                                    <th>Tanggal Dikembalikan</th>
                                     <th>Status</th>
+                                    {{-- <th style="display: none;">Catatan</th> --}}
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($peminjamanSudahKembali as $index => $peminjaman)
-                                    @php
-                                        $tanggalKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
-                                        $tanggalDikembalikan = \Carbon\Carbon::parse($peminjaman->tanggal_pengembalian);
-                                        $statusPengembalian = 'Tepat Waktu';
-                                        $statusClass = 'completed';
-
-                                        if ($tanggalDikembalikan->gt($tanggalKembali)) {
-                                            $hariTerlambat = $tanggalDikembalikan->diffInDays($tanggalKembali);
-                                            $statusPengembalian = 'Terlambat ' . $hariTerlambat . ' hari';
-                                            $statusClass = 'pending';
-                                        }
-                                    @endphp
+                                @foreach ($peminjamanBelumKembali as $index => $peminjaman)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>
-                                            <span class="status">{{ $peminjaman->user->nama }}</span>
-                                        </td>
-                                        <td>
-                                            <span class="status">{{ $peminjaman->user->email }}</span>
-                                        </td>
-                                        <td>
-                                            <span class="status completed">{{ ucfirst($peminjaman->user->level) }}</span>
-                                        </td>
+                                        @if (auth()->user()->level == 'admin')
+                                            <td>
+                                                <span class="status">{{ $peminjaman->user->nama }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="status">{{ $peminjaman->user->email }}</span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="status completed">{{ ucfirst($peminjaman->user->level) }}</span>
+                                            </td>
+                                        @endif
                                         <td>
                                             <span class="status">{{ $peminjaman->buku->judul }}</span>
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($peminjaman->tanggal_pengembalian)->format('d/m/Y') }}
+                                        <td>{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y') }}
                                         </td>
                                         <td>
-                                            <span class="badge"
-                                                style="background-color: {{ $statusClass === 'completed' ? '#28a745' : '#ffc107' }}; color: {{ $statusClass === 'completed' ? 'white' : 'black' }};">
-                                                {{ $statusPengembalian }}
-                                            </span>
+                                            @php
+                                                $today = \Carbon\Carbon::now();
+                                                $tanggalKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
+                                                $isLate = $today->gt($tanggalKembali);
+                                            @endphp
+
+                                            @if ($isLate)
+                                                <span class="badge"
+                                                    style="background-color: #dc3545; color: white;">Terlambat</span>
+                                            @else
+                                                <span class="badge"
+                                                    style="background-color: #ffc107; color: black;">Dipinjam</span>
+                                            @endif
                                         </td>
+                                        {{-- <td style="display: none;">{{ $peminjaman->catatan ?? '-' }}</td> --}}
                                         <td>
                                             <div class="btn-group">
-                                                <a href="{{ route('peminjaman.detail', ['id' => $peminjaman->id, 'ref' => 'laporan_sudah_kembali']) }}"
+                                                <a href="{{ route('peminjaman.detail', ['id' => $peminjaman->id, 'ref' => 'laporan_belum_kembali']) }}"
                                                     class="btn btn-sm btn-info" title="Detail">
                                                     <i class='bx bx-info-circle'></i>
                                                 </a>
@@ -145,8 +123,7 @@
                     <div style="text-align: center; padding: 40px;">
                         <i class='bx bx-info-circle'
                             style="font-size: 48px; color: var(--dark-grey); margin-bottom: 16px;"></i>
-                        <p style="color: var(--dark-grey);">Tidak ada data peminjaman yang sudah dikembalikan dengan filter
-                            tersebut.</p>
+                        <p style="color: var(--dark-grey);">Tidak ada data peminjaman yang belum dikembalikan.</p>
                     </div>
                 @endif
             </div>
@@ -154,13 +131,51 @@
     </main>
 @endsection
 
-
 @section('scripts')
     <!-- Additional library for Word export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
         $(document).ready(function() {
             // Initialize DataTable with export buttons
+            var isAdmin = {{ auth()->user()->level == 'admin' ? 'true' : 'false' }};
+
+            // Configure responsive priorities based on user level
+            var responsivePriorities = isAdmin ? [{
+                    responsivePriority: 1,
+                    targets: [0, 1, 4, 7]
+                }, // No, Peminjam, Buku, Status
+                {
+                    responsivePriority: 2,
+                    targets: [8]
+                    // targets: [9] // Jika ada kolom catatan (hidden kolom 9 (aksi) agar tidak di export)
+                }, // Aksi
+                {
+                    // visible: false, // Tambahkan jika ada kolom catatan
+                    // targets: [8] // Tambahkan jika ada kolom catatan
+                }, // Hide Catatan column
+                {
+                    orderable: false,
+                    targets: [-1]
+                } // Kolom aksi tidak dapat diurutkan
+            ] : [{
+                    responsivePriority: 1,
+                    targets: [0, 1, 4]
+                }, // No, Buku, Status
+                {
+                    responsivePriority: 2,
+                    targets: [5]
+                    // targets: [6] // Jika ada kolom catatan (hidden kolom 6 (aksi) agar tidak di export)
+                }, // Aksi
+                {
+                    // visible: false, // Tambahkan jika ada kolom catatan
+                    // targets: [5] // Tambahkan jika ada kolom catatan
+                }, // Hide Catatan column
+                {
+                    orderable: false,
+                    targets: [-1]
+                } // Kolom aksi tidak dapat diurutkan
+            ];
+
             $('#dataTableExport').DataTable({
                 responsive: true,
                 order: [
@@ -182,7 +197,7 @@
                         extend: 'csv',
                         text: '<i class="bx bx-file"></i><span>CSV</span>',
                         className: 'btn btn-outline-success btn-sm export-btn',
-                        filename: 'Laporan_Sudah_Dikembalikan_{{ date('d-m-Y') }}',
+                        filename: 'Laporan_Belum_Dikembalikan_{{ date('d-m-Y') }}',
                         exportOptions: {
                             columns: ':not(:last-child)'
                         }
@@ -191,7 +206,7 @@
                         extend: 'excel',
                         text: '<i class="bx bx-file-blank"></i><span>Excel</span>',
                         className: 'btn btn-outline-success btn-sm export-btn',
-                        filename: 'Laporan_Sudah_Dikembalikan_{{ date('d-m-Y') }}',
+                        filename: 'Laporan_Belum_Dikembalikan_{{ date('d-m-Y') }}',
                         exportOptions: {
                             columns: ':not(:last-child)'
                         }
@@ -207,7 +222,7 @@
                         extend: 'pdf',
                         text: '<i class="bx bxs-file-pdf"></i><span>PDF</span>',
                         className: 'btn btn-outline-danger btn-sm export-btn',
-                        filename: 'Laporan_Sudah_Dikembalikan_{{ date('d-m-Y') }}',
+                        filename: 'Laporan_Belum_Dikembalikan_{{ date('d-m-Y') }}',
                         orientation: 'landscape',
                         exportOptions: {
                             columns: ':not(:last-child)'
@@ -222,19 +237,7 @@
                         }
                     }
                 ],
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: [0, 1, 4, 8] // No, Peminjam, Buku, Status
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: [9] // Aksi
-                    },
-                    {
-                        orderable: false,
-                        targets: [-1] // Kolom aksi tidak dapat diurutkan
-                    }
-                ]
+                columnDefs: responsivePriorities
             });
 
             // Function to export table data to Word format
@@ -244,6 +247,19 @@
                     columns: ':not(:last-child)' // Exclude actions column
                 });
 
+                // Different styles based on user level
+                var columnClasses, documentTitle;
+
+                if (isAdmin) {
+                    columnClasses = ['col-no', 'col-nama', 'col-email', 'col-level', 'col-buku', 'col-tgl-pinjam',
+                        'col-tgl-kembali', 'col-status'
+                    ];
+                    documentTitle = 'Laporan Buku Belum Dikembalikan';
+                } else {
+                    columnClasses = ['col-no', 'col-buku', 'col-tgl-pinjam', 'col-tgl-kembali', 'col-status'];
+                    documentTitle = 'Riwayat Peminjaman Saya (Belum Dikembalikan)';
+                }
+
                 // Create HTML content for Word document
                 let htmlContent = `
                     <html xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -251,7 +267,7 @@
                           xmlns="http://www.w3.org/TR/REC-html40">
                     <head>
                         <meta charset="utf-8">
-                        <title>Laporan Buku Sudah Dikembalikan</title>
+                        <title>${documentTitle}</title>
                         <!--[if gte mso 9]>
                         <xml>
                             <w:WordDocument>
@@ -304,23 +320,37 @@
                                 background-color: #f2f2f2;
                                 font-weight: bold;
                                 font-size: 9px;
-                            }
-                            /* Specific column widths for sudah dikembalikan */
-                            .col-no { width: 4%; }
-                            .col-nama { width: 12%; }
-                            .col-email { width: 15%; }
-                            .col-level { width: 7%; }
-                            .col-buku { width: 18%; }
-                            .col-tgl-pinjam { width: 11%; }
-                            .col-tgl-kembali { width: 11%; }
-                            .col-tgl-dikembalikan { width: 11%; }
-                            .col-status { width: 11%; }
+                            }`;
+
+                // Add different column widths based on user level
+                if (isAdmin) {
+                    htmlContent += `
+                            /* Admin view column widths */
+                            .col-no { width: 5%; }
+                            .col-nama { width: 15%; }
+                            .col-email { width: 18%; }
+                            .col-level { width: 8%; }
+                            .col-buku { width: 20%; }
+                            .col-tgl-pinjam { width: 12%; }
+                            .col-tgl-kembali { width: 12%; }
+                            .col-status { width: 10%; }`;
+                } else {
+                    htmlContent += `
+                            /* Non-admin view column widths */
+                            .col-no { width: 8%; }
+                            .col-buku { width: 35%; }
+                            .col-tgl-pinjam { width: 19%; }
+                            .col-tgl-kembali { width: 19%; }
+                            .col-status { width: 19%; }`;
+                }
+
+                htmlContent += `
                             .text-center { text-align: center; }
                         </style>
                     </head>
                     <body>
                         <div class="header">
-                            <h2>Laporan Buku Sudah Dikembalikan</h2>
+                            <h2>${documentTitle}</h2>
                         </div>
                         <div class="date">
                             <p>Data per tanggal {{ date('d/m/Y') }}</p>
@@ -330,11 +360,8 @@
                                 <tr>`;
 
                 // Add headers with specific classes
-                const headerClasses = ['col-no', 'col-nama', 'col-email', 'col-level', 'col-buku', 'col-tgl-pinjam',
-                    'col-tgl-kembali', 'col-tgl-dikembalikan', 'col-status'
-                ];
                 data.header.forEach(function(header, index) {
-                    const className = headerClasses[index] || '';
+                    const className = columnClasses[index] || '';
                     htmlContent += `<th class="${className}">${header}</th>`;
                 });
 
@@ -349,7 +376,7 @@
                     row.forEach(function(cell, index) {
                         // Clean cell data (remove HTML tags and extra spaces)
                         let cleanCell = cell.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-                        const className = headerClasses[index] || '';
+                        const className = columnClasses[index] || '';
                         htmlContent += `<td class="${className}">${cleanCell}</td>`;
                     });
                     htmlContent += '</tr>';
@@ -366,7 +393,9 @@
                     type: 'application/msword'
                 });
 
-                const fileName = 'Laporan_Sudah_Dikembalikan_{{ date('d-m-Y') }}.doc';
+                const fileName = isAdmin ?
+                    'Laporan_Belum_Dikembalikan_{{ date('d-m-Y') }}.doc' :
+                    'Riwayat_Belum_Dikembalikan_{{ date('d-m-Y') }}.doc';
 
                 // Use FileSaver.js to download the file
                 saveAs(blob, fileName);
