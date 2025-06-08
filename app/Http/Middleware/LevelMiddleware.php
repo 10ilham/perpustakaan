@@ -21,24 +21,95 @@ class LevelMiddleware
 
             // Cek apakah pengguna memiliki level yang valid
             if (!in_array($user->level, ['admin', 'siswa', 'guru', 'staff'])) {
-                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+                return $this->logoutAndRedirect($request, 'Level pengguna tidak valid.');
             }
+
             // Cek apakah pengguna memiliki akses ke halaman yang diminta
             if ($request->is('admin/*') && $user->level !== 'admin') {
-                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+                return $this->redirectToUserDashboard($user->level, 'Anda tidak memiliki akses ke halaman admin.');
             }
             if ($request->is('siswa/*') && $user->level !== 'siswa') {
-                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+                $message = $this->getSpecificMessage($request, 'siswa');
+                return $this->redirectToUserDashboard($user->level, $message);
             }
             if ($request->is('guru/*') && $user->level !== 'guru') {
-                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+                $message = $this->getSpecificMessage($request, 'guru');
+                return $this->redirectToUserDashboard($user->level, $message);
             }
             if ($request->is('staff/*') && $user->level !== 'staff') {
-                return redirect('/')->with('error', 'Akses tidak diizinkan.');
+                $message = $this->getSpecificMessage($request, 'staff');
+                return $this->redirectToUserDashboard($user->level, $message);
             }
+
+            // Cek akses khusus untuk anggota dashboard - hanya untuk siswa, guru, dan staff
+            if ($request->is('anggota/dashboard') && $user->level === 'admin') {
+                return redirect('/admin/dashboard')->with('error', 'Anda tidak memiliki akses ke halaman anggota. Silakan gunakan dashboard admin.');
+            }
+
+            // Cek akses khusus untuk anggota chart data - hanya untuk siswa, guru, dan staff
+            if ($request->is('anggota/chart-data') && $user->level === 'admin') {
+                return response()->json(['error' => 'Akses tidak diizinkan'], 403);
+            }
+
             // Jika pengguna memiliki akses yang sesuai, lanjutkan ke permintaan berikutnya
             return $next($request);
         }
-        return redirect('/')->with('error', 'Akses tidak diizinkan.');
+        return redirect('/login')->with('error', 'Anda harus login terlebih dahulu.');
+    }
+
+    /**
+     * Redirect user to their appropriate dashboard
+     */
+    private function redirectToUserDashboard($userLevel, $message)
+    {
+        $redirectRoute = '/';
+
+        switch ($userLevel) {
+            case 'admin':
+                $redirectRoute = '/admin/dashboard';
+                break;
+            case 'siswa':
+            case 'guru':
+            case 'staff':
+                $redirectRoute = '/anggota/dashboard';
+                break;
+        }
+
+        return redirect($redirectRoute)->with('error', $message);
+    }
+
+    /**
+     * Logout user and redirect to home with proper session cleanup
+     */
+    private function logoutAndRedirect($request, $message)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('error', $message);
+    }
+
+    /**
+     * Get specific message based on request type and target level
+     */
+    private function getSpecificMessage($request, $targetLevel)
+    {
+        $method = $request->method();
+        $path = $request->path();
+
+        // Handle profile-related requests
+        if (str_contains($path, 'profile')) {
+            if (str_contains($path, 'edit')) {
+                return "Anda tidak memiliki akses untuk mengedit profil {$targetLevel}.";
+            } elseif (str_contains($path, 'update') || $method === 'POST') {
+                return "Anda tidak memiliki akses untuk memperbarui profil {$targetLevel}.";
+            } else {
+                return "Anda tidak memiliki akses untuk melihat profil {$targetLevel}.";
+            }
+        }
+
+        // Default message for other requests
+        return "Anda tidak memiliki akses ke halaman {$targetLevel}.";
     }
 }

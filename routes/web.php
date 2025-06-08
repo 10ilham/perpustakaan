@@ -115,4 +115,18 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::post('/guru/profile/update', [GuruController::class, 'updateProfile'])->name('guru.profile.update');
     Route::get('/staff/profile/edit', [StaffController::class, 'editProfile'])->name('staff.profile.edit');
     Route::post('/staff/profile/update', [StaffController::class, 'updateProfile'])->name('staff.profile.update');
+
+    // Fallback GET routes untuk profile update (untuk handling direct URL access)
+    Route::get('/admin/profile/update', function () {
+        return redirect('/admin/profile/edit')->with('success', 'Silakan gunakan form edit untuk memperbarui profil.');
+    });
+    Route::get('/siswa/profile/update', function () {
+        return redirect('/siswa/profile/edit')->with('success', 'Silakan gunakan form edit untuk memperbarui profil.');
+    });
+    Route::get('/guru/profile/update', function () {
+        return redirect('/guru/profile/edit')->with('success', 'Silakan gunakan form edit untuk memperbarui profil.');
+    });
+    Route::get('/staff/profile/update', function () {
+        return redirect('/staff/profile/edit')->with('success', 'Silakan gunakan form edit untuk memperbarui profil.');
+    });
 });
