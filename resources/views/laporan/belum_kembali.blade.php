@@ -24,30 +24,97 @@
             </div>
         @endif
 
+        <!-- Filter Form -->
         <div class="data">
             <div class="content-data">
                 <div class="head">
-                    <h3>
-                        @if (auth()->user()->level == 'admin')
-                            Daftar Buku Belum Dikembalikan (Semua Anggota)
-                        @else
-                            Daftar Buku Belum Dikembalikan Anda
-                        @endif
-                    </h3>
-                    <div class="menu">
-                        <span style="color: var(--dark-grey); font-size: 14px;">
-                            <i class='bx bx-info-circle'></i>
-                            @if (auth()->user()->level == 'admin')
-                                Gunakan tombol export di bawah untuk mengunduh data semua anggota
-                            @else
-                                Daftar peminjaman Anda yang belum dikembalikan
-                            @endif
-                        </span>
-                    </div>
+                    <h3>Filter Laporan</h3>
+                </div>
+                @if (auth()->user()->level == 'admin')
+                    <form method="GET" action="{{ route('laporan.belum_kembali') }}" class="filter-form-grid">
+                        <div class="filter-form-group">
+                            <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
+                            <input type="date" id="tanggal_mulai" name="tanggal_mulai"
+                                value="{{ request('tanggal_mulai') }}" class="filter-form-input">
+                        </div>
+                        <div class="filter-form-group">
+                            <label for="tanggal_selesai" class="filter-form-label">Tanggal Selesai</label>
+                            <input type="date" id="tanggal_selesai" name="tanggal_selesai"
+                                value="{{ request('tanggal_selesai') }}" class="filter-form-input">
+                        </div>
+                        <div class="filter-form-group">
+                            <label for="level" class="filter-form-label">Level User</label>
+                            <select id="level" name="level" class="filter-form-input">
+                                <option value="">Semua Level</option>
+                                @foreach ($levels as $level)
+                                    <option value="{{ $level }}" {{ request('level') === $level ? 'selected' : '' }}>
+                                        {{ ucfirst($level) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="filter-buttons-container">
+                            <button type="submit" class="btn-download btn-filter">
+                                <i class='bx bx-search'></i> Filter
+                            </button>
+                            <a href="{{ route('laporan.belum_kembali') }}" class="btn-download btn-reset">
+                                <i class='bx bx-refresh'></i> Reset
+                            </a>
+                        </div>
+                    </form>
+                @else
+                    <form method="GET" action="{{ route('laporan.belum_kembali') }}" class="filter-form-grid">
+                        <div class="filter-form-group">
+                            <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
+                            <input type="date" id="tanggal_mulai" name="tanggal_mulai"
+                                value="{{ request('tanggal_mulai') }}" class="filter-form-input">
+                        </div>
+                        <div class="filter-form-group">
+                            <label for="tanggal_selesai" class="filter-form-label">Tanggal Selesai</label>
+                            <input type="date" id="tanggal_selesai" name="tanggal_selesai"
+                                value="{{ request('tanggal_selesai') }}" class="filter-form-input">
+                        </div>
+                        <div class="filter-buttons-container">
+                            <button type="submit" class="btn-download btn-filter">
+                                <i class='bx bx-search'></i> Filter
+                            </button>
+                            <a href="{{ route('laporan.belum_kembali') }}" class="btn-download btn-reset">
+                                <i class='bx bx-refresh'></i> Reset
+                            </a>
+                        </div>
+                    </form>
+                @endif
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="data">
+            <div class="content-data">
+                <div class="head">
+                    @if (auth()->user()->level == 'admin')
+                        <h3>Daftar Buku Belum Dikembalikan</h3>
+                        <div class="menu">
+                            <span style="color: var(--dark-grey); font-size: 14px;">
+                                <i class='bx bx-info-circle'></i> Gunakan tombol export di bawah tabel untuk mengunduh data
+                            </span>
+                        </div>
+                    @else
+                        <h3>Daftar Buku Belum Dikembalikan Anda</h3>
+                        <div class="menu">
+                            <span style="color: var(--dark-grey); font-size: 14px;">
+                                <i class='bx bx-info-circle'></i> Ini adalah daftar buku yang belum Anda kembalikan
+                            </span>
+                        </div>
+                    @endif
                 </div>
 
-                <p style="color: var(--dark-grey); margin-bottom: 20px;">Total: {{ $peminjamanBelumKembali->count() }}
-                    peminjaman</p>
+                @if (auth()->user()->level == 'admin')
+                    <p style="color: var(--dark-grey); margin-bottom: 20px;">Total: {{ $peminjamanBelumKembali->count() }}
+                        peminjaman</p>
+                @else
+                    <p style="color: var(--dark-grey); margin-bottom: 20px;">Total: {{ $peminjamanBelumKembali->count() }}
+                        buku yang belum Anda kembalikan</p>
+                @endif
 
                 @if ($peminjamanBelumKembali->count() > 0)
                     <div class="table-responsive p-3">
@@ -123,7 +190,13 @@
                     <div style="text-align: center; padding: 40px;">
                         <i class='bx bx-info-circle'
                             style="font-size: 48px; color: var(--dark-grey); margin-bottom: 16px;"></i>
-                        <p style="color: var(--dark-grey);">Tidak ada data peminjaman yang belum dikembalikan.</p>
+                        @if (auth()->user()->level == 'admin')
+                            <p style="color: var(--dark-grey);">Tidak ada data peminjaman yang belum dikembalikan dengan
+                                filter tersebut.</p>
+                        @else
+                            <p style="color: var(--dark-grey);">Anda belum memiliki riwayat peminjaman yang belum
+                                dikembalikan dengan filter tersebut.</p>
+                        @endif
                     </div>
                 @endif
             </div>

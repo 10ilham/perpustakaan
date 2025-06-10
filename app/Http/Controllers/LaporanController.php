@@ -53,7 +53,7 @@ class LaporanController extends Controller
         ));
     }
 
-    public function belumKembali()
+    public function belumKembali(Request $request)
     {
         $query = PeminjamanModel::with(['user', 'buku'])
             ->whereIn('status', ['Dipinjam', 'Terlambat']);
@@ -61,6 +61,22 @@ class LaporanController extends Controller
         // Filter data untuk non-admin: hanya tampilkan data peminjaman mereka sendiri
         if (Auth::user()->level !== 'admin') {
             $query->where('user_id', Auth::id());
+        }
+
+        // Filter berdasarkan tanggal jika ada
+        if ($request->has('tanggal_mulai') && $request->tanggal_mulai) {
+            $query->whereDate('tanggal_pinjam', '>=', $request->tanggal_mulai);
+        }
+
+        if ($request->has('tanggal_selesai') && $request->tanggal_selesai) {
+            $query->whereDate('tanggal_pinjam', '<=', $request->tanggal_selesai);
+        }
+
+        // Filter berdasarkan level user jika ada (hanya untuk admin)
+        if (Auth::user()->level === 'admin' && $request->has('level') && $request->level) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('level', $request->level);
+            });
         }
 
         $peminjamanBelumKembali = $query->orderBy('tanggal_kembali', 'asc')
@@ -84,7 +100,10 @@ class LaporanController extends Controller
                 return $peminjaman;
             });
 
-        return view('laporan.belum_kembali', compact('peminjamanBelumKembali'));
+        // Data untuk filter (hanya untuk admin)
+        $levels = ['siswa', 'guru', 'staff'];
+
+        return view('laporan.belum_kembali', compact('peminjamanBelumKembali', 'levels'));
     }
 
     public function sudahKembali(Request $request)
