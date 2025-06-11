@@ -5,7 +5,7 @@
         @if (auth()->user()->level == 'admin')
             <h1 class="title">Laporan Sudah Dikembalikan</h1>
         @else
-            <h1 class="title">Riwayat Peminjaman Anda (Sudah Dikembalikan)</h1>
+            <h1 class="title">Laporan Riwayat Peminjaman Anda (Sudah Dikembalikan)</h1>
         @endif
         <ul class="breadcrumbs">
             @if (auth()->user()->level == 'admin')
@@ -103,7 +103,7 @@
                             </span>
                         </div>
                     @else
-                        <h3>Riwayat Buku Sudah Saya Kembalikan</h3>
+                        <h3>Daftar Riwayat Buku Sudah Anda Kembalikan</h3>
                         <div class="menu">
                             <span style="color: var(--dark-grey); font-size: 14px;">
                                 <i class='bx bx-info-circle'></i> Ini adalah daftar buku yang sudah Anda kembalikan
@@ -264,7 +264,7 @@
                 order: [
                     [0, 'asc']
                 ], // Sort by the first column (No) in ascending order
-                dom: '<"export-buttons-container"B>frtip',
+                dom: '<"export-buttons-container"B>lfrtip',
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
                 },
@@ -342,7 +342,7 @@
                     columnClasses = ['col-no', 'col-buku', 'col-tgl-pinjam', 'col-tgl-kembali',
                         'col-tgl-dikembalikan', 'col-status', 'col-catatan'
                     ];
-                    documentTitle = 'Riwayat Peminjaman Anda (Sudah Dikembalikan)';
+                    documentTitle = 'Laporan Riwayat Peminjaman Anda (Sudah Dikembalikan)';
                 }
 
                 // Create HTML content for Word document

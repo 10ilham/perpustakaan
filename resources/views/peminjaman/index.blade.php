@@ -977,7 +977,7 @@
                     order: [
                         [0, 'asc']
                     ],
-                    dom: '<"export-buttons-container"B>frtip',
+                    dom: '<"export-buttons-container"B>lfrtip',
                     language: {
                         url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
                     },

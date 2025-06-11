@@ -2,7 +2,11 @@
 
 @section('content')
     <main>
-        <h1 class="title">Laporan Belum Dikembalikan</h1>
+        @if (auth()->user()->level == 'admin')
+            <h1 class="title">Laporan Belum Dikembalikan</h1>
+        @else
+            <h1 class="title">Laporan Riwayat Peminjaman Anda (Belum Dikembalikan)</h1>
+        @endif
         <ul class="breadcrumbs">
             @if (auth()->user()->level == 'admin')
                 <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
@@ -99,7 +103,7 @@
                             </span>
                         </div>
                     @else
-                        <h3>Daftar Buku Belum Dikembalikan Anda</h3>
+                        <h3>Daftar Riwayat Buku Belum Anda Kembalikan</h3>
                         <div class="menu">
                             <span style="color: var(--dark-grey); font-size: 14px;">
                                 <i class='bx bx-info-circle'></i> Ini adalah daftar buku yang belum Anda kembalikan
@@ -254,7 +258,7 @@
                 order: [
                     [0, 'asc']
                 ], // Sort by the first column (No) in ascending order
-                dom: '<"export-buttons-container"B>frtip',
+                dom: '<"export-buttons-container"B>lfrtip',
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/2.0.2/i18n/id.json'
                 },
