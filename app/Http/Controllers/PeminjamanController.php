@@ -185,7 +185,8 @@ class PeminjamanController extends Controller
 
         // Cek apakah stok buku tersedia
         if ($buku->stok_buku <= 0) {
-            return redirect()->back()->with('error', 'Stok buku tidak tersedia untuk dipinjam.');
+            // Redirect ke halaman buku berdasarkan level user
+            return $this->redirectToAppropriateView()->with('error', 'Stok buku tidak tersedia untuk dipinjam.');
         }
 
         // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan
@@ -196,7 +197,7 @@ class PeminjamanController extends Controller
             ->first();
 
         if ($sudahPinjam) {
-            return redirect()->back()->with('error', 'Anda sudah meminjam buku ini dan belum mengembalikannya.');
+            return $this->redirectToAppropriateView()->with('error', 'Anda sudah meminjam buku ini dan belum mengembalikannya.');
         }
 
         // Cek jumlah buku yang sedang dipinjam oleh user
@@ -206,10 +207,24 @@ class PeminjamanController extends Controller
 
         // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
         if ($jumlahPinjam >= 1) {
-            return redirect()->back()->with('error', 'Anda sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu untuk meminjam buku lain.');
+            return $this->redirectToAppropriateView()->with('error', 'Anda sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu untuk meminjam buku lain.');
         }
 
         return view('peminjaman.form', compact('buku'));
+    }
+
+    // Helper method untuk redirect yang tepat berdasarkan level user
+    private function redirectToAppropriateView()
+    {
+        $userLevel = Auth::user()->level;
+
+        // Redirect ke dashboard yang sesuai berdasarkan level user
+        if ($userLevel === 'admin') {
+            return redirect()->route('buku.index');
+        } else {
+            // Untuk siswa, guru, staff redirect ke anggota dashboard
+            return redirect()->route('buku.index');
+        }
     }
 
     // Proses peminjaman buku
