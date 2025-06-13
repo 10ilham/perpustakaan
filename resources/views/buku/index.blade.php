@@ -77,14 +77,12 @@
             <div class="content-data">
                 <div class="head">
                     <h3>Daftar Buku</h3>
-                    <div class="d-flex gap-2">
-                        @if (auth()->user()->level == 'admin')
-                            <a href="{{ route('buku.tambah') }}" class="btn btn-success d-flex align-items-center">
-                                <i class="bx bx-plus-circle"></i>
-                                <span>Tambah Buku</span>
-                            </a>
-                        @endif
-                    </div>
+                    @if (auth()->user()->level == 'admin')
+                        <a href="{{ route('buku.tambah') }}" class="btn btn-success d-flex align-items-center">
+                            <i class="bx bx-plus-circle"></i>
+                            <span>Tambah Buku</span>
+                        </a>
+                    @endif
                 </div>
 
                 <!-- Area pencarian dan tombol export dalam satu baris -->

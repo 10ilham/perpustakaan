@@ -667,10 +667,6 @@ button[data-toggle="collapse"] {
 }
 
 /* Fix khusus untuk halaman tambah kategori */
-.profile-page form {
-    margin-bottom: 30px; /* Tambah ruang di bawah form */
-}
-
 .profile-page .page-title .row {
     margin-left: 0 !important;
     margin-right: 0 !important;

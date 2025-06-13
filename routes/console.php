@@ -55,8 +55,14 @@ Schedule::command('app:send-pengembalian-reminders')
 //     ->appendOutputTo(storage_path('logs/scheduler-test-notification.log'))
 //     ->description('Pengujian pengiriman notifikasi');
 
-// Menjalankan notifikasi admin untuk peminjaman baru setiap 1 menit
-Schedule::command('app:send-pengingat-notifikasi-admin')
-    ->everyMinute()
-    ->appendOutputTo(storage_path('logs/admin-notification.log'))
-    ->description('Pengiriman notifikasi peminjaman baru ke admin');
+// Menjalankan notifikasi admin untuk peminjaman baru setiap 1 menit (untuk keperluan testing)
+// Schedule::command('app:send-pengingat-notifikasi-admin')
+//     ->everyMinute()
+//     ->appendOutputTo(storage_path('logs/admin-notification.log'))
+//     ->description('Pengiriman notifikasi peminjaman baru ke admin');
+
+// Menjalankan notifikasi anggota untuk peminjaman manual setiap 1 menit (untuk keperluan testing)
+// Schedule::command('app:send-notifikasi-peminjaman-manual')
+//     ->everyMinute()
+//     ->appendOutputTo(storage_path('logs/peminjaman-manual-notification.log'))
+//     ->description('Pengiriman notifikasi peminjaman manual ke anggota');

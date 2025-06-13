@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Notifications\PeminjamanBukuAdminNotification;
+use App\Notifications\PeminjamanManualNotification;
 
 class PeminjamanController extends Controller
 {
@@ -521,6 +522,23 @@ class PeminjamanController extends Controller
     }
 
     /**
+     * Mengirim notifikasi ke anggota tentang peminjaman manual yang dilakukan admin
+     * Terhubung ke Notifications/PeminjamanManualNotification
+     * @param PeminjamanModel $peminjaman - Model peminjaman yang baru dibuat
+     * @return void
+     */
+    private function kirimNotifikasiPeminjamanManual(PeminjamanModel $peminjaman)
+    {
+        // Ambil user (anggota) yang terkait dengan peminjaman
+        $anggota = User::find($peminjaman->user_id);
+
+        if ($anggota) {
+            // Kirim notifikasi ke anggota
+            $anggota->notify(new PeminjamanManualNotification($peminjaman));
+        }
+    }
+
+    /**
      * Menampilkan form peminjaman manual untuk admin
      * @return \Illuminate\Http\Response
      */
@@ -689,8 +707,8 @@ class PeminjamanController extends Controller
 
         $buku->save();
 
-        // Kirim notifikasi ke admin tentang peminjaman baru
-        $this->kirimNotifikasiPeminjamanBaru($peminjaman);
+        // Kirim notifikasi ke anggota tentang peminjaman manual
+        $this->kirimNotifikasiPeminjamanManual($peminjaman);
 
         return redirect()->route('peminjaman.index')->with('success', 'Peminjaman manual berhasil disimpan untuk anggota: ' . $user->nama);
     }

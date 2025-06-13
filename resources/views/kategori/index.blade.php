@@ -22,11 +22,10 @@
                 <div class="head">
                     <h3>Daftar Kategori Buku</h3>
                     @if (auth()->user()->level == 'admin')
-                        <div>
-                            <a href="{{ route('kategori.tambah') }}" class="btn btn-success">
-                                <i class="bx bx-plus-circle"></i> Tambah Kategori
-                            </a>
-                        </div>
+                        <a href="{{ route('kategori.tambah') }}" class="btn btn-success">
+                            <i class="bx bx-plus-circle"></i>
+                            <span>Tambah Kategori</span>
+                        </a>
                     @endif
                 </div>
 
