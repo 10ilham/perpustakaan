@@ -17,22 +17,35 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PeminjamanController;
 
 Route::get('/', function () {
+    // Jika pengguna sudah login, arahkan ke dashboard yang sesuai
+    if (Auth::check()) {
+        $userLevel = Auth::user()->level;
+
+        if ($userLevel === 'admin') {
+            return redirect('/admin/dashboard');
+        } else {
+            return redirect('/anggota/dashboard');
+        }
+    }
+
     return view('layouts.index');
 });
 
 Route::get('formemail', [KirimEmailController::class, 'index']);
 Route::post('kirim', [KirimEmailController::class, 'kirim']);
 
-// Route untuk login
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+// Route untuk login - hanya dapat diakses oleh tamu (belum login)
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
 
-// Route untuk lupa password dan reset password
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
+    // Route untuk lupa password dan reset password
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
+});
 
-// Route untuk verifikasi email
+// Route untuk verifikasi email - dapat diakses baik oleh tamu maupun pengguna yang sudah login
 Route::get('/email/verify/{token}', [VerificationController::class, 'verify'])->name('email.verify');
 
 // Route untuk logout
@@ -50,7 +63,7 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::get('/anggota/dashboard', [AnggotaController::class, 'showAnggotaData'])->name('anggota.dashboard');
     Route::get('/anggota/chart-data', [AnggotaController::class, 'getChartData'])->name('anggota.chart-data');
 
-    // Route untuk anggota (halaman admin)
+    // Route untuk pengelolaan anggota (khusus admin)
     Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.index');
     Route::get('/anggota/detail/{id}', [AnggotaController::class, 'detail'])->name('anggota.detail');
     Route::get('/anggota/tambah', [AnggotaController::class, 'tambah'])->name('anggota.tambah');
@@ -93,7 +106,7 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::post('/peminjaman/manual/simpan', [PeminjamanController::class, 'simpanManual'])->name('peminjaman.manual.simpan');
     Route::get('/peminjaman/manual/get-anggota/{level}', [PeminjamanController::class, 'getAnggotaByLevel'])->name('peminjaman.manual.anggota');
 
-    // Route untuk laporan
+    // Route untuk laporan (hanya dapat diakses oleh admin)
     Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/belum_kembali', [App\Http\Controllers\LaporanController::class, 'belumKembali'])->name('laporan.belum_kembali');
     Route::get('/laporan/sudah_kembali', [App\Http\Controllers\LaporanController::class, 'sudahKembali'])->name('laporan.sudah_kembali');
