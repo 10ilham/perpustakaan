@@ -70,8 +70,15 @@
                         </div>
                         <div class="form-group">
                             <label for="bagian">Bagian</label>
-                            <input type="text" name="bagian" id="bagian" class="form-control"
-                                value="{{ $staff->bagian }}" required>
+                            <select name="bagian" id="bagian" class="form-control" required>
+                                <option value="" disabled selected>Pilih Bagian</option>
+                                <option value="Kepala Tata Usaha" {{ $staff->bagian == 'Kepala Tata Usaha' ? 'selected' : '' }}>Kepala Tata Usaha</option>
+                                <option value="Tata Usaha" {{ $staff->bagian == 'Tata Usaha' ? 'selected' : '' }}>Tata Usaha</option>
+                                <option value="Staff Keuangan" {{ $staff->bagian == 'Staff Keuangan' ? 'selected' : '' }}>Staff Keuangan</option>
+                                <option value="Staff Laboratorium" {{ $staff->bagian == 'Staff Laboratorium' ? 'selected' : '' }}>Staff Laboratorium</option>
+                                <option value="Staff Keamanan" {{ $staff->bagian == 'Staff Keamanan' ? 'selected' : '' }}>Staff Keamanan</option>
+                                <option value="Staff Kebersihan" {{ $staff->bagian == 'Staff Kebersihan' ? 'selected' : '' }}>Staff Kebersihan</option>
+                            </select>
                             @error('bagian')
                                 <div class="custom-alert" role="alert">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

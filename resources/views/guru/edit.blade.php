@@ -71,23 +71,17 @@
                         <div class="form-group">
                             <label for="mata_pelajaran">Mata Pelajaran</label>
                             <select name="mata_pelajaran" id="mata_pelajaran" class="form-control" required>
-                                <option value="">Pilih Mata Pelajaran</option>
-                                <option value="Matematika" {{ $guru->mata_pelajaran == 'Matematika' ? 'selected' : '' }}>
-                                    Matematika</option>
-                                <option value="Bahasa Indonesia"
-                                    {{ $guru->mata_pelajaran == 'Bahasa Indonesia' ? 'selected' : '' }}>Bahasa Indonesia
-                                </option>
-                                <option value="Bahasa Inggris"
-                                    {{ $guru->mata_pelajaran == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris
-                                </option>
-                                <option value="Bahasa Sunda"
-                                    {{ $guru->mata_pelajaran == 'Bahasa Sunda' ? 'selected' : '' }}>Bahasa Sunda</option>
+                                <option value="" disabled selected>Pilih Mata Pelajaran</option>
+                                <option value="Matematika" {{ $guru->mata_pelajaran == 'Matematika' ? 'selected' : '' }}>Matematika</option>
+                                <option value="Bahasa Indonesia" {{ $guru->mata_pelajaran == 'Bahasa Indonesia' ? 'selected' : '' }}>Bahasa Indonesia</option>
+                                <option value="Bahasa Inggris" {{ $guru->mata_pelajaran == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris</option>
+                                <option value="Bahasa Arab" {{ $guru->mata_pelajaran == 'Bahasa Arab' ? 'selected' : '' }}>Bahasa Arab</option>
+                                <option value="Bahasa Sunda" {{ $guru->mata_pelajaran == 'Bahasa Sunda' ? 'selected' : '' }}>Bahasa Sunda</option>
                                 <option value="IPA" {{ $guru->mata_pelajaran == 'IPA' ? 'selected' : '' }}>IPA</option>
                                 <option value="IPS" {{ $guru->mata_pelajaran == 'IPS' ? 'selected' : '' }}>IPS</option>
-                                <option value="PAI" {{ $guru->mata_pelajaran == 'PAI' ? 'selected' : '' }}>PAI</option>
-                                <option value="PKN" {{ $guru->mata_pelajaran == 'PKN' ? 'selected' : '' }}>PKN</option>
-                                <option value="Olahraga" {{ $guru->mata_pelajaran == 'Olahraga' ? 'selected' : '' }}>
-                                    Olahraga</option>
+                                <option value="Pendidikan Agama Islam" {{ $guru->mata_pelajaran == 'Pendidikan Agama Islam' ? 'selected' : '' }}>Pendidikan Agama Islam</option>
+                                <option value="Fiqih" {{ $guru->mata_pelajaran == 'Fiqih' ? 'selected' : '' }}>Fiqih</option>
+                                <option value="Akidah Akhlak" {{ $guru->mata_pelajaran == 'Akidah Akhlak' ? 'selected' : '' }}>Akidah Akhlak</option>
                             </select>
                             @error('mata_pelajaran')
                                 <div class="custom-alert" role="alert">

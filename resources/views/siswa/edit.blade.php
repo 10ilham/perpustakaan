@@ -71,16 +71,13 @@
                         <div class="form-group">
                             <label for="kelas">Kelas</label>
                             <select name="kelas" id="kelas" class="form-control" required>
-                                <option value="">Pilih Kelas</option>
-                                <option value="7A" {{ $siswa->kelas == '7A' ? 'selected' : '' }}>7A</option>
-                                <option value="7B" {{ $siswa->kelas == '7B' ? 'selected' : '' }}>7B</option>
-                                <option value="7C" {{ $siswa->kelas == '7C' ? 'selected' : '' }}>7C</option>
-                                <option value="8A" {{ $siswa->kelas == '8A' ? 'selected' : '' }}>8A</option>
-                                <option value="8B" {{ $siswa->kelas == '8B' ? 'selected' : '' }}>8B</option>
-                                <option value="8C" {{ $siswa->kelas == '8C' ? 'selected' : '' }}>8C</option>
-                                <option value="9A" {{ $siswa->kelas == '9A' ? 'selected' : '' }}>9A</option>
-                                <option value="9B" {{ $siswa->kelas == '9B' ? 'selected' : '' }}>9B</option>
-                                <option value="9C" {{ $siswa->kelas == '9C' ? 'selected' : '' }}>9C</option>
+                                <option value="" disabled selected>Pilih Kelas</option>
+                                <option value="VII A" {{ $siswa->kelas == 'VII A' ? 'selected' : '' }}>VII A</option>
+                                <option value="VII B" {{ $siswa->kelas == 'VII B' ? 'selected' : '' }}>VII B</option>
+                                <option value="VIII A" {{ $siswa->kelas == 'VIII A' ? 'selected' : '' }}>VIII A</option>
+                                <option value="VIII B" {{ $siswa->kelas == 'VIII B' ? 'selected' : '' }}>VIII B</option>
+                                <option value="IX A" {{ $siswa->kelas == 'IX A' ? 'selected' : '' }}>IX A</option>
+                                <option value="IX B" {{ $siswa->kelas == 'IX B' ? 'selected' : '' }}>IX B</option>
                             </select>
                             @error('kelas')
                                 <div class="custom-alert" role="alert">
