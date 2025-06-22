@@ -64,6 +64,10 @@
                                 <h5 class="card-title">Buku dalam Kategori Ini</h5>
                             </div>
 
+                            {{-- Parameter untuk pagination, ketika tombol simpan perubahan ditekan maka akan kembali ke halaman sebelumnya ketika sebelum diedit --}}
+                            <input type="hidden" name="page" value="{{ request('page') }}">
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+
                             <!-- Form pencarian buku dalam kategori -->
                             <form class="navbar-search mb-3" action="{{ route('kategori.detail', $kategori->id) }}"
                                 method="GET">
@@ -132,11 +136,11 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-area mt-3">
-                                                        <a href="{{ route('buku.detail', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id]) }}"
+                                                        <a href="{{ route('buku.detail', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id, 'page' => request('page'), 'search' => request('search')]) }}"
                                                             class="btn btn-sm btn-info px-2"
                                                             style="text-decoration: none; color: white;">Detail</a>
                                                         @if (auth()->user()->level == 'admin' || auth()->user()->level == 'staff')
-                                                            <a href="{{ route('buku.edit', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id]) }}"
+                                                            <a href="{{ route('buku.edit', ['id' => $item->id, 'ref' => 'kategori', 'kategori_id' => $kategori->id, 'page' => request('page'), 'search' => request('search')]) }}"
                                                                 class="btn btn-sm btn-warning px-2"
                                                                 style="text-decoration: none; color: white;">Edit</a>
                                                             <button class="btn btn-sm btn-danger px-3 delete-btn"

@@ -55,24 +55,6 @@
                         <div class="card-body">
                             <h4 class="card-title">Form Peminjaman Manual</h4>
 
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-
-                            @if (session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-
                             <form method="POST" action="{{ route('peminjaman.manual.simpan') }}" id="manualPeminjamanForm">
                                 @csrf
 
@@ -501,19 +483,6 @@
 
             // Validasi form sebelum submit
             $('#manualPeminjamanForm').submit(function(e) {
-                var pesan = '';
-                if (!$('#buku_id').val()) pesan += '- Buku harus dipilih\n';
-                if (!$('#user_level').val()) pesan += '- Level anggota harus dipilih\n';
-                if (!$('#user_id').val()) pesan += '- Anggota harus dipilih\n';
-                if (!$('#tanggal_pinjam').val()) pesan += '- Tanggal pinjam harus diisi\n';
-                if (!$('#tanggal_kembali').val()) pesan += '- Tanggal kembali harus diisi\n';
-
-                if (pesan) {
-                    e.preventDefault();
-                    alert('Mohon lengkapi data berikut:\n' + pesan);
-                    return false;
-                }
-
                 $('#submitBtn').prop('disabled', true).html(
                     '<i class="bx bx-loader bx-spin"></i> Menyimpan...');
             });

@@ -26,6 +26,9 @@ class PeminjamanController extends Controller
         // Filter berdasarkan user_type jika ada
         $userType = $request->input('user_type');
 
+        // Filter status peminjaman
+        $status = $request->input('status');
+
         // Filter berdasarkan rentang tanggal jika ada
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
@@ -39,6 +42,24 @@ class PeminjamanController extends Controller
                 $peminjaman = $baseQuery->whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
                 });
+
+                // Tambahkan filter status jika ada
+                if ($status) {
+                    if ($status == 'Dipinjam') {
+                        $peminjaman = $peminjaman->whereIn('status', ['Dipinjam', 'Terlambat']);
+                    } elseif ($status == 'Terlambat') {
+                        $peminjaman = $peminjaman->where(function ($query) {
+                            $query->where('status', 'Terlambat')
+                                ->orWhere(function ($q) {
+                                    $q->where('status', 'Dikembalikan')
+                                        ->where('is_terlambat', true);
+                                });
+                        });
+                    } else {
+                        // Untuk status Dikembalikan, gunakan filter biasa
+                        $peminjaman = $peminjaman->where('status', $status);
+                    }
+                }
 
                 // Tambahkan filter rentang tanggal jika ada
                 if ($startDate && $endDate) {
@@ -54,10 +75,7 @@ class PeminjamanController extends Controller
 
                 $dipinjamQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
-                })->where(function ($query) {
-                    $query->where('status', 'Dipinjam')
-                        ->orWhere('status', 'Terlambat');
-                });
+                })->whereIn('status', ['Dipinjam', 'Terlambat']);
 
                 $dikembalikanQuery = PeminjamanModel::whereHas('user', function ($query) use ($userType) {
                     $query->where('level', $userType);
@@ -67,8 +85,29 @@ class PeminjamanController extends Controller
                     $query->where('level', $userType);
                 })->where(function ($query) {
                     $query->where('status', 'Terlambat')
-                        ->orWhere('is_terlambat', true);
+                        ->orWhere(function ($q) {
+                            $q->where('status', 'Dikembalikan')
+                                ->where('is_terlambat', true);
+                        });
                 });
+
+                // Tambahkan filter status untuk statistik jika ada
+                if ($status) {
+                    if ($status == 'Dipinjam') {
+                        $totalQuery = $totalQuery->whereIn('status', ['Dipinjam', 'Terlambat']);
+                    } elseif ($status == 'Terlambat') {
+                        $totalQuery = $totalQuery->where(function ($query) {
+                            $query->where('status', 'Terlambat')
+                                ->orWhere(function ($q) {
+                                    $q->where('status', 'Dikembalikan')
+                                        ->where('is_terlambat', true);
+                                });
+                        });
+                    } else {
+                        // Untuk status Dikembalikan, gunakan filter biasa
+                        $totalQuery = $totalQuery->where('status', $status);
+                    }
+                }
 
                 // Tambahkan filter rentang tanggal jika ada
                 if ($startDate && $endDate) {
@@ -86,6 +125,24 @@ class PeminjamanController extends Controller
                 // Admin dapat melihat semua peminjaman jika tidak ada filter user type
                 $peminjaman = $baseQuery;
 
+                // Tambahkan filter status jika ada
+                if ($status) {
+                    if ($status == 'Dipinjam') {
+                        $peminjaman = $peminjaman->whereIn('status', ['Dipinjam', 'Terlambat']);
+                    } elseif ($status == 'Terlambat') {
+                        $peminjaman = $peminjaman->where(function ($query) {
+                            $query->where('status', 'Terlambat')
+                                ->orWhere(function ($q) {
+                                    $q->where('status', 'Dikembalikan')
+                                        ->where('is_terlambat', true);
+                                });
+                        });
+                    } else {
+                        // Untuk status Dikembalikan, gunakan filter biasa
+                        $peminjaman = $peminjaman->where('status', $status);
+                    }
+                }
+
                 // Tambahkan filter rentang tanggal jika ada
                 if ($startDate && $endDate) {
                     $peminjaman = $peminjaman->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
@@ -96,17 +153,35 @@ class PeminjamanController extends Controller
                 // Statistik untuk semua peminjaman
                 $totalQuery = PeminjamanModel::query();
 
-                $dipinjamQuery = PeminjamanModel::where(function ($query) {
-                    $query->where('status', 'Dipinjam')
-                        ->orWhere('status', 'Terlambat');
-                });
+                $dipinjamQuery = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat']);
 
                 $dikembalikanQuery = PeminjamanModel::where('status', 'Dikembalikan');
 
                 $terlambatQuery = PeminjamanModel::where(function ($query) {
                     $query->where('status', 'Terlambat')
-                        ->orWhere('is_terlambat', true);
+                        ->orWhere(function ($q) {
+                            $q->where('status', 'Dikembalikan')
+                                ->where('is_terlambat', true);
+                        });
                 });
+
+                // Tambahkan filter status untuk statistik jika ada
+                if ($status) {
+                    if ($status == 'Dipinjam') {
+                        $totalQuery = $totalQuery->whereIn('status', ['Dipinjam', 'Terlambat']);
+                    } elseif ($status == 'Terlambat') {
+                        $totalQuery = $totalQuery->where(function ($query) {
+                            $query->where('status', 'Terlambat')
+                                ->orWhere(function ($q) {
+                                    $q->where('status', 'Dikembalikan')
+                                        ->where('is_terlambat', true);
+                                });
+                        });
+                    } else {
+                        // Untuk status Dikembalikan, gunakan filter biasa
+                        $totalQuery = $totalQuery->where('status', $status);
+                    }
+                }
 
                 // Tambahkan filter rentang tanggal jika ada
                 if ($startDate && $endDate) {
@@ -125,6 +200,24 @@ class PeminjamanController extends Controller
             // Siswa, staff dan guru hanya melihat peminjaman mereka sendiri
             $peminjaman = $baseQuery->where('user_id', Auth::id());
 
+            // Tambahkan filter status jika ada
+            if ($status) {
+                if ($status == 'Dipinjam') {
+                    $peminjaman = $peminjaman->whereIn('status', ['Dipinjam', 'Terlambat']);
+                } elseif ($status == 'Terlambat') {
+                    $peminjaman = $peminjaman->where(function ($query) {
+                        $query->where('status', 'Terlambat')
+                            ->orWhere(function ($q) {
+                                $q->where('status', 'Dikembalikan')
+                                    ->where('is_terlambat', true);
+                            });
+                    });
+                } else {
+                    // Untuk status Dikembalikan, gunakan filter biasa
+                    $peminjaman = $peminjaman->where('status', $status);
+                }
+            }
+
             // Tambahkan filter rentang tanggal jika ada
             if ($startDate && $endDate) {
                 $peminjaman = $peminjaman->whereBetween('tanggal_pinjam', [$startDate, $endDate]);
@@ -135,17 +228,36 @@ class PeminjamanController extends Controller
             // Statistik untuk peminjaman pengguna sendiri
             $totalQuery = PeminjamanModel::where('user_id', Auth::id());
 
-            $dipinjamQuery = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
-                $query->where('status', 'Dipinjam')
-                    ->orWhere('status', 'Terlambat');
-            });
+            $dipinjamQuery = PeminjamanModel::where('user_id', Auth::id())
+                ->whereIn('status', ['Dipinjam', 'Terlambat']);
 
             $dikembalikanQuery = PeminjamanModel::where('user_id', Auth::id())->where('status', 'Dikembalikan');
 
             $terlambatQuery = PeminjamanModel::where('user_id', Auth::id())->where(function ($query) {
                 $query->where('status', 'Terlambat')
-                    ->orWhere('is_terlambat', true);
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'Dikembalikan')
+                            ->where('is_terlambat', true);
+                    });
             });
+
+            // Tambahkan filter status untuk statistik jika ada
+            if ($status) {
+                if ($status == 'Dipinjam') {
+                    $totalQuery = $totalQuery->whereIn('status', ['Dipinjam', 'Terlambat']);
+                } elseif ($status == 'Terlambat') {
+                    $totalQuery = $totalQuery->where(function ($query) {
+                        $query->where('status', 'Terlambat')
+                            ->orWhere(function ($q) {
+                                $q->where('status', 'Dikembalikan')
+                                    ->where('is_terlambat', true);
+                            });
+                    });
+                } else {
+                    // Untuk status Dikembalikan, gunakan filter biasa
+                    $totalQuery = $totalQuery->where('status', $status);
+                }
+            }
 
             // Tambahkan filter rentang tanggal jika ada
             if ($startDate && $endDate) {
@@ -161,7 +273,7 @@ class PeminjamanController extends Controller
             $terlambat = $terlambatQuery->count();
         }
 
-        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'dipinjam', 'dikembalikan', 'terlambat', 'startDate', 'endDate'));
+        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'dipinjam', 'dikembalikan', 'terlambat', 'startDate', 'endDate', 'status'));
     }
 
     // Method untuk memperbarui status peminjaman yang terlambat
@@ -219,11 +331,8 @@ class PeminjamanController extends Controller
     {
         $userLevel = Auth::user()->level;
 
-        // Redirect ke dashboard yang sesuai berdasarkan level user
-        if ($userLevel === 'admin') {
-            return redirect()->route('buku.index');
-        } else {
-            // Untuk siswa, guru, staff redirect ke anggota dashboard
+        // Redirect ke index buku untuk user selain admin yaitu anggota (siswa, guru, staff)
+        if ($userLevel !== 'admin') {
             return redirect()->route('buku.index');
         }
     }
@@ -395,7 +504,7 @@ class PeminjamanController extends Controller
         $peminjaman = PeminjamanModel::findOrFail($id);
 
         // Hanya admin yang dapat mengembalikan buku
-        if (Auth::user()->level != 'admin') {
+        if (Auth::user()->level !== 'admin') {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengembalikan buku.');
         }
 
@@ -465,7 +574,7 @@ class PeminjamanController extends Controller
         $peminjaman = PeminjamanModel::findOrFail($id);
 
         // Hanya admin yang dapat menghapus data peminjaman
-        if (Auth::user()->level != 'admin') {
+        if (Auth::user()->level !== 'admin') {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus data peminjaman.');
         }
 
@@ -557,6 +666,7 @@ class PeminjamanController extends Controller
 
     /**
      * Mendapatkan daftar anggota berdasarkan level
+     * Anggota yang sudah memiliki peminjaman aktif (status Dipinjam atau Terlambat) tidak ditampilkan
      * @param string $level
      * @return \Illuminate\Http\JsonResponse
      */
@@ -564,13 +674,19 @@ class PeminjamanController extends Controller
     {
         // Hanya admin yang bisa akses
         if (Auth::user()->level !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return response()->json(['error' => 'Dilarang masuk! Selain admin tidak diperbolehkan'], 403);
         }
+
+        // Dapatkan user_id yang memiliki peminjaman aktif (status = 'Dipinjam' atau 'Terlambat')
+        $userIdDenganPeminjamanAktif = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->pluck('user_id')
+            ->toArray();
 
         $anggota = [];
 
         if ($level === 'siswa') {
             $anggota = User::where('level', 'siswa')
+                ->whereNotIn('id', $userIdDenganPeminjamanAktif) // Exclude anggota dengan peminjaman aktif
                 ->with('siswa')
                 ->get()
                 ->map(function ($user) {
@@ -582,6 +698,7 @@ class PeminjamanController extends Controller
                 });
         } elseif ($level === 'guru') {
             $anggota = User::where('level', 'guru')
+                ->whereNotIn('id', $userIdDenganPeminjamanAktif) // Exclude anggota dengan peminjaman aktif
                 ->with('guru')
                 ->get()
                 ->map(function ($user) {
@@ -593,6 +710,7 @@ class PeminjamanController extends Controller
                 });
         } elseif ($level === 'staff') {
             $anggota = User::where('level', 'staff')
+                ->whereNotIn('id', $userIdDenganPeminjamanAktif) // Exclude anggota dengan peminjaman aktif
                 ->with('staff')
                 ->get()
                 ->map(function ($user) {
@@ -660,7 +778,7 @@ class PeminjamanController extends Controller
 
         // Cek stok buku
         if ($buku->stok_buku <= 0) {
-            return redirect()->back()->with('error', 'Stok buku tidak tersedia untuk dipinjam.')->withInput();
+            return redirect()->back()->with('error', 'Stok buku tidak tersedia untuk dipinjam.');
         }
 
         // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan
@@ -670,7 +788,7 @@ class PeminjamanController extends Controller
             ->first();
 
         if ($sudahPinjam) {
-            return redirect()->back()->with('error', 'Anggota sudah meminjam buku ini dan belum mengembalikannya.')->withInput();
+            return redirect()->back()->with('error', 'Anggota sudah meminjam buku ini dan belum mengembalikannya.');
         }
 
         // Cek jumlah buku yang sedang dipinjam oleh user
@@ -680,7 +798,7 @@ class PeminjamanController extends Controller
 
         // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
         if ($jumlahPinjam >= 1) {
-            return redirect()->back()->with('error', 'Anggota sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu.')->withInput();
+            return redirect()->back()->with('error', 'Anggota sudah meminjam 1 buku. Silakan kembalikan buku tersebut terlebih dahulu.');
         }
 
         // Generate nomor peminjaman

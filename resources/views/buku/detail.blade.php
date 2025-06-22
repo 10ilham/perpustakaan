@@ -143,7 +143,8 @@
                                 <div class="form-group text-end">
                                     {{-- Parameter referensi yang akan digunakan di controller --}}
                                     @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
-                                        <a href="{{ route('kategori.detail', $kategori_id) }}" class="btn btn-secondary">
+                                        <a href="{{ route('kategori.detail', ['id' => $kategori_id, 'page' => $page ?? '', 'search' => $search ?? '']) }}"
+                                            class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali ke Kategori
                                         </a>
                                     @elseif (isset($dashboard) && $dashboard == 'admin')
@@ -157,7 +158,8 @@
                                             <i class="bx bx-arrow-back"></i> Kembali ke Dashboard
                                         </a>
                                     @else
-                                        <a href="{{ route('buku.index') }}" class="btn btn-secondary">
+                                        <a href="{{ route('buku.index', ['page' => $page ?? '', 'search' => $search ?? '', 'kategori' => $kategoriFilter ?? '', 'status' => $status ?? '']) }}"
+                                            class="btn btn-secondary">
                                             <i class="bx bx-arrow-back"></i> Kembali
                                         </a>
                                     @endif

@@ -38,6 +38,12 @@
                             <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
                         @endif
 
+                        {{-- Parameter untuk pagination dan filter, ketika tombol simpan perubahan ditekan maka akan kembali ke halaman sebelumnya ketika sebelum diedit --}}
+                        <input type="hidden" name="page" value="{{ request('page') }}">
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                        <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+
                         <div class="row" style="display: flex; flex-wrap: nowrap;">
                             <div class="col-md-6">
                                 <!-- Informasi Dasar Buku -->
@@ -226,11 +232,12 @@
 
                         <div class="form-group mt-4 text-end">
                             @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
-                                <a href="{{ route('kategori.detail', $kategori_id) }}" class="btn btn-secondary me-2">
+                                <a href="{{ route('kategori.detail', ['id' => $kategori_id, 'page' => $page ?? '', 'search' => $search ?? '']) }}" class="btn btn-secondary me-2">
                                     <i class="bx bx-arrow-back"></i> Kembali ke Kategori
                                 </a>
                             @else
-                                <a href="{{ route('buku.index') }}" class="btn btn-secondary me-2">
+                                <a href="{{ route('buku.index', ['page' => $page ?? '', 'search' => $search ?? '', 'kategori' => $kategoriFilter ?? '', 'status' => $status ?? '']) }}"
+                                    class="btn btn-secondary me-2">
                                     <i class="bx bx-arrow-back"></i> Kembali
                                 </a>
                             @endif

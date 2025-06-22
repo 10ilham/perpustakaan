@@ -23,7 +23,8 @@
                 <div class="head">
                     <div>
                         <h2>{{ $totalPeminjaman }}</h2>
-                        <p>Total Peminjaman {{ request('user_type') ? ucfirst(request('user_type')) : '' }}</p>
+                        <p>Total Peminjaman {{ request('user_type') ? ucfirst(request('user_type')) : '' }}
+                            {{ request('status') }}</p>
                     </div>
                     <i class='bx bxs-book-bookmark icon'></i>
                 </div>
@@ -33,8 +34,19 @@
             <div class="card">
                 <div class="head">
                     <div>
-                        <h2>{{ $dipinjam }}</h2>
-                        <p>Sedang Dipinjam {{ request('user_type') ? ucfirst(request('user_type')) : '' }}</p>
+                        @if (request('status') == 'Dikembalikan')
+                            <h2>{{ $peminjaman->where('status', 'Dipinjam')->count() }}</h2>
+                            <p>Sedang Dipinjam</p>
+                        @elseif(request('status') == 'Terlambat')
+                            <h2>{{ $peminjaman->where('status', 'Terlambat')->count() }}</h2>
+                            <p>Sedang Dipinjam & Terlambat</p>
+                        @elseif(request('status') == 'Dipinjam')
+                            <h2>{{ $dipinjam }}</h2>
+                            <p>Sedang Dipinjam</p>
+                        @else
+                            <h2>{{ $dipinjam }}</h2>
+                            <p>Sedang Dipinjam</p>
+                        @endif
                     </div>
                     <i class='bx bxs-book icon'></i>
                 </div>
@@ -44,8 +56,20 @@
             <div class="card">
                 <div class="head">
                     <div>
-                        <h2>{{ $dikembalikan }}</h2>
-                        <p>Dikembalikan {{ request('user_type') ? ucfirst(request('user_type')) : '' }}</p>
+                        @if (request('status') == 'Dipinjam')
+                            <h2>{{ $peminjaman->where('status', 'Dikembalikan')->count() }}</h2>
+                            <p>Dikembalikan</p>
+                        @elseif(request('status') == 'Terlambat')
+                            <h2>{{ $peminjaman->where('status', 'Dikembalikan')->where('is_terlambat', true)->count() }}
+                            </h2>
+                            <p>Dikembalikan & Terlambat</p>
+                        @elseif(request('status') == 'Dikembalikan')
+                            <h2>{{ $dikembalikan }}</h2>
+                            <p>Dikembalikan</p>
+                        @else
+                            <h2>{{ $dikembalikan }}</h2>
+                            <p>Dikembalikan</p>
+                        @endif
                     </div>
                     <i class='bx bx-check-circle icon'></i>
                 </div>
@@ -55,8 +79,20 @@
             <div class="card">
                 <div class="head">
                     <div>
-                        <h2>{{ $terlambat }}</h2>
-                        <p>Terlambat {{ request('user_type') ? ucfirst(request('user_type')) : '' }}</p>
+                        @if (request('status') == 'Dipinjam')
+                            <h2>{{ $peminjaman->where('status', 'Terlambat')->count() }}</h2>
+                            <p>Terlambat & Belum Dikembalikan</p>
+                        @elseif(request('status') == 'Dikembalikan')
+                            <h2>{{ $peminjaman->where('status', 'Dikembalikan')->where('is_terlambat', true)->count() }}
+                            </h2>
+                            <p>Terlambat Dikembalikan </p>
+                        @elseif(request('status') == 'Terlambat')
+                            <h2>{{ $terlambat }}</h2>
+                            <p>Total Terlambat</p>
+                        @else
+                            <h2>{{ $terlambat }}</h2>
+                            <p>Terlambat</p>
+                        @endif
                     </div>
                     <i class='bx bxs-time icon'></i>
                 </div>
@@ -79,6 +115,17 @@
                             <option value="staff" {{ request('user_type') == 'staff' ? 'selected' : '' }}>Staff</option>
                         </select>
 
+                        {{-- Filter status --}}
+                        <select name="status" id="status" class="form-control" style="max-width: 180px;">
+                            <option value="">Semua Status</option>
+                            <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>Dipinjam
+                            </option>
+                            <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>
+                                Dikembalikan</option>
+                            <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>Terlambat
+                            </option>
+                        </select>
+
                         <!-- Filter Rentang Waktu -->
                         <div style="display: flex; align-items: center; gap: 5px;">
                             <label for="start_date">Dari:</label>
@@ -96,7 +143,7 @@
                             <i class='bx bx-filter'></i> Filter
                         </button>
 
-                        @if (request('user_type') || request('start_date') || request('end_date'))
+                        @if (request('user_type') || request('status') || request('start_date') || request('end_date'))
                             <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary" style="padding: 5px 15px;">
                                 <i class='bx bx-reset'></i> Reset
                             </a>
@@ -215,7 +262,8 @@
                                                             @elseif ($item->status == 'Terlambat')
                                                                 <span class="badge"
                                                                     style="color: #dc3545;">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
+                                                                    hari)
                                                                 </span>
                                                             @endif
                                                         </td>
@@ -500,6 +548,21 @@
                     <form action="{{ route('peminjaman.index') }}" method="GET" class="form-group"
                         style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
 
+                        {{-- Filter status --}}
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="status">Status:</label>
+                            <select name="status" id="status" class="form-control" style="max-width: 180px;">
+                                <option value="">Semua Status</option>
+                                <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>
+                                    Dipinjam
+                                </option>
+                                <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>
+                                    Dikembalikan</option>
+                                <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>
+                                    Terlambat</option>
+                            </select>
+                        </div>
+
                         <div style="display: flex; align-items: center; gap: 5px;">
                             <label for="start_date">Dari:</label>
                             <input type="date" name="start_date" id="start_date" class="form-control"
@@ -516,7 +579,7 @@
                             <i class='bx bx-filter'></i> Filter
                         </button>
 
-                        @if (request('start_date') || request('end_date'))
+                        @if (request('status') || request('start_date') || request('end_date'))
                             <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary"
                                 style="padding: 5px 15px;">
                                 <i class='bx bx-reset'></i> Reset

@@ -174,7 +174,13 @@ class BukuController extends Controller
         $kategori_id = request('kategori_id'); // id referensi untuk kembali ke halaman kategori
         $dashboard = request('dashboard'); // id referensi untuk kembali ke halaman dashboard
 
-        return view('buku.detail', compact('buku', 'totalStokBuku', 'ref', 'kategori_id', 'dashboard'));
+        // Referensi untuk kembali ke page sebelumnya
+        $page = request('page');
+        $search = request('search');
+        $kategoriFilter = request('kategori');
+        $status = request('status');
+
+        return view('buku.detail', compact('buku', 'totalStokBuku', 'ref', 'kategori_id', 'dashboard', 'page', 'search', 'kategoriFilter', 'status'));
     }
 
     // Menampilkan form edit buku
@@ -187,7 +193,13 @@ class BukuController extends Controller
         $ref = request('ref');
         $kategori_id = request('kategori_id');
 
-        return view('buku.edit', compact('buku', 'kategori', 'ref', 'kategori_id'));
+        // Referensi untuk kembali ke page sebelumnya
+        $page = request('page');
+        $search = request('search');
+        $kategoriFilter = request('kategori');
+        $status = request('status');
+
+        return view('buku.edit', compact('buku', 'kategori', 'ref', 'kategori_id', 'page', 'search', 'kategoriFilter', 'status'));
     }
 
     // Mengupdate data buku
@@ -301,9 +313,34 @@ class BukuController extends Controller
 
         // Cek apakah ada referensi ke halaman kategori
         if ($request->has('ref') && $request->ref == 'kategori' && $request->has('kategori_id')) {
-            return redirect()->route('kategori.detail', $request->kategori_id)->with('success', 'Buku berhasil diperbarui.');
+            // Referensi untuk kembali ke halaman kategori
+            $page = $request->input('page');
+            $search = $request->input('search');
+            $kategori_id = $request->input('kategori_id');
+            // Handle if kategori_id agar dibaca berupa array
+            if (is_array($kategori_id)) {
+                $kategori_id = reset($kategori_id); // Ambil kategori pertama dari array
+            }
+            return redirect()->route('kategori.detail', [
+                'id' => $kategori_id,
+                'page' => $page ?? '',
+                'search' => $search ?? '',
+            ])->with('success', 'Buku berhasil diperbarui.');
         } else {
-            return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
+
+            // Referensi untuk kembali ke page sebelumnya - menggunakan parameter yang sama dengan tombol "Kembali"
+            $page = $request->input('page');
+            $search = $request->input('search');
+            $kategoriFilter = $request->input('kategori');
+            $status = $request->input('status');
+
+            // Gunakan parameter yang sama persis dengan tombol "Kembali" di view
+            return redirect()->route('buku.index', [
+                'page' => $page ?? '',
+                'search' => $search ?? '',
+                'kategori' => $kategoriFilter ?? '',
+                'status' => $status ?? ''
+            ])->with('success', 'Buku berhasil diperbarui.');
         }
     }
 

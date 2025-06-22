@@ -157,11 +157,12 @@
                                     </div>
                                     <div class="button-area mt-3"
                                         style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                        <a href="{{ route('buku.detail', $item->id) }}" class="btn btn-sm btn-info px-2"
+                                        <a href="{{ route('buku.detail', $item->id) }}?page={{ $buku->currentPage() }}{{ request('search') ? '&search=' . request('search') : '' }}{{ request('kategori') ? '&kategori=' . request('kategori') : '' }}{{ request('status') ? '&status=' . request('status') : '' }}"
+                                            class="btn btn-sm btn-info px-2"
                                             style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Detail</a>
 
                                         @if (auth()->user()->level == 'admin')
-                                            <a href="{{ route('buku.edit', $item->id) }}"
+                                            <a href="{{ route('buku.edit', $item->id) }}?page={{ $buku->currentPage() }}{{ request('search') ? '&search=' . request('search') : '' }}{{ request('kategori') ? '&kategori=' . request('kategori') : '' }}{{ request('status') ? '&status=' . request('status') : '' }}"
                                                 class="btn btn-sm btn-warning px-2"
                                                 style="text-decoration: none; color: white; height: 31px; display: flex; align-items: center;">Edit</a>
                                             <button class="btn btn-sm btn-danger px-3 delete-btn" data-bs-toggle="modal"
