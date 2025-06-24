@@ -1007,6 +1007,7 @@ button[data-toggle="collapse"] {
     /* Memberikan gaya tombol sukses */
     .table .btn-success,
     .table .btn-sm.btn-success,
+    .table .btn-success-pengambilan,
     .table .btn-success-peminjaman {
         background-color: #28a745;
         color: white;
@@ -1015,6 +1016,7 @@ button[data-toggle="collapse"] {
     }
 
     .table .btn-success:hover,
+    .table .btn-success-pengambilan:hover,
     .table .btn-success-peminjaman:hover {
         background-color: #218838;
     }

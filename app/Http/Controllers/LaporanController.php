@@ -12,31 +12,43 @@ class LaporanController extends Controller
 {
     public function index()
     {
-        // Statistik umum
-        $totalPeminjaman = PeminjamanModel::count();
+        // === STATISTIK UMUM ===
+        // Hitung total peminjaman (tidak termasuk buku yang masih diproses)
+        $totalPeminjaman = PeminjamanModel::where('status', '!=', 'Diproses')->count();
+
+        // Hitung buku yang saat ini masih dipinjam atau terlambat dikembalikan
         $belumKembali = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat'])->count();
+
+        // Hitung total buku yang sudah dikembalikan
         $sudahKembali = PeminjamanModel::where('status', 'Dikembalikan')->count();
 
-        // Hitung terlambat: yang masih dipinjam melewati tanggal kembali + yang dikembalikan terlambat
+        // === HITUNG KETERLAMBATAN ===
+        // Bagian 1: Buku yang masih dipinjam tapi sudah lewat tanggal kembali
+        // (tanggal kembali lebih kecil dari hari ini = harusnya sudah dikembalikan)
         $terlambatMasihPinjam = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat'])
             ->where('tanggal_kembali', '<', now()->toDateString())
             ->count();
 
+        // Bagian 2: Buku yang sudah dikembalikan tapi terlambat
+        // (tanggal pengembalian lebih besar dari tanggal kembali yang seharusnya)
         $terlambatSudahKembali = PeminjamanModel::where('status', 'Dikembalikan')
             ->whereRaw('DATE(tanggal_pengembalian) > DATE(tanggal_kembali)')
             ->count();
 
         $terlambat = $terlambatMasihPinjam + $terlambatSudahKembali;
 
-        // Statistik per level user
+        // === STATISTIK BERDASARKAN JENIS PENGGUNA ===
+        // Ambil data level pengguna (siswa, guru, staff) beserta jumlahnya
         $statistikLevel = User::select('level', DB::raw('count(*) as total_user'))
             ->groupBy('level')
             ->get()
             ->map(function ($user) {
+                // Untuk setiap jenis pengguna, hitung total buku yang pernah dipinjam
                 $user->total_peminjaman = PeminjamanModel::whereHas('user', function ($q) use ($user) {
                     $q->where('level', $user->level);
-                })->count();
+                })->where('status', '!=', 'Diproses')->count();
 
+                // Untuk setiap jenis pengguna, hitung buku yang sedang dipinjam saat ini
                 $user->sedang_pinjam = PeminjamanModel::whereHas('user', function ($q) use ($user) {
                     $q->where('level', $user->level);
                 })->whereIn('status', ['Dipinjam', 'Terlambat'])->count();
@@ -53,9 +65,16 @@ class LaporanController extends Controller
         ));
     }
 
+    /**
+     * Menampilkan daftar buku yang belum dikembalikan
+     *
+     * Fungsi ini menampilkan daftar buku yang masih dipinjam atau terlambat
+     * dengan berbagai filter berdasarkan tanggal dan jenis pengguna
+     */
     public function belumKembali(Request $request)
     {
-        $query = PeminjamanModel::with(['user', 'buku'])
+        // Dapatkan semua peminjaman dengan status 'Dipinjam' atau 'Terlambat'
+        $query = PeminjamanModel::with(['user', 'buku'])  // Load relasi user dan buku
             ->whereIn('status', ['Dipinjam', 'Terlambat']);
 
         // Filter data untuk non-admin: hanya tampilkan data peminjaman mereka sendiri
@@ -106,9 +125,16 @@ class LaporanController extends Controller
         return view('laporan.belum_kembali', compact('peminjamanBelumKembali', 'levels'));
     }
 
+    /**
+     * Menampilkan daftar buku yang sudah dikembalikan
+     *
+     * Fungsi ini menampilkan daftar buku yang sudah dikembalikan
+     * dengan berbagai filter berdasarkan tanggal dan jenis pengguna
+     */
     public function sudahKembali(Request $request)
     {
-        $query = PeminjamanModel::with(['user', 'buku'])
+        // Dapatkan semua peminjaman dengan status 'Dikembalikan'
+        $query = PeminjamanModel::with(['user', 'buku'])  // Load relasi user dan buku
             ->where('status', 'Dikembalikan');
 
         // Filter data untuk non-admin: hanya tampilkan data peminjaman mereka sendiri
@@ -140,61 +166,104 @@ class LaporanController extends Controller
         return view('laporan.sudah_kembali', compact('peminjamanSudahKembali', 'levels'));
     }
 
+    /**
+     * Fungsi untuk menghasilkan data grafik peminjaman dan pengembalian
+     *
+     * Fungsi ini mengambil data untuk ditampilkan dalam bentuk grafik statistik
+     * berdasarkan periode waktu yang dipilih: hari ini, minggu ini, bulan ini,
+     * 6 bulan terakhir, atau tahun ini.
+     */
     public function getChartData(Request $request)
     {
+        // Ambil periode dari request, default-nya 6 bulan terakhir
         $period = $request->get('period', '6months');
-        $data = [];
+        $data = []; // Array untuk menyimpan data grafik
 
-        // Array untuk nama bulan dan hari dalam bahasa Indonesia
+        // Array untuk menerjemahkan nama bulan dan hari dalam bahasa Indonesia
+        // Key: nomor bulan (1-12), Value: nama bulan singkat dalam bahasa Indonesia
         $bulanIndonesia = [
-            1 => 'Jan',
-            2 => 'Feb',
-            3 => 'Mar',
-            4 => 'Apr',
-            5 => 'Mei',
-            6 => 'Jun',
-            7 => 'Jul',
-            8 => 'Agu',
-            9 => 'Sep',
-            10 => 'Okt',
-            11 => 'Nov',
-            12 => 'Des'
+            1 => 'Jan',  // Januari
+            2 => 'Feb',  // Februari
+            3 => 'Mar',  // Maret
+            4 => 'Apr',  // April
+            5 => 'Mei',  // Mei
+            6 => 'Jun',  // Juni
+            7 => 'Jul',  // Juli
+            8 => 'Agu',  // Agustus
+            9 => 'Sep',  // September
+            10 => 'Okt', // Oktober
+            11 => 'Nov', // November
+            12 => 'Des'  // Desember
         ];
 
+        // Array untuk menerjemahkan nama hari dari bahasa Inggris ke Indonesia
+        // Key: nama hari dalam bahasa Inggris (dari format('l')), Value: nama hari singkat dalam bahasa Indonesia
         $hariIndonesia = [
-            'Sunday' => 'Min',
-            'Monday' => 'Sen',
-            'Tuesday' => 'Sel',
-            'Wednesday' => 'Rab',
-            'Thursday' => 'Kam',
-            'Friday' => 'Jum',
-            'Saturday' => 'Sab'
+            'Sunday' => 'Min',    // Minggu
+            'Monday' => 'Sen',    // Senin
+            'Tuesday' => 'Sel',   // Selasa
+            'Wednesday' => 'Rab', // Rabu
+            'Thursday' => 'Kam',  // Kamis
+            'Friday' => 'Jum',    // Jumat
+            'Saturday' => 'Sab'   // Sabtu
         ];
 
         switch ($period) {
             case 'day':
-                // Last 24 hours (hourly data)
-                for ($i = 23; $i >= 0; $i--) {
-                    $hour = now()->subHours($i);
+                // === STATISTIK UNTUK PERIODE HARI INI (24 JAM) ===
+
+                // Dapatkan tanggal hari ini (mulai dari jam 00:00)
+                $today = now()->startOfDay();
+
+                // Ambil semua data peminjaman hari ini dengan waktu yang tepat
+                // Status 'Diproses' tidak termasuk dalam perhitungan
+                // PERBAIKAN: Gunakan tanggal_pinjam, bukan created_at untuk statistik yang lebih akurat
+                $todayLoans = PeminjamanModel::where('status', '!=', 'Diproses')
+                    ->whereDate('tanggal_pinjam', $today->toDateString())
+                    ->get(['id', 'tanggal_pinjam']);
+
+                // Ambil data pengembalian hari ini
+                // Catatan: tanggal_pengembalian hanya berisi tanggal (tidak ada jam),
+                // jadi kita gunakan updated_at yang memiliki informasi jam
+                $todayReturns = PeminjamanModel::where('status', 'Dikembalikan')
+                    ->whereDate('tanggal_pengembalian', $today->toDateString())
+                    ->get(['id', 'tanggal_pengembalian', 'updated_at']);
+
+                // Buat array untuk menyimpan jumlah peminjaman dan pengembalian per jam
+                // Inisialisasi dengan nilai 0 untuk semua 24 jam
+                $loansByHour = array_fill(0, 24, 0);     // Peminjaman per jam
+                $returnsByHour = array_fill(0, 24, 0);   // Pengembalian per jam
+
+                // Hitung peminjaman per jam
+                // PERBAIKAN: Gunakan tanggal_pinjam untuk data peminjaman yang lebih akurat
+                foreach ($todayLoans as $loan) {
+                    $timestamp = $loan->tanggal_pinjam;
+                    $hour = \Carbon\Carbon::parse($timestamp)->hour; // Ambil jam dari timestamp
+                    $loansByHour[$hour]++; // Tambahkan penghitung untuk jam tersebut
+                }
+
+                // Hitung pengembalian per jam menggunakan updated_at yang berisi info jam
+                foreach ($todayReturns as $return) {
+                    $timestamp = $return->updated_at; // Gunakan updated_at, bukan tanggal_pengembalian
+                    $hour = \Carbon\Carbon::parse($timestamp)->hour;
+                    $returnsByHour[$hour]++;
+                }
+
+                // Buat data untuk grafik dengan format 24 jam (00:00 hingga 23:00)
+                for ($hour = 0; $hour < 24; $hour++) {
+                    $hourLabel = sprintf("%02d:00", $hour); // Format label jam: 00:00, 01:00, dst
                     $data[] = [
-                        'label' => $hour->format('H:i'),
-                        'dipinjam' => PeminjamanModel::where(function ($query) use ($hour) {
-                            $query->whereDate('tanggal_pinjam', $hour->toDateString())
-                                ->whereTime('tanggal_pinjam', '>=', $hour->format('H:00:00'))
-                                ->whereTime('tanggal_pinjam', '<', $hour->copy()->addHour()->format('H:00:00'));
-                        })->count(),
-                        'dikembalikan' => PeminjamanModel::where('status', 'Dikembalikan')
-                            ->where(function ($query) use ($hour) {
-                                $query->whereDate('tanggal_pengembalian', $hour->toDateString())
-                                    ->whereTime('tanggal_pengembalian', '>=', $hour->format('H:00:00'))
-                                    ->whereTime('tanggal_pengembalian', '<', $hour->copy()->addHour()->format('H:00:00'));
-                            })->count()
+                        'label' => $hourLabel,
+                        'dipinjam' => $loansByHour[$hour],
+                        'dikembalikan' => $returnsByHour[$hour]
                     ];
                 }
                 break;
 
             case 'week':
-                // 1 minggu sekarang (dari hari senin sampai minggu)
+                // === STATISTIK UNTUK PERIODE 7 HARI TERAKHIR ===
+
+                // Kode di bawah ini tidak digunakan (menggunakan 1 minggu dari Senin-Minggu)
                 // $startOfWeek = now()->startOfWeek();
                 // $endOfWeek = now()->endOfWeek();
                 // $daysInWeek = 7;
@@ -211,13 +280,22 @@ class LaporanController extends Controller
                 // }
                 // break;
 
-                // Last 7 days (daily data)
+                // Ambil data 7 hari terakhir secara berurutan mundur
                 for ($i = 6; $i >= 0; $i--) {
-                    $day = now()->subDays($i);
-                    $dayName = $hariIndonesia[$day->format('l')];
+                    $day = now()->subDays($i);  // Hitung tanggal: hari ini sampai 6 hari
+                    // format('l') - 'l' kecil digunakan untuk mendapatkan nama hari lengkap dalam bahasa Inggris
+                    // contoh: 'Monday', 'Tuesday', dst. Lalu dikonversi ke nama hari dalam bahasa Indonesia
+                    $dayName = $hariIndonesia[$day->format('l')];  // Mendapatkan nama hari dalam bahasa Indonesia
+
                     $data[] = [
+                        // Format label: Nama Hari, Tanggal Bulan (contoh: Sen, 20 Jun)
                         'label' => $dayName . ', ' . $day->format('j') . ' ' . $bulanIndonesia[$day->month],
-                        'dipinjam' => PeminjamanModel::whereDate('tanggal_pinjam', $day->toDateString())->count(),
+
+                        // Jumlah peminjaman pada tanggal tersebut (tidak termasuk status 'Diproses')
+                        'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->whereDate('tanggal_pinjam', $day->toDateString())->count(),
+
+                        // Jumlah pengembalian pada tanggal tersebut
                         'dikembalikan' => PeminjamanModel::whereDate('tanggal_pengembalian', $day->toDateString())
                             ->where('status', 'Dikembalikan')
                             ->count()
@@ -226,17 +304,25 @@ class LaporanController extends Controller
                 break;
 
             case 'month':
-                // Bulan sekarang (dari tanggal 1 sampai akhir bulan)
-                $currentMonth = now();
-                $startOfMonth = $currentMonth->copy()->startOfMonth();
-                $endOfMonth = $currentMonth->copy()->endOfMonth();
-                $daysInMonth = $endOfMonth->day;
+                // === STATISTIK UNTUK BULAN INI (DARI TANGGAL 1 SAMPAI AKHIR BULAN) ===
 
+                $currentMonth = now();  // Tanggal dan waktu saat ini
+                $startOfMonth = $currentMonth->copy()->startOfMonth();  // Tanggal 1 pada bulan ini
+                $endOfMonth = $currentMonth->copy()->endOfMonth();  // Tanggal terakhir pada bulan ini
+                $daysInMonth = $endOfMonth->day;  // Jumlah hari dalam bulan ini (28/30/31)
+
+                // Buat data untuk setiap hari dalam bulan ini
                 for ($day = 1; $day <= $daysInMonth; $day++) {
-                    $date = $currentMonth->copy()->day($day);
+                    $date = $currentMonth->copy()->day($day);  // Set tanggal ke-n
                     $data[] = [
+                        // Format label: Tanggal Bulan (contoh: 15 Jun)
                         'label' => $day . ' ' . $bulanIndonesia[$date->month],
-                        'dipinjam' => PeminjamanModel::whereDate('tanggal_pinjam', $date->toDateString())->count(),
+
+                        // Jumlah peminjaman pada tanggal tersebut (tidak termasuk status 'Diproses')
+                        'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->whereDate('tanggal_pinjam', $date->toDateString())->count(),
+
+                        // Jumlah pengembalian pada tanggal tersebut
                         'dikembalikan' => PeminjamanModel::whereDate('tanggal_pengembalian', $date->toDateString())
                             ->where('status', 'Dikembalikan')
                             ->count()
@@ -244,7 +330,8 @@ class LaporanController extends Controller
                 }
                 break;
 
-            // Last 30 days (daily data)
+            // Alternatif: Data 30 hari terakhir (tidak digunakan)
+            // Kode ini tidak digunakan tapi disimpan sebagai referensi
             // for ($i = 29; $i >= 0; $i--) {
             //     $day = now()->subDays($i);
             //     $data[] = [
@@ -258,14 +345,23 @@ class LaporanController extends Controller
             // break;
 
             case '6months':
-                // Last 6 months (monthly data)
+                // === STATISTIK UNTUK 6 BULAN TERAKHIR ===
+
+                // Ambil data bulanan untuk 6 bulan terakhir
                 for ($i = 5; $i >= 0; $i--) {
-                    $month = now()->subMonths($i);
+                    $month = now()->subMonths($i);  // Bulan ke-i dari sekarang mundur ke belakang
+
                     $data[] = [
+                        // Format label: Bulan Tahun (contoh: Jun 2025)
                         'label' => $bulanIndonesia[$month->month] . ' ' . $month->year,
-                        'dipinjam' => PeminjamanModel::whereYear('tanggal_pinjam', $month->year)
-                            ->whereMonth('tanggal_pinjam', $month->month)
+
+                        // Jumlah peminjaman pada bulan dan tahun tersebut (tidak termasuk status 'Diproses')
+                        'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->whereYear('tanggal_pinjam', $month->year)    // Filter berdasarkan tahun
+                            ->whereMonth('tanggal_pinjam', $month->month)  // Filter berdasarkan bulan
                             ->count(),
+
+                        // Jumlah pengembalian pada bulan dan tahun tersebut
                         'dikembalikan' => PeminjamanModel::whereYear('tanggal_pengembalian', $month->year)
                             ->whereMonth('tanggal_pengembalian', $month->month)
                             ->where('status', 'Dikembalikan')
@@ -275,14 +371,23 @@ class LaporanController extends Controller
                 break;
 
             case 'year':
-                // Current year (12 months from January to December)
-                $currentYear = now()->year;
+                // === STATISTIK UNTUK TAHUN INI (JANUARI SAMPAI DESEMBER) ===
+
+                $currentYear = now()->year;  // Tahun saat ini
+
+                // Ambil data untuk setiap bulan dalam tahun ini
                 for ($month = 1; $month <= 12; $month++) {
                     $data[] = [
+                        // Format label: Bulan Tahun (contoh: Jan 2025)
                         'label' => $bulanIndonesia[$month] . ' ' . $currentYear,
-                        'dipinjam' => PeminjamanModel::whereYear('tanggal_pinjam', $currentYear)
-                            ->whereMonth('tanggal_pinjam', $month)
+
+                        // Jumlah peminjaman pada bulan tersebut dalam tahun ini (tidak termasuk status 'Diproses')
+                        'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->whereYear('tanggal_pinjam', $currentYear)   // Filter berdasarkan tahun ini
+                            ->whereMonth('tanggal_pinjam', $month)        // Filter berdasarkan bulan 1-12
                             ->count(),
+
+                        // Jumlah pengembalian pada bulan tersebut dalam tahun ini
                         'dikembalikan' => PeminjamanModel::whereYear('tanggal_pengembalian', $currentYear)
                             ->whereMonth('tanggal_pengembalian', $month)
                             ->where('status', 'Dikembalikan')
@@ -295,32 +400,43 @@ class LaporanController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * Fungsi untuk menghasilkan data diagram lingkaran (pie chart)
+     *
+     * Fungsi ini menghasilkan data untuk:
+     * 1. Diagram lingkaran berdasarkan level pengguna (siswa/guru/staff)
+     * 2. Diagram status buku (sedang dipinjam/sudah dikembalikan)
+     */
     public function getPieChartData(Request $request)
     {
+        // Ambil periode dari request, default-nya 6 bulan terakhir
         $period = $request->get('period', '6months');
 
-        // Get date range based on period
+        // Dapatkan rentang tanggal berdasarkan periode
         $dateRange = $this->getDateRange($period);
 
-        // Get level data based on period (exclude admin level since admins don't borrow books)
+        // === DATA DIAGRAM BERDASARKAN JENIS PENGGUNA ===
+        // Ambil data peminjaman berdasarkan level pengguna (kecuali admin karena admin tidak meminjam buku)
         $levelData = User::select('level', DB::raw('count(*) as total_user'))
-            ->where('level', '!=', 'admin')
-            ->groupBy('level')
+            ->where('level', '!=', 'admin')  // Kecualikan level admin
+            ->groupBy('level')               // Kelompokkan berdasarkan level
             ->get()
             ->map(function ($user) use ($dateRange, $period) {
-                // For consistency between both charts, we need to handle different periods differently
+                // Untuk konsistensi antar grafik, kita perlu menangani periode yang berbeda secara berbeda
                 if ($period === 'day') {
-                    // For daily view: show current status (books currently borrowed)
-                    // This makes both charts consistent for daily monitoring
+                    // Untuk tampilan harian: tampilkan status saat ini (buku yang sedang dipinjam)
                     $user->total_peminjaman = PeminjamanModel::whereHas('user', function ($q) use ($user) {
-                        $q->where('level', $user->level);
-                    })->whereIn('status', ['Dipinjam', 'Terlambat'])->count();
+                        $q->where('level', $user->level);  // Filter berdasarkan level pengguna
+                    })
+                        ->whereIn('status', ['Dipinjam', 'Terlambat'])  // Hanya status "sedang dipinjam"
+                        ->count();
                 } else {
-                    // For other periods: show borrowings made in the period
+                    // Untuk periode lain: tampilkan peminjaman dalam periode (tidak termasuk "Diproses")
                     $query = PeminjamanModel::whereHas('user', function ($q) use ($user) {
-                        $q->where('level', $user->level);
-                    });
+                        $q->where('level', $user->level);  // Filter berdasarkan level pengguna
+                    })->where('status', '!=', 'Diproses');  // Kecualikan status "Diproses"
 
+                    // Terapkan filter rentang tanggal jika ada
                     if ($dateRange) {
                         $query->whereBetween('tanggal_pinjam', $dateRange);
                     }
@@ -328,7 +444,7 @@ class LaporanController extends Controller
                     $user->total_peminjaman = $query->count();
                 }
 
-                // Count sedang pinjam in current time (for status chart)
+                // Hitung buku yang sedang dipinjam saat ini (untuk diagram status)
                 $user->sedang_pinjam = PeminjamanModel::whereHas('user', function ($q) use ($user) {
                     $q->where('level', $user->level);
                 })->whereIn('status', ['Dipinjam', 'Terlambat'])->count();
@@ -336,35 +452,37 @@ class LaporanController extends Controller
                 return $user;
             });
 
-        // Calculate totals for status chart (exclude admin-related borrowings)
+        // === DATA DIAGRAM STATUS BUKU ===
+        // Hitung total buku yang sedang dipinjam (tidak termasuk peminjaman oleh admin)
         $totalSedangPinjam = $levelData->sum('sedang_pinjam');
-        $totalPeminjamanPeriod = $levelData->sum('total_peminjaman');
 
-        // For status chart, calculate returned books based on period logic
+        // Untuk diagram status, hitung buku yang sudah dikembalikan berdasarkan logika periode
         $totalDikembalikanPeriod = 0;
+
         if ($period === 'day') {
-            // For daily view: show books returned today
-            if ($dateRange) {
-                $totalDikembalikanPeriod = PeminjamanModel::where('status', 'Dikembalikan')
-                    ->whereHas('user', function ($q) {
-                        $q->where('level', '!=', 'admin');
-                    })
-                    ->whereBetween('tanggal_pengembalian', $dateRange)
-                    ->count();
-            }
+            // Untuk tampilan harian: tampilkan buku yang dikembalikan hari ini
+            $today = now()->toDateString();
+            $totalDikembalikanPeriod = PeminjamanModel::where('status', 'Dikembalikan')
+                ->whereHas('user', function ($q) {
+                    $q->where('level', '!=', 'admin');  // Kecualikan admin
+                })
+                ->whereDate('tanggal_pengembalian', $today)  // Filter berdasarkan tanggal hari ini
+                ->count();
         } else {
-            // For other periods: show books returned in the period
+            // Untuk periode lain: tampilkan buku yang dikembalikan dalam periode
             if ($dateRange) {
+                // Jika ada rentang tanggal yang ditentukan
                 $totalDikembalikanPeriod = PeminjamanModel::where('status', 'Dikembalikan')
                     ->whereHas('user', function ($q) {
-                        $q->where('level', '!=', 'admin');
+                        $q->where('level', '!=', 'admin');  // Kecualikan admin
                     })
-                    ->whereBetween('tanggal_pengembalian', $dateRange)
+                    ->whereBetween('tanggal_pengembalian', $dateRange)  // Filter berdasarkan rentang tanggal
                     ->count();
             } else {
+                // Jika tidak ada rentang tanggal (semua waktu)
                 $totalDikembalikanPeriod = PeminjamanModel::where('status', 'Dikembalikan')
                     ->whereHas('user', function ($q) {
-                        $q->where('level', '!=', 'admin');
+                        $q->where('level', '!=', 'admin');  // Kecualikan admin
                     })
                     ->count();
             }
@@ -379,21 +497,37 @@ class LaporanController extends Controller
         ]);
     }
 
+    /**
+     * Fungsi helper untuk menentukan rentang tanggal berdasarkan periode
+     *
+     * @param string $period Periode waktu: day, week, month, 6months, year
+     * @return array|null Array berisi [tanggal_awal, tanggal_akhir] atau null jika tidak ada filter
+     */
     private function getDateRange($period)
     {
         switch ($period) {
             case 'day':
-                return [now()->startOfDay(), now()->endOfDay()];
+                // Hari ini: dari jam 00:00 sampai 23:59:59
+                return [now()->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()];
+
             case 'week':
-                return [now()->subDays(6)->startOfDay(), now()->endOfDay()];
+                // 7 hari terakhir: dari 6 hari yang lalu jam 00:00 sampai hari ini jam 23:59:59
+                return [now()->subDays(6)->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()];
+
             case 'month':
-                return [now()->startOfMonth(), now()->endOfMonth()];
+                // Bulan ini: dari tanggal 1 jam 00:00 sampai tanggal terakhir bulan ini jam 23:59:59
+                return [now()->startOfMonth()->toDateTimeString(), now()->endOfMonth()->toDateTimeString()];
+
             case '6months':
-                return [now()->subMonths(5)->startOfMonth(), now()->endOfMonth()];
+                // 6 bulan terakhir: dari awal bulan 5 bulan yang lalu sampai akhir bulan ini
+                return [now()->subMonths(5)->startOfMonth()->toDateTimeString(), now()->endOfMonth()->toDateTimeString()];
+
             case 'year':
-                return [now()->startOfYear(), now()->endOfYear()];
+                // Tahun ini: dari 1 Januari jam 00:00 sampai 31 Desember jam 23:59:59
+                return [now()->startOfYear()->toDateTimeString(), now()->endOfYear()->toDateTimeString()];
+
             default:
-                return null; // No filter for all time
+                return null; // Tidak ada filter waktu (semua data)
         }
     }
 }

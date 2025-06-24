@@ -204,6 +204,27 @@
                                             <i class="bx bx-check"></i> Konfirmasi Pengembalian
                                         </button>
                                     @endif
+
+                                    @if ($peminjaman->status == 'Diproses')
+                                        @if (auth()->user()->level == 'admin' && $peminjaman->diproses_by == 'admin')
+                                            <button type="button" class="btn btn-success btn-success-pengambilan"
+                                                data-bs-toggle="modal" data-bs-target="#pengambilanModal"
+                                                data-action="{{ route('peminjaman.konfirmasi-pengambilan', $peminjaman->id) }}"
+                                                title="Konfirmasi Pengambilan">
+                                                <i class="bx bx-check"></i> Konfirmasi Pengambilan
+                                            </button>
+                                            {{-- untuk user selain admin --}}
+                                        @elseif (auth()->user()->level != 'admin')
+                                            @if ($peminjaman->user_id == auth()->id() && ($peminjaman->diproses_by == 'admin' || $peminjaman->diproses_by == null))
+                                                <button type="button" class="btn btn-success btn-success-pengambilan"
+                                                    data-bs-toggle="modal" data-bs-target="#pengambilanModal"
+                                                    data-action="{{ route('peminjaman.konfirmasi-pengambilan', $peminjaman->id) }}"
+                                                    title="Konfirmasi Pengambilan">
+                                                    <i class="bx bx-check"></i> Konfirmasi Pengambilan
+                                                </button>
+                                            @endif
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -229,6 +250,30 @@
                         <form id="return-form" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-success">Konfirmasi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Konfirmasi Pengambilan -->
+        <div class="modal fade bootstrap-modal" id="pengambilanModal" tabindex="-1" aria-labelledby="pengambilanModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pengambilanModalLabel">Konfirmasi Pengambilan Buku</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah Anda yakin ingin mengkonfirmasi pengambilan buku ini?</p>
+                        <p>Tanggal pinjam akan diatur ke tanggal hari ini.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <form id="pengambilan-form" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success">Konfirmasi Pengambilan</button>
                         </form>
                     </div>
                 </div>
@@ -261,6 +306,14 @@
                 button.addEventListener('click', function() {
                     const actionUrl = this.getAttribute('data-action');
                     returnForm.setAttribute('action', actionUrl);
+                });
+            });
+
+            // Handler untuk tombol pengambilan
+            document.querySelectorAll('.btn-success-pengambilan').forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionUrl = this.getAttribute('data-action');
+                    document.getElementById('pengambilan-form').setAttribute('action', actionUrl);
                 });
             });
         });

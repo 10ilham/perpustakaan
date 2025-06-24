@@ -77,11 +77,12 @@ class ForgotPasswordController extends Controller
     {
         // Validasi input
         $request->validate([
-            'email' => 'required|email|exists:users',
+            'email' => 'required|email|max:70|exists:users',
             'token' => 'required',
             'password' => 'required|min:6|confirmed',
         ], [
             'email.required' => 'Email wajib diisi',
+            'email.max' => 'Email tidak boleh lebih dari :max karakter',
             'email.email' => 'Format email tidak valid',
             'email.exists' => 'Email tidak terdaftar',
             'password.required' => 'Password wajib diisi',

@@ -29,6 +29,7 @@ class BukuModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan me
      * Konsep OOP: Encapsulation - Melindungi atribut dari modifikasi yang tidak diinginkan
      */
     protected $fillable = [
+        'id_admin',     // Foreign key ke tabel admin
         'kode_buku',    // Kode unik untuk buku
         'judul',        // Judul buku
         'pengarang',    // Nama pengarang buku
@@ -39,7 +40,8 @@ class BukuModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan me
         'total_buku',   // Total jumlah buku yang dimiliki perpustakaan
         'stok_buku',    // Jumlah buku yang tersedia untuk dipinjam
         'status',       // Status ketersediaan buku
-        'id_admin',     // Foreign key ke tabel admin
+        'created_at',   // Timestamp saat buku ditambahkan
+        'updated_at',   // Timestamp saat buku terakhir diperbarui
     ];
 
     /**

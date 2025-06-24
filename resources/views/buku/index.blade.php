@@ -61,7 +61,7 @@
                         <option value="">Semua Kategori</option>
                         @foreach ($kategori as $kat)
                             <option value="{{ $kat->id }}" {{ request('kategori') == $kat->id ? 'selected' : '' }}>
-                                {{ $kat->nama }}</option>
+                                {{ $kat->nama_kategori }}</option>
                         @endforeach
                     </select>
                     <select name="status" id="status" class="form-control" onchange="this.form.submit()">
@@ -144,7 +144,7 @@
                                         <p class="card-text m-0">Kode Buku: {{ $item->kode_buku }}</p>
                                         <p class="card-text m-0">Pengarang: {{ $item->pengarang }}</p>
                                         <p class="card-text m-0">Kategori:
-                                            {{ $item->kategori->pluck('nama')->implode(', ') }}</p>
+                                            {{ $item->kategori->pluck('nama_kategori')->implode(', ') }}</p>
                                         <p class="card-text m-0">Status:
                                             @if ($item->status === 'Tersedia')
                                                 <span class="badge badge-outline-success">{{ $item->status }}</span>

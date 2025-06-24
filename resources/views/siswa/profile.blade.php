@@ -53,8 +53,8 @@
                                         value="{{ $siswa->user->email }}" readonly>
                                 </div>
                                 <div class="form-group">
-                                    <label for="nis">NIS</label>
-                                    <input type="text" id="nis" class="form-control" value="{{ $siswa->nis }}"
+                                    <label for="nisn">NISN</label>
+                                    <input type="text" id="nisn" class="form-control" value="{{ $siswa->nisn }}"
                                         readonly>
                                 </div>
                                 <div class="form-group">

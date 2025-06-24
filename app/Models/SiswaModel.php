@@ -26,12 +26,14 @@ class SiswaModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan m
      */
     protected $fillable = [
         'user_id',      // Kunci asing (foreign key) ke tabel users
-        'nis',          // Nomor Induk Siswa
+        'nisn',          // Nomor Induk Siswa
         'kelas',        // Kelas siswa
         'tanggal_lahir', // Tanggal lahir siswa
         'alamat',       // Alamat siswa
         'no_telepon',   // Nomor telepon siswa
         'foto',         // Path ke foto siswa
+        'created_at',   // Timestamp saat akun dibuat
+        'updated_at',   // Timestamp saat akun terakhir diperbarui
     ];
 
     /**

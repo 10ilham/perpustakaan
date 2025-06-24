@@ -34,6 +34,8 @@ class GuruModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan me
         'alamat',          // Alamat guru
         'no_telepon',      // Nomor telepon guru
         'foto',            // Path ke foto guru
+        'created_at',      // Timestamp saat akun dibuat
+        'updated_at',      // Timestamp saat akun terakhir diperbarui
     ];
 
     /**

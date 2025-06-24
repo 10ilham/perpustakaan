@@ -84,7 +84,7 @@
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>Level</th>
-                                <th>NIP/NIS</th>
+                                <th>NIP/NISN</th>
                                 <th>Tombol Aksi</th>
                             </tr>
                         </thead>
@@ -146,7 +146,7 @@
                                             } elseif ($user->level === 'siswa') {
                                                 $profile = App\Models\SiswaModel::where('user_id', $user->id)->first();
                                                 if ($profile) {
-                                                    $idAnggota = $profile->nis ?? '-';
+                                                    $idAnggota = $profile->nisn ?? '-';
                                                 }
                                             } elseif ($user->level === 'guru') {
                                                 $profile = App\Models\GuruModel::where('user_id', $user->id)->first();

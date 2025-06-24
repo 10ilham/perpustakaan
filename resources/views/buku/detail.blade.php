@@ -106,7 +106,7 @@
                                 <div class="form-group">
                                     <label for="kategori">Kategori</label>
                                     <input type="text" id="kategori" class="form-control"
-                                        value="{{ $buku->kategori->pluck('nama')->implode(', ') }}" readonly>
+                                        value="{{ $buku->kategori->pluck('nama_kategori')->implode(', ') }}" readonly>
                                 </div>
 
                                 <div class="form-group">

@@ -85,7 +85,7 @@
                                         @foreach ($kategori as $kat)
                                             <option value="{{ $kat->id }}"
                                                 {{ in_array($kat->id, old('kategori_id', $buku->kategori->pluck('id')->toArray())) ? 'selected' : '' }}>
-                                                {{ $kat->nama }}
+                                                {{ $kat->nama_kategori }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -232,7 +232,8 @@
 
                         <div class="form-group mt-4 text-end">
                             @if (isset($ref) && $ref == 'kategori' && isset($kategori_id))
-                                <a href="{{ route('kategori.detail', ['id' => $kategori_id, 'page' => $page ?? '', 'search' => $search ?? '']) }}" class="btn btn-secondary me-2">
+                                <a href="{{ route('kategori.detail', ['id' => $kategori_id, 'page' => $page ?? '', 'search' => $search ?? '']) }}"
+                                    class="btn btn-secondary me-2">
                                     <i class="bx bx-arrow-back"></i> Kembali ke Kategori
                                 </a>
                             @else

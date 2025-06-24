@@ -47,11 +47,11 @@ class SiswaController extends Controller
             'email.max' => 'Email tidak boleh lebih dari :max karakter',
             'email.unique' => 'Email sudah digunakan',
 
-            'nis.required' => 'NIS wajib diisi',
-            'nis.numeric' => 'NIS hanya boleh berisi angka',
-            'nis.digits_between' => 'NIS harus terdiri dari 10 hingga 20 digit',
-            'nis.unique' => 'NIS sudah digunakan',
-            'nis.max' => 'NIS tidak boleh lebih dari :max karakter',
+            'nisn.required' => 'NISN wajib diisi',
+            'nisn.numeric' => 'NISN hanya boleh berisi angka',
+            'nisn.digits' => 'NISN harus terdiri dari 10 digit',
+            'nisn.unique' => 'NISN sudah digunakan',
+            'nisn.max' => 'NISN tidak boleh lebih dari :max karakter',
 
             'kelas.required' => 'Kelas wajib diisi',
             'kelas.string' => 'Kelas harus berupa teks',
@@ -62,11 +62,10 @@ class SiswaController extends Controller
 
             'alamat.required' => 'Alamat wajib diisi',
             'alamat.string' => 'Alamat harus berupa teks',
-            'alamat.max' => 'Alamat tidak boleh lebih dari :max karakter',
 
             'no_telepon.required' => 'Nomor telepon wajib diisi',
             'no_telepon.numeric' => 'Nomor telepon hanya boleh berisi angka',
-            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 15 digit',
+            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 13 digit',
             'no_telepon.unique' => 'Nomor telepon sudah digunakan',
 
             'password.min' => 'Password minimal :min karakter',
@@ -82,13 +81,13 @@ class SiswaController extends Controller
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:50',
-            'email' => 'required|email|max:50|unique:users,email,' . $siswa->user->id,
-            'nis' => 'required|numeric|digits_between:10,20|unique:siswa,nis,' . $siswa->id,
-            'kelas' => 'required|string|max:20',
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:80',
+            'email' => 'required|email|max:70|unique:users,email,' . $siswa->user->id,
+            'nisn' => 'required|numeric|digits:10|unique:siswa,nisn,' . $siswa->id,
+            'kelas' => 'required|string|max:6',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required|string|max:255',
-            'no_telepon' => 'required|numeric|digits_between:10,15|unique:siswa,no_telepon,' . $siswa->id . '|unique:guru,no_telepon|unique:staff,no_telepon|unique:admin,no_telepon',
+            'alamat' => 'required|string',
+            'no_telepon' => 'required|numeric|digits_between:10,13|unique:siswa,no_telepon,' . $siswa->id . '|unique:guru,no_telepon|unique:staff,no_telepon|unique:admin,no_telepon',
             'password' => 'nullable|min:6|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048'
         ], $messages);
@@ -134,7 +133,7 @@ class SiswaController extends Controller
             }
 
             // Ambil nama file
-            $nama_file = time() . '_' . $request->file('foto')->getClientOriginalName();
+            $nama_file = $siswa->user->id . '_' . $request->file('foto')->getClientOriginalName(); // Menggunakan ID user untuk menghindari duplikasi
 
             // Simpan file ke folder public/assets/img/siswa_foto
             $request->file('foto')->move(public_path('assets/img/siswa_foto'), $nama_file);

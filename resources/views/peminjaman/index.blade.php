@@ -242,29 +242,29 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if ($item->status == 'Dipinjam')
+                                                            @if ($item->status == 'Diproses')
                                                                 <span class="badge"
-                                                                    style="color: #ffc107;">{{ $item->status }}
-                                                                </span>
+                                                                    style="color: #0077ff; font-weight: bold">{{ $item->status }}</span>
+                                                            @elseif ($item->status == 'Dipinjam')
+                                                                <span class="badge"
+                                                                    style="color: #ffc107; font-weight: bold">{{ $item->status }}</span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
-                                                                    <span class="badge" style="color: #dc3545;">Terlambat
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #dc3545; font-weight: bold">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
                                                                 <span class="badge"
-                                                                    style="color: #dc3545;">{{ $item->status }}
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
                                                                     ({{ $item->is_late ? $item->late_days : '?' }}
-                                                                    hari)
-                                                                </span>
+                                                                    hari)</span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -274,6 +274,34 @@
                                                                     class="btn btn-sm btn-info" title="Detail">
                                                                     <i class="bx bx-info-circle"></i>
                                                                 </a>
+
+                                                                @if ($item->status == 'Diproses')
+                                                                    @if (auth()->user()->level == 'admin')
+                                                                        @if ($item->diproses_by == 'admin')
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success-pengambilan"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#pengambilanModal"
+                                                                                data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                title="Konfirmasi Pengambilan">
+                                                                                <i class="bx bx-package"></i>
+                                                                            </button>
+                                                                        @endif
+                                                                    @else
+                                                                        @if ($item->user_id == auth()->id())
+                                                                            @if ($item->diproses_by == null)
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-success-pengambilan"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#pengambilanModal"
+                                                                                    data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                    title="Konfirmasi Pengambilan">
+                                                                                    <i class="bx bx-package"></i>
+                                                                                </button>
+                                                                            @endif
+                                                                        @endif
+                                                                    @endif
+                                                                @endif
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
@@ -286,13 +314,16 @@
                                                                     </button>
                                                                 @endif
 
-                                                                <button type="button"
-                                                                    class="btn btn-sm btn-danger delete-btn"
-                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                                    data-action="{{ route('peminjaman.hapus', $item->id) }}"
-                                                                    title="Hapus">
-                                                                    <i class="bx bx-trash"></i>
-                                                                </button>
+                                                                @if (auth()->user()->level == 'admin')
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-danger delete-btn"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#deleteModal"
+                                                                        data-action="{{ route('peminjaman.hapus', $item->id) }}"
+                                                                        title="Hapus">
+                                                                        <i class="bx bx-trash"></i>
+                                                                    </button>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -359,28 +390,29 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if ($item->status == 'Dipinjam')
+                                                            @if ($item->status == 'Diproses')
                                                                 <span class="badge"
-                                                                    style="color: #ffc107;">{{ $item->status }}
-                                                                </span>
+                                                                    style="color: #0077ff; font-weight: bold">{{ $item->status }}</span>
+                                                            @elseif ($item->status == 'Dipinjam')
+                                                                <span class="badge"
+                                                                    style="color: #ffc107; font-weight: bold">{{ $item->status }}</span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
-                                                                    <span class="badge" style="color: #dc3545;">Terlambat
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #dc3545; font-weight: bold">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
                                                                 <span class="badge"
-                                                                    style="color: #dc3545;">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
-                                                                </span>
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
+                                                                    hari)</span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -390,6 +422,34 @@
                                                                     class="btn btn-sm btn-info" title="Detail">
                                                                     <i class="bx bx-info-circle"></i>
                                                                 </a>
+
+                                                                @if ($item->status == 'Diproses')
+                                                                    @if (auth()->user()->level == 'admin')
+                                                                        @if ($item->diproses_by == 'admin')
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success-pengambilan"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#pengambilanModal"
+                                                                                data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                title="Konfirmasi Pengambilan">
+                                                                                <i class="bx bx-package"></i>
+                                                                            </button>
+                                                                        @endif
+                                                                    @else
+                                                                        @if ($item->user_id == auth()->id())
+                                                                            @if ($item->diproses_by == null)
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-success-pengambilan"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#pengambilanModal"
+                                                                                    data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                    title="Konfirmasi Pengambilan">
+                                                                                    <i class="bx bx-package"></i>
+                                                                                </button>
+                                                                            @endif
+                                                                        @endif
+                                                                    @endif
+                                                                @endif
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
@@ -475,28 +535,29 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if ($item->status == 'Dipinjam')
+                                                            @if ($item->status == 'Diproses')
                                                                 <span class="badge"
-                                                                    style="color: #ffc107;">{{ $item->status }}
-                                                                </span>
+                                                                    style="color: #0077ff; font-weight: bold">{{ $item->status }}</span>
+                                                            @elseif ($item->status == 'Dipinjam')
+                                                                <span class="badge"
+                                                                    style="color: #ffc107; font-weight: bold">{{ $item->status }}</span>
                                                             @elseif ($item->status == 'Dikembalikan')
                                                                 @if ($item->is_terlambat)
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
-                                                                    <span class="badge" style="color: #dc3545;">Terlambat
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
+                                                                    <span class="badge"
+                                                                        style="color: #dc3545; font-weight: bold">Terlambat
                                                                         ({{ $item->jumlah_hari_terlambat }} hari)
                                                                     </span>
                                                                 @else
                                                                     <span class="badge"
-                                                                        style="color: #28a745;">{{ $item->status }}
-                                                                    </span>
+                                                                        style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
                                                                 @endif
                                                             @elseif ($item->status == 'Terlambat')
                                                                 <span class="badge"
-                                                                    style="color: #dc3545;">{{ $item->status }}
-                                                                    ({{ $item->is_late ? $item->late_days : '?' }} hari)
-                                                                </span>
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                                    ({{ $item->is_late ? $item->late_days : '?' }}
+                                                                    hari)</span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -506,6 +567,34 @@
                                                                     class="btn btn-sm btn-info" title="Detail">
                                                                     <i class="bx bx-info-circle"></i>
                                                                 </a>
+
+                                                                @if ($item->status == 'Diproses')
+                                                                    @if (auth()->user()->level == 'admin')
+                                                                        @if ($item->diproses_by == 'admin')
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success-pengambilan"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#pengambilanModal"
+                                                                                data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                title="Konfirmasi Pengambilan">
+                                                                                <i class="bx bx-package"></i>
+                                                                            </button>
+                                                                        @endif
+                                                                    @else
+                                                                        @if ($item->user_id == auth()->id())
+                                                                            @if ($item->diproses_by == null)
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-success-pengambilan"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#pengambilanModal"
+                                                                                    data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                                    title="Konfirmasi Pengambilan">
+                                                                                    <i class="bx bx-package"></i>
+                                                                                </button>
+                                                                            @endif
+                                                                        @endif
+                                                                    @endif
+                                                                @endif
 
                                                                 @if ($item->status == 'Dipinjam' || $item->status == 'Terlambat')
                                                                     <button type="button"
@@ -553,13 +642,15 @@
                             <label for="status">Status:</label>
                             <select name="status" id="status" class="form-control" style="max-width: 180px;">
                                 <option value="">Semua Status</option>
-                                <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>
-                                    Dipinjam
+                                <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses
+                                </option>
+                                <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>Dipinjam
                                 </option>
                                 <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>
                                     Dikembalikan</option>
                                 <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>
-                                    Terlambat</option>
+                                    Terlambat
+                                </option>
                             </select>
                         </div>
 
@@ -630,24 +721,28 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($item->status == 'Dipinjam')
-                                                    <span class="badge" style="color: #ffc107;">{{ $item->status }}
-                                                    </span>
+                                                @if ($item->status == 'Diproses')
+                                                    <span class="badge"
+                                                        style="background-color: #fd7238; color: white">{{ $item->status }}</span>
+                                                @elseif ($item->status == 'Dipinjam')
+                                                    <span class="badge"
+                                                        style="background-color: #ffc107; color: black">{{ $item->status }}</span>
                                                 @elseif ($item->status == 'Dikembalikan')
                                                     @if ($item->is_terlambat)
-                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
-                                                        </span>
-                                                        <span class="badge" style="color: #dc3545;">Terlambat
+                                                        <span class="badge"
+                                                            style="background-color: #28a745; color: white">{{ $item->status }}</span>
+                                                        <span class="badge"
+                                                            style="background-color: #dc3545; color: white">Terlambat
                                                             ({{ $item->jumlah_hari_terlambat }} hari)
                                                         </span>
                                                     @else
-                                                        <span class="badge" style="color: #28a745;">{{ $item->status }}
-                                                        </span>
+                                                        <span class="badge"
+                                                            style="background-color: #28a745; color: white">{{ $item->status }}</span>
                                                     @endif
                                                 @elseif ($item->status == 'Terlambat')
-                                                    <span class="badge" style="color: #dc3545;">{{ $item->status }}
-                                                        ({{ $item->is_late ? $item->late_days : '?' }} hari)
-                                                    </span>
+                                                    <span class="badge"
+                                                        style="background-color: #dc3545; color: white">{{ $item->status }}
+                                                        ({{ $item->is_late ? $item->late_days : '?' }} hari)</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -656,6 +751,18 @@
                                                         class="btn btn-sm btn-info" title="Detail">
                                                         <i class="bx bx-info-circle"></i>
                                                     </a>
+
+                                                    @if ($item->status == 'Diproses')
+                                                        @if ($item->diproses_by == 'admin' || $item->diproses_by == null)
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-success-pengambilan"
+                                                                data-bs-toggle="modal" data-bs-target="#pengambilanModal"
+                                                                data-action="{{ route('peminjaman.konfirmasi-pengambilan', $item->id) }}"
+                                                                title="Konfirmasi Pengambilan">
+                                                                <i class="bx bx-package"></i>
+                                                            </button>
+                                                        @endif
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
@@ -715,6 +822,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Konfirmasi Pengambilan -->
+    <div class="modal fade bootstrap-modal" id="pengambilanModal" tabindex="-1" aria-labelledby="pengambilanModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pengambilanModalLabel">Konfirmasi Pengambilan Buku</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tanggal pinjam akan diatur ke tanggal hari ini.</p>
+                    <p>Apakah Anda yakin ingin mengkonfirmasi pengambilan buku ini?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <form id="pengambilan-form" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-success">Konfirmasi Pengambilan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -739,6 +870,14 @@
                 button.addEventListener('click', function() {
                     const actionUrl = this.getAttribute('data-action');
                     document.getElementById('delete-form').setAttribute('action', actionUrl);
+                });
+            });
+
+            // Handler untuk tombol pengambilan
+            document.querySelectorAll('.btn-success-pengambilan').forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionUrl = this.getAttribute('data-action');
+                    document.getElementById('pengambilan-form').setAttribute('action', actionUrl);
                 });
             });
 

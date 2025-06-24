@@ -50,7 +50,7 @@ class StaffController extends Controller
 
             'nip.required' => 'NIP wajib diisi',
             'nip.numeric' => 'NIP harus berupa angka',
-            'nip.digits_between' => 'NIP harus terdiri dari 10 hingga 20 digit',
+            'nip.digits' => 'NIP harus terdiri dari 18 digit',
             'nip.unique' => 'NIP sudah digunakan',
 
             'bagian.required' => 'Bagian wajib diisi',
@@ -62,11 +62,10 @@ class StaffController extends Controller
 
             'alamat.required' => 'Alamat wajib diisi',
             'alamat.string' => 'Alamat harus berupa teks',
-            'alamat.max' => 'Alamat tidak boleh lebih dari :max karakter',
 
             'no_telepon.required' => 'Nomor telepon wajib diisi',
             'no_telepon.numeric' => 'Nomor telepon hanya boleh berisi angka',
-            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 15 digit',
+            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 13 digit',
             'no_telepon.unique' => 'Nomor telepon sudah digunakan',
 
             'password.min' => 'Password minimal :min karakter',
@@ -82,13 +81,13 @@ class StaffController extends Controller
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:50',
-            'email' => 'required|email|max:50|unique:users,email,' . $staff->user->id,
-            'nip' => 'required|numeric|digits_between:10,20|unique:staff,nip,' . $staff->id . '|unique:guru,nip|unique:admin,nip',
-            'bagian' => 'required|string|max:50',
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:80',
+            'email' => 'required|email|max:70|unique:users,email,' . $staff->user->id,
+            'nip' => 'required|numeric|digits:18|unique:staff,nip,' . $staff->id . '|unique:guru,nip|unique:admin,nip',
+            'bagian' => 'required|string|max:30',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required|string|max:255',
-            'no_telepon' => 'required|numeric|digits_between:10,15|unique:staff,no_telepon,' . $staff->id . '|unique:siswa,no_telepon|unique:admin,no_telepon|unique:guru,no_telepon',
+            'alamat' => 'required|string',
+            'no_telepon' => 'required|numeric|digits_between:10,13|unique:staff,no_telepon,' . $staff->id . '|unique:siswa,no_telepon|unique:admin,no_telepon|unique:guru,no_telepon',
             'password' => 'nullable|min:6|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048'
         ], $messages);
@@ -134,7 +133,7 @@ class StaffController extends Controller
             }
 
             // Ambil nama file
-            $nama_file = time() . '_' . $request->file('foto')->getClientOriginalName(); //time untuk mencegah duplikasi nama file
+            $nama_file = $staff->user->id . '_' . $request->file('foto')->getClientOriginalName(); // Menggunakan ID user untuk menghindari duplikasi
 
             // Simpan file ke folder public/assets/img/staff_foto
             $request->file('foto')->move(public_path('assets/img/staff_foto'), $nama_file);

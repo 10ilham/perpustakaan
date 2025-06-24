@@ -1636,6 +1636,11 @@ option .icon {
     color: var(--light);
 }
 
+.btn-success-pengambilan {
+    background: var(--green);
+    color: var(--light);
+}
+
 .btn-success:hover {
     background: var(--green);
     color: var(--light); /* Updated to use var(--light) */

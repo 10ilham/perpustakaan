@@ -397,7 +397,7 @@ class PeminjamanController extends Controller
         }
 
         // Generate nomor peminjaman
-        $no_peminjaman = 'PJM-' . date('YmdHis') . '-' . Str::random(5);
+        $no_peminjaman = 'PJM-' . date('YmdHis') . '-' . Str::random(2);
 
         // Buat record peminjaman
         $peminjaman = new PeminjamanModel();
@@ -406,7 +406,8 @@ class PeminjamanController extends Controller
         $peminjaman->no_peminjaman = $no_peminjaman;
         $peminjaman->tanggal_pinjam = $request->tanggal_pinjam;
         $peminjaman->tanggal_kembali = $request->tanggal_kembali;
-        $peminjaman->status = 'Dipinjam';
+        $peminjaman->status = 'Diproses';
+        $peminjaman->diproses_by = null; // Set diproses_by ke null untuk peminjaman self-service
         $peminjaman->catatan = $request->catatan;
         $peminjaman->save();
 
@@ -678,7 +679,7 @@ class PeminjamanController extends Controller
         }
 
         // Dapatkan user_id yang memiliki peminjaman aktif (status = 'Dipinjam' atau 'Terlambat')
-        $userIdDenganPeminjamanAktif = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat'])
+        $userIdDenganPeminjamanAktif = PeminjamanModel::whereIn('status', ['Diproses','Dipinjam', 'Terlambat'])
             ->pluck('user_id')
             ->toArray();
 
@@ -693,7 +694,7 @@ class PeminjamanController extends Controller
                     return [
                         'id' => $user->id,
                         'nama' => $user->nama,
-                        'info' => $user->siswa ? 'NIS: ' . $user->siswa->nis . ' - Kelas: ' . $user->siswa->kelas : 'Data tidak lengkap'
+                        'info' => $user->siswa ? 'NISN: ' . $user->siswa->nisn . ' - Kelas: ' . $user->siswa->kelas : 'Data tidak lengkap'
                     ];
                 });
         } elseif ($level === 'guru') {
@@ -802,7 +803,7 @@ class PeminjamanController extends Controller
         }
 
         // Generate nomor peminjaman
-        $no_peminjaman = 'PJM-' . date('YmdHis') . '-' . Str::random(5);
+        $no_peminjaman = 'PJM-' . date('YmdHis') . '-' . Str::random(2);
 
         // Buat record peminjaman
         $peminjaman = new PeminjamanModel();
@@ -811,7 +812,8 @@ class PeminjamanController extends Controller
         $peminjaman->no_peminjaman = $no_peminjaman;
         $peminjaman->tanggal_pinjam = $request->tanggal_pinjam;
         $peminjaman->tanggal_kembali = $request->tanggal_kembali;
-        $peminjaman->status = 'Dipinjam';
+        $peminjaman->status = 'Diproses';
+        $peminjaman->diproses_by = 'admin'; // Set diproses_by untuk peminjaman manual
         $peminjaman->catatan = $request->catatan;
         $peminjaman->save();
 
@@ -829,5 +831,28 @@ class PeminjamanController extends Controller
         $this->kirimNotifikasiPeminjamanManual($peminjaman);
 
         return redirect()->route('peminjaman.index')->with('success', 'Peminjaman manual berhasil disimpan untuk anggota: ' . $user->nama);
+    }
+
+    // Proses konfirmasi pengambilan buku
+    public function konfirmasiPengambilan($id)
+    {
+        $peminjaman = PeminjamanModel::findOrFail($id);
+
+        // Cek status peminjaman harus dalam status Diproses
+        if ($peminjaman->status !== 'Diproses') {
+            return redirect()->back()->with('error', 'Status peminjaman tidak valid untuk pengambilan buku.');
+        }
+
+        // Update tanggal pinjam menjadi saat ini
+        $peminjaman->tanggal_pinjam = now();
+        $peminjaman->status = 'Dipinjam';
+        $peminjaman->save();
+
+        // Redirect berdasarkan level pengguna
+        if (Auth::user()->level === 'admin') {
+            return redirect()->route('peminjaman.index')->with('success', 'Konfirmasi pengambilan buku berhasil.');
+        } else {
+            return redirect()->route('peminjaman.index', $peminjaman->id)->with('success', 'Konfirmasi pengambilan buku berhasil.');
+        }
     }
 }

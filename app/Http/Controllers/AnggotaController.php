@@ -97,13 +97,13 @@ class AnggotaController extends Controller
 
             'nip.required_if' => 'NIP wajib diisi',
             'nip.numeric' => 'NIP harus berupa angka',
-            'nip.digits_between' => 'NIP harus terdiri dari 10 hingga 20 digit',
+            'nip.digits' => 'NIP harus terdiri dari 18 digit',
             'nip.unique' => 'NIP sudah digunakan',
 
-            'nis.required_if' => 'NIS wajib diisi',
-            'nis.numeric' => 'NIS harus berupa angka',
-            'nis.digits_between' => 'NIS harus terdiri dari 10 hingga 20 digit',
-            'nis.unique' => 'NIS sudah digunakan',
+            'nisn.required_if' => 'NISN wajib diisi',
+            'nisn.numeric' => 'NISN harus berupa angka',
+            'nisn.digits' => 'NISN harus terdiri dari 10 digit',
+            'nisn.unique' => 'NISN sudah digunakan',
 
             'kelas.required_if' => 'Kelas wajib diisi',
             'kelas.string' => 'Kelas harus berupa teks',
@@ -122,30 +122,29 @@ class AnggotaController extends Controller
 
             'alamat.required' => 'Alamat wajib diisi',
             'alamat.string' => 'Alamat harus berupa teks',
-            'alamat.max' => 'Alamat tidak boleh lebih dari :max karakter',
 
             'no_telepon.required' => 'Nomor telepon wajib diisi',
             'no_telepon.numeric' => 'Nomor telepon hanya boleh berisi angka',
-            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 15 digit',
+            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 13 digit',
             'no_telepon.unique' => 'Nomor telepon sudah digunakan',
         ];
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:50',
-            'email' => 'required|email|max:50|unique:users',
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:80',
+            'email' => 'required|email|max:70|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'level' => 'required|in:admin,siswa,guru,staff',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
             // Validasi sesuai level
-            'nip' => 'required_if:level,admin,guru,staff|numeric|digits_between:10,20|unique:admin,nip|unique:guru,nip|unique:staff,nip',
-            'nis' => 'required_if:level,siswa|numeric|digits_between:10,20|unique:siswa,nis',
-            'kelas' => 'required_if:level,siswa|string|max:10',
-            'mata_pelajaran' => 'required_if:level,guru|string|max:50',
-            'bagian' => 'required_if:level,staff|string|max:50',
+            'nip' => 'required_if:level,admin,guru,staff|numeric|digits:18|unique:admin,nip|unique:guru,nip|unique:staff,nip',
+            'nisn' => 'required_if:level,siswa|numeric|digits:10|unique:siswa,nisn',
+            'kelas' => 'required_if:level,siswa|string|max:6',
+            'mata_pelajaran' => 'required_if:level,guru|string|max:40',
+            'bagian' => 'required_if:level,staff|string|max:30',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required|string|max:255',
-            'no_telepon' => 'required|numeric|digits_between:10,15|unique:admin,no_telepon|unique:siswa,no_telepon|unique:guru,no_telepon|unique:staff,no_telepon',
+            'alamat' => 'required|string',
+            'no_telepon' => 'required|numeric|digits_between:10,13|unique:admin,no_telepon|unique:siswa,no_telepon|unique:guru,no_telepon|unique:staff,no_telepon',
         ], $messages);
 
         $user = User::create($request->only('nama', 'email', 'level', 'password'));
@@ -156,7 +155,7 @@ class AnggotaController extends Controller
             $profileData = new AdminModel($request->only('nip', 'tanggal_lahir', 'alamat', 'no_telepon'));
             $folder = 'admin_foto';
         } elseif ($user->level === 'siswa') {
-            $profileData = new SiswaModel($request->only('nis', 'kelas', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            $profileData = new SiswaModel($request->only('nisn', 'kelas', 'tanggal_lahir', 'alamat', 'no_telepon'));
             $folder = 'siswa_foto';
         } elseif ($user->level === 'guru') {
             $profileData = new GuruModel($request->only('nip', 'mata_pelajaran', 'tanggal_lahir', 'alamat', 'no_telepon'));
@@ -170,7 +169,7 @@ class AnggotaController extends Controller
         // Handle foto upload
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
-            $nama_file = time() . '_' . $foto->getClientOriginalName(); // Menambahkan timestamp untuk menghindari duplikasi
+            $nama_file = $user->id . '_' . $foto->getClientOriginalName(); // Menggunakan ID user untuk menghindari duplikasi
             $foto->move(public_path('assets/img/' . $folder), $nama_file);
 
             $profileData->foto = $nama_file;
@@ -225,13 +224,13 @@ class AnggotaController extends Controller
 
             'nip.required_if' => 'NIP wajib diisi',
             'nip.numeric' => 'NIP harus berupa angka',
-            'nip.digits_between' => 'NIP harus terdiri dari 10 hingga 20 digit',
+            'nip.digits' => 'NIP harus terdiri dari 18 digit',
             'nip.unique' => 'NIP sudah digunakan',
 
-            'nis.required_if' => 'NIS wajib diisi',
-            'nis.numeric' => 'NIS harus berupa angka',
-            'nis.digits_between' => 'NIS harus terdiri dari 10 hingga 20 digit',
-            'nis.unique' => 'NIS sudah digunakan',
+            'nisn.required_if' => 'NISN wajib diisi',
+            'nisn.numeric' => 'NISN harus berupa angka',
+            'nisn.digits' => 'NISN harus terdiri dari 10 digit',
+            'nisn.unique' => 'NISN sudah digunakan',
 
             'kelas.required_if' => 'Kelas wajib diisi',
             'kelas.string' => 'Kelas harus berupa teks',
@@ -259,14 +258,14 @@ class AnggotaController extends Controller
         ];
         // Validasi input
         $request->validate([
-            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:50',
-            'email' => 'required|email|max:50|unique:users,email,' . $id,
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:80',
+            'email' => 'required|email|max:70|unique:users,email,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
             // Validasi sesuai level
-            'nip' => 'required_if:level,admin,guru,staff|numeric|digits_between:10,20|unique:admin,nip,' . $id . ',user_id|unique:guru,nip,' . $id . ',user_id|unique:staff,nip,' . $id . ',user_id',
-            'nis' => 'required_if:level,siswa|numeric|digits_between:10,20|unique:siswa,nis,' . $id . ',user_id',
-            'kelas' => 'required_if:level,siswa|string|max:10',
+            'nip' => 'required_if:level,admin,guru,staff|numeric|digits:18|unique:admin,nip,' . $id . ',user_id|unique:guru,nip,' . $id . ',user_id|unique:staff,nip,' . $id . ',user_id',
+            'nisn' => 'required_if:level,siswa|numeric|digits:10|unique:siswa,nisn,' . $id . ',user_id',
+            'kelas' => 'required_if:level,siswa|string|max:6',
             'mata_pelajaran' => 'required_if:level,guru|string|max:50',
             'bagian' => 'required_if:level,staff|string|max:50',
             'tanggal_lahir' => 'required|date',
@@ -282,22 +281,42 @@ class AnggotaController extends Controller
             $user->save();
         }
 
-        // Update data anggota sesuai level
+        // Update atau buat data anggota sesuai level (buat disini maksudnya ketika tabel anggota tersebut belum ada datanya karena awalnya anggota tersebut misalnya ditambahkan lewat seeder yang datanya tidak lengkap)
         if ($user->level === 'admin') {
             $profileData = AdminModel::where('user_id', $user->id)->first();
-            $profileData->update($request->only('nip', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            if (!$profileData) {
+                $profileData = new AdminModel();
+                $profileData->user_id = $user->id;
+            }
+            $profileData->fill($request->only('nip', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            $profileData->save();
             $folder = 'admin_foto';
         } elseif ($user->level === 'siswa') {
             $profileData = SiswaModel::where('user_id', $user->id)->first();
-            $profileData->update($request->only('nis', 'kelas', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            if (!$profileData) {
+                $profileData = new SiswaModel();
+                $profileData->user_id = $user->id;
+            }
+            $profileData->fill($request->only('nisn', 'kelas', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            $profileData->save();
             $folder = 'siswa_foto';
         } elseif ($user->level === 'guru') {
             $profileData = GuruModel::where('user_id', $user->id)->first();
-            $profileData->update($request->only('nip', 'mata_pelajaran', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            if (!$profileData) {
+                $profileData = new GuruModel();
+                $profileData->user_id = $user->id;
+            }
+            $profileData->fill($request->only('nip', 'mata_pelajaran', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            $profileData->save();
             $folder = 'guru_foto';
         } elseif ($user->level === 'staff') {
             $profileData = StaffModel::where('user_id', $user->id)->first();
-            $profileData->update($request->only('nip', 'bagian', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            if (!$profileData) {
+                $profileData = new StaffModel();
+                $profileData->user_id = $user->id;
+            }
+            $profileData->fill($request->only('nip', 'bagian', 'tanggal_lahir', 'alamat', 'no_telepon'));
+            $profileData->save();
             $folder = 'staff_foto';
         }
 
@@ -309,7 +328,7 @@ class AnggotaController extends Controller
             }
 
             $foto = $request->file('foto');
-            $nama_file = time() . '_' . $foto->getClientOriginalName(); // Menambahkan timestamp untuk menghindari duplikasi
+            $nama_file = $user->id . '_' . $foto->getClientOriginalName(); // Menggunakan ID user untuk menghindari duplikasi
             $foto->move(public_path('assets/img/' . $folder), $nama_file);
 
             $profileData->foto = $nama_file;
@@ -419,7 +438,16 @@ class AnggotaController extends Controller
     }
 
     /**
-     * Generate chart data for anggota dashboard
+     * Mengambil data untuk grafik peminjaman anggota
+     *
+     * Fungsi ini menghasilkan data untuk ditampilkan dalam bentuk grafik statistik
+     * berdasarkan periode waktu yang dipilih: hari ini, minggu ini, atau bulan ini.
+     * Format data disesuaikan dengan kebutuhan chart di dashboard anggota.
+     *
+     * Catatan penting:
+     * - Hanya peminjaman dengan status selain 'Diproses' yang dihitung
+     * - Data untuk periode hari ditampilkan per jam tanpa menit (00:00, 01:00, dst)
+     * - Format konsisten dengan AdminController dan LaporanController
      */
     public function getChartData(Request $request)
     {
@@ -430,112 +458,137 @@ class AnggotaController extends Controller
         if ($period == 'day') {
             $startDate = now()->startOfDay();
             $endDate = now()->endOfDay();
-            $format = 'H:i'; // Format untuk menampilkan jam dan menit
-            $intervalHours = 1; // Interval 1 jam untuk detail lebih baik
+            $format = 'H:00'; // Format untuk jam lengkap (tanpa menit), contoh: 09:00
+            $interval = 'hour';
+            $intervalValue = 1; // Interval 1 jam
         } elseif ($period == 'week') {
+            // Implementasi saat ini: rentang 7 hari terakhir
             $startDate = now()->subDays(6)->startOfDay();
             $endDate = now()->endOfDay();
             $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1;
+
+
+            //  * ALTERNATIF: Kode untuk minggu dari Senin sampai Minggu
+            //  * Kode ini mengganti rentang waktu dari 7 hari terakhir menjadi
+            //  * minggu kalender (Senin sampai Minggu)
+            // // Ambil tanggal awal minggu (Senin)
+            // $startDate = now()->startOfWeek();  // Carbon default startOfWeek() ke Senin
+            // // Ambil tanggal akhir minggu (Minggu)
+            // $endDate = now()->endOfWeek();      // Carbon default endOfWeek() ke Minggu
+            // $format = 'd/m';
+            // $interval = 'day';
+            // $intervalValue = 1;
+
         } elseif ($period == 'month') {
+            // Implementasi saat ini: rentang 30 hari terakhir
             $startDate = now()->subDays(29)->startOfDay();
             $endDate = now()->endOfDay();
             $format = 'd/m';
+            $interval = 'day';
+            $intervalValue = 1;
+
+            // //  * ALTERNATIF: Kode untuk bulan dari tanggal 1 sampai akhir bulan
+            // //  * Kode ini mengganti rentang waktu dari 30 hari terakhir menjadi
+            // //  * bulan kalender (tanggal 1 sampai akhir bulan)
+            // // Tanggal saat ini
+            // $currentMonth = now();
+            // // Tanggal 1 bulan ini
+            // $startDate = $currentMonth->copy()->startOfMonth();
+            // // Tanggal terakhir bulan ini (28/30/31)
+            // $endDate = $currentMonth->copy()->endOfMonth();
+            // // Jumlah hari dalam bulan ini
+            // $daysInMonth = $endDate->day;
+            // $format = 'd/m';
+            // $interval = 'day';
+            // $intervalValue = 1;
         }
 
         // Ambil data peminjaman aktual dari database untuk periode yang dipilih
+        // Tidak termasuk peminjaman dengan status 'Diproses'
+        // PERBAIKAN: Menggunakan tanggal_pinjam untuk timestamp yang lebih akurat,
+        // bukan created_at yang hanya menunjukkan kapan peminjaman dientry
         $peminjamanFromDB = PeminjamanModel::where('user_id', $userId)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select('created_at')
+            ->where('status', '!=', 'Diproses') // Mengecualikan peminjaman yang masih berstatus 'Diproses'
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate]) // Gunakan tanggal_pinjam
+            ->select('tanggal_pinjam') // Gunakan tanggal_pinjam
             ->get();
 
-        // Dapatkan total peminjaman user
-        $totalPeminjaman = PeminjamanModel::where('user_id', $userId)->count();
+        // Dapatkan total peminjaman user (tidak termasuk status 'Diproses')
+        $totalPeminjaman = PeminjamanModel::where('user_id', $userId)
+            ->where('status', '!=', 'Diproses') // Konsisten dengan query chart data
+            ->count();
 
         $labels = [];
         $peminjamanData = [];
 
         if ($period == 'day') {
-            // Untuk periode hari, buat slot per jam dengan menit
-            $timeSlots = [];
-            for ($hour = 0; $hour < 24; $hour += $intervalHours) {
-                // Format jam dengan menit yang jelas
-                $timeLabel = sprintf('%02d:00', $hour);
-                $labels[] = $timeLabel;
-                $timeSlots[] = ['hour' => $hour];
-                $peminjamanData[] = 0; // inisialisasi dengan 0
+            // === STATISTIK UNTUK PERIODE HARI INI (24 JAM) ===
+            // Inisialisasi array untuk 24 jam dengan nilai 0
+            $peminjamanData = array_fill(0, 24, 0);
+
+            // Buat label untuk 24 jam (00:00, 01:00, ..., 23:00)
+            for ($hour = 0; $hour < 24; $hour++) {
+                $labels[] = sprintf('%02d:00', $hour); // Format: 00:00, 01:00, dst.
             }
 
-            // Hitung peminjaman untuk setiap slot waktu
+            // Hitung peminjaman untuk setiap jam (hanya yang statusnya bukan 'Diproses')
+            // Data sudah difilter pada query di atas
+            // PERBAIKAN: Menggunakan tanggal_pinjam sebagai timestamp akurat, bukan created_at
             foreach ($peminjamanFromDB as $peminjaman) {
-                $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
-                $hour = (int) $createdAt->format('H');
-                $minute = (int) $createdAt->format('i');
+                $tanggalPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam);
+                $hour = (int) $tanggalPinjam->format('H'); // Ambil jam dari timestamp, tanpa menit
 
-                // Temukan slot jam yang sesuai
-                $slotIndex = $hour;
-                if ($slotIndex >= 0 && $slotIndex < count($peminjamanData)) {
-                    $peminjamanData[$slotIndex]++;
-                }
+                // Tambahkan ke penghitung jam yang sesuai
+                $peminjamanData[$hour]++;
             }
         } else {
-            // Untuk periode week dan month (logika existing)
+            // === STATISTIK UNTUK PERIODE MINGGU ATAU BULAN ===
             $current = clone $startDate;
             $dateMap = [];
 
-            // Initialize date map
+            // Inisialisasi map tanggal (semua hari dalam rentang)
             while ($current <= $endDate) {
                 $dateKey = $current->format('Y-m-d');
-                $dateMap[$dateKey] = 0;
+                $dateMap[$dateKey] = 0; // Nilai awal 0 untuk setiap tanggal
                 $current->addDay();
             }
 
-            // Count peminjaman per hari
+            // Hitung peminjaman per hari
+            // PERBAIKAN: Menggunakan tanggal_pinjam untuk timestamp yang lebih akurat
             foreach ($peminjamanFromDB as $peminjaman) {
-                $dateKey = \Carbon\Carbon::parse($peminjaman->created_at)->format('Y-m-d');
+                $dateKey = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('Y-m-d');
                 if (isset($dateMap[$dateKey])) {
-                    $dateMap[$dateKey]++;
+                    $dateMap[$dateKey]++; // Tambah penghitung untuk tanggal tersebut
                 }
-            }
-
-            // Generate labels dan data
+            }            // Generate labels dan data untuk chart
             $current = clone $startDate;
             while ($current <= $endDate) {
+                // Format label berdasarkan periode (d/m untuk minggu dan bulan)
                 $labels[] = $current->format($format);
+
+                // Ambil data untuk tanggal ini
                 $dateKey = $current->format('Y-m-d');
                 $peminjamanData[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
-                $current->addDay();
+
+                $current->addDay(); // Pindah ke hari berikutnya
             }
         }
 
-        // Tambahkan detail menit pada label
-        if ($period == 'day' && count($peminjamanFromDB) > 0) {
-            // Temukan jam yang ada peminjaman dan tambahkan menit ke label
-            $detailedLabels = $labels;
-            foreach ($peminjamanFromDB as $peminjaman) {
-                $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
-                $hour = (int) $createdAt->format('H');
-                $minute = (int) $createdAt->format('i');
+        // Format label jam dibuat dengan konsisten untuk periode harian (00:00, 01:00, dst)
+        // sehingga tidak perlu pemrosesan tambahan untuk menampilkan menit
+        // Ini agar data chart anggota konsisten dengan chart pada dashboard admin
 
-                // Jika ada peminjaman pada jam tersebut, ubah label dengan menit yang tepat
-                if ($hour >= 0 && $hour < count($detailedLabels)) {
-                    $detailedLabels[$hour] = sprintf('%02d:%02d', $hour, $minute);
-                }
-            }
-            $labels = $detailedLabels;
-        }
-
-        // Verifikasi jumlah peminjaman dalam grafik
+        // Hitung total data dalam chart (untuk verifikasi)
         $totalInChart = array_sum($peminjamanData);
 
-        // Kembalikan data dalam format JSON
+        // Kembalikan data dalam format JSON yang mudah digunakan oleh frontend
         return response()->json([
-            'labels' => $labels,
-            'peminjaman' => $peminjamanData,
-            'total' => $totalPeminjaman,
-            'totalInChart' => $totalInChart,
-            'actualData' => $peminjamanFromDB->map(function ($item) {
-                return \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s');
-            })
+            'labels' => $labels,                            // Label untuk sumbu X chart (jam atau tanggal)
+            'peminjaman' => $peminjamanData,                // Data jumlah peminjaman untuk ditampilkan
+            'total' => $totalPeminjaman,                    // Total semua peminjaman user (tidak termasuk 'Diproses')
+            'totalInChart' => $totalInChart,                // Total peminjaman dalam periode chart
         ]);
     }
 }

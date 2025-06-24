@@ -426,7 +426,7 @@
                                 userSelect.prop('disabled', false);
                             } else {
                                 userSelect.html(
-                                    '<option value="">Tidak ada anggota dengan level ' +
+                                    '<option value="">Tidak ada anggota tersedia untuk level ' +
                                     level + '</option>');
                             }
                             $('#loadingOverlay').hide();

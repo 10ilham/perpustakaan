@@ -131,10 +131,10 @@
 
                         <div id="siswa-fields" class="level-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="nis">NIS</label>
-                                <input type="number" name="nis" id="nis" class="form-control"
-                                    value="{{ old('nis') }}">
-                                @error('nis')
+                                <label for="nisn">NISN</label>
+                                <input type="number" name="nisn" id="nisn" class="form-control"
+                                    value="{{ old('nisn') }}">
+                                @error('nisn')
                                     <div class="custom-alert" role="alert">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                             <path

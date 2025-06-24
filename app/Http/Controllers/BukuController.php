@@ -74,19 +74,20 @@ class BukuController extends Controller
     {
         $messages = [
             'kode_buku.required' => 'Kode buku harus diisi.',
+            'kode_buku.max' => 'Kode buku tidak boleh lebih dari :max karakter.',
             'kode_buku.unique' => 'Kode buku sudah ada.',
 
             'judul.required' => 'Judul buku harus diisi.',
             'judul.string' => 'Judul buku harus berupa string.',
-            'judul.max' => 'Judul buku tidak boleh lebih dari 50 karakter.',
+            'judul.max' => 'Judul buku tidak boleh lebih dari :max karakter.',
 
             'pengarang.required' => 'Pengarang buku harus diisi.',
             'pengarang.string' => 'Pengarang buku harus berupa string.',
-            'pengarang.max' => 'Pengarang buku tidak boleh lebih dari 30 karakter.',
+            'pengarang.max' => 'Pengarang buku tidak boleh lebih dari :max karakter.',
 
             'penerbit.required' => 'Penerbit buku harus diisi.',
             'penerbit.string' => 'Penerbit buku harus berupa string.',
-            'penerbit.max' => 'Penerbit buku tidak boleh lebih dari 30 karakter.',
+            'penerbit.max' => 'Penerbit buku tidak boleh lebih dari :max karakter.',
 
             'tahun_terbit.required' => 'Tahun terbit buku harus diisi.',
             'tahun_terbit.numeric' => 'Tahun terbit buku harus berupa angka.',
@@ -109,10 +110,10 @@ class BukuController extends Controller
 
         // Validasi input
         $request->validate([
-            'kode_buku' => 'required|unique:buku,kode_buku',
-            'judul' => 'required|string|max:50',
-            'pengarang' => 'required|string|max:30',
-            'penerbit' => 'required|string|max:30',
+            'kode_buku' => 'required|max:22|unique:buku,kode_buku',
+            'judul' => 'required|string|max:60',
+            'pengarang' => 'required|string|max:50',
+            'penerbit' => 'required|string|max:50',
             'tahun_terbit' => 'required|numeric|digits:4',
             'deskripsi' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
@@ -147,7 +148,7 @@ class BukuController extends Controller
 
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
-            $nama_file = time() . '_' . $foto->getClientOriginalName();
+            $nama_file = $buku->id . '_' . $foto->getClientOriginalName(); // Menggunakan ID buku untuk menghindari duplikasi
             $foto->move(public_path('assets/img/buku/'), $nama_file);
             $buku->foto = $nama_file;
         }
@@ -207,19 +208,20 @@ class BukuController extends Controller
     {
         $messages = [
             'kode_buku.required' => 'Kode buku harus diisi.',
+            'kode_buku.max' => 'Kode buku tidak boleh lebih dari :max karakter.',
             'kode_buku.unique' => 'Kode buku sudah ada.',
 
             'judul.required' => 'Judul buku harus diisi.',
             'judul.string' => 'Judul buku harus berupa string.',
-            'judul.max' => 'Judul buku tidak boleh lebih dari 50 karakter.',
+            'judul.max' => 'Judul buku tidak boleh lebih dari :max karakter.',
 
             'pengarang.required' => 'Pengarang buku harus diisi.',
             'pengarang.string' => 'Pengarang buku harus berupa string.',
-            'pengarang.max' => 'Pengarang buku tidak boleh lebih dari 30 karakter.',
+            'pengarang.max' => 'Pengarang buku tidak boleh lebih dari :max karakter.',
 
             'penerbit.required' => 'Penerbit buku harus diisi.',
             'penerbit.string' => 'Penerbit buku harus berupa string.',
-            'penerbit.max' => 'Penerbit buku tidak boleh lebih dari 30 karakter.',
+            'penerbit.max' => 'Penerbit buku tidak boleh lebih dari :max karakter.',
 
             'tahun_terbit.required' => 'Tahun terbit buku harus diisi.',
             'tahun_terbit.numeric' => 'Tahun terbit buku harus berupa angka.',
@@ -234,32 +236,41 @@ class BukuController extends Controller
 
             'total_buku.required' => 'Stok buku harus diisi.',
             'total_buku.integer' => 'Stok buku harus berupa angka.',
-            'total_buku.min' => 'Stok buku tidak boleh kurang dari 0.',
+            'total_buku.min' => 'Stok buku tidak boleh kurang dari :min.',
 
             'kategori_id.required' => 'Kategori buku harus diisi minimal 1.',
             'kategori_id.min' => 'Kategori minimal 1 kategori harus dipilih.',
 
         ];
 
-        // Validasi input
+        // Ambil data buku terlebih dahulu
+        $buku = BukuModel::findOrFail($id);
+
+        // PENTING: Hitung jumlah buku yang sedang dipinjam dan diproses dari database
+        // Ini lebih akurat daripada menghitung dari selisih total dan stok
+        $bukuDipinjam = \App\Models\PeminjamanModel::where('buku_id', $id)
+            ->whereIn('status', ['Dipinjam', 'Diproses'])
+            ->count();
+
+        // Jika ada buku yang sedang dipinjam, kita perlu memastikan total buku tidak kurang dari itu
+        if ($bukuDipinjam > 0) {
+            // Update pesan error untuk validasi total_buku
+            $messages['total_buku.min'] = "Total buku minimal harus minimal $bukuDipinjam. Karena saat ini ada $bukuDipinjam buku sedang dipinjam.";
+        }
+
+        // Validasi input dengan tambahan validasi untuk total_buku
+        // total_buku minimal harus sama dengan jumlah buku yang sedang dipinjam
         $request->validate([
-            'kode_buku' => 'required|unique:buku,kode_buku,' . $id,
-            'judul' => 'required|string|max:50',
-            'pengarang' => 'required|string|max:30',
-            'penerbit' => 'required|string|max:30',
+            'kode_buku' => 'required|max:22|unique:buku,kode_buku,' . $id,
+            'judul' => 'required|string|max:60',
+            'pengarang' => 'required|string|max:50',
+            'penerbit' => 'required|string|max:50',
             'tahun_terbit' => 'required|numeric|digits:4',
             'deskripsi' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
-            'total_buku' => 'required|integer|min:0',
+            'total_buku' => 'required|integer|min:' . $bukuDipinjam, // Kunci perbaikan ada di sini
             'kategori_id' => 'required|min:1',
         ], $messages);
-
-        $buku = BukuModel::findOrFail($id);
-        $oldStok = $buku->stok_buku; // Simpan stok lama
-        $oldTotal = $buku->total_buku ?? $oldStok; // Simpan total lama (jika ada)
-
-        // Hitung selisih antara stok saat ini dengan total (untuk melihat berapa buku yang sedang dipinjam)
-        $bukuDipinjam = $oldTotal - $oldStok;
 
         // Ambil data admin yang sedang login dan update id_admin pada tabel buku
         $adminModel = AdminModel::where('user_id', Auth::id())->first();
@@ -277,11 +288,14 @@ class BukuController extends Controller
             $buku->id_admin = $adminModel->id;
         }
 
-        // Perbarui stok berdasarkan total buku baru dikurangi buku yang sedang dipinjam
-        $newStok = $request->total_buku - $bukuDipinjam;
-        $buku->stok_buku = max(0, $newStok); // Pastikan stok tidak negatif
-        // Pastikan stok tidak melebihi total buku
-        $buku->stok_buku = min($buku->stok_buku, $request->total_buku);
+        // Dapatkan total buku baru dari request
+        $newTotal = $request->total_buku;
+
+        // Hitung stok buku yang tersedia: total buku baru dikurangi jumlah peminjaman aktif
+        $newStok = $newTotal - $bukuDipinjam;
+
+        // Pastikan stok tidak negatif
+        $buku->stok_buku = max(0, $newStok);
 
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
@@ -291,12 +305,12 @@ class BukuController extends Controller
             }
             // Upload foto baru
             $foto = $request->file('foto');
-            $nama_file = time() . '_' . $foto->getClientOriginalName();
+            $nama_file = $buku->id . '_' . $foto->getClientOriginalName(); // Menggunakan ID buku untuk menghindari duplikasi
             $foto->move(public_path('assets/img/buku/'), $nama_file);
             $buku->foto = $nama_file;
         }
 
-        // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >=0, set status "Tersedia"
+        // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >0, set status "Tersedia"
         if ($buku->stok_buku <= 0) {
             $buku->status = 'Habis';
         } else {
@@ -321,11 +335,17 @@ class BukuController extends Controller
             if (is_array($kategori_id)) {
                 $kategori_id = reset($kategori_id); // Ambil kategori pertama dari array
             }
+
+            // Pesan sukses dengan detail stok
+            $successMessage = 'Buku berhasil diperbarui. Total buku: ' . $buku->total_buku .
+                ', Stok tersedia: ' . $buku->stok_buku .
+                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '');
+
             return redirect()->route('kategori.detail', [
                 'id' => $kategori_id,
                 'page' => $page ?? '',
                 'search' => $search ?? '',
-            ])->with('success', 'Buku berhasil diperbarui.');
+            ])->with('success', $successMessage);
         } else {
 
             // Referensi untuk kembali ke page sebelumnya - menggunakan parameter yang sama dengan tombol "Kembali"
@@ -334,13 +354,18 @@ class BukuController extends Controller
             $kategoriFilter = $request->input('kategori');
             $status = $request->input('status');
 
+            // Pesan sukses dengan detail stok
+            $successMessage = 'Buku berhasil diperbarui. Total buku: ' . $buku->total_buku .
+                ', Stok tersedia: ' . $buku->stok_buku .
+                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '');
+
             // Gunakan parameter yang sama persis dengan tombol "Kembali" di view
             return redirect()->route('buku.index', [
                 'page' => $page ?? '',
                 'search' => $search ?? '',
                 'kategori' => $kategoriFilter ?? '',
                 'status' => $status ?? ''
-            ])->with('success', 'Buku berhasil diperbarui.');
+            ])->with('success', $successMessage);
         }
     }
 
@@ -442,7 +467,7 @@ class BukuController extends Controller
                 'pengarang' => $book->pengarang,
                 'penerbit' => $book->penerbit,
                 'tahun_terbit' => $book->tahun_terbit,
-                'kategori' => $book->kategori->pluck('nama')->implode(', '),
+                'kategori' => $book->kategori->pluck('nama_kategori')->implode(', '),
                 'total_buku' => $book->total_buku,
                 'stok_buku' => $book->stok_buku,
                 'status' => $book->status,

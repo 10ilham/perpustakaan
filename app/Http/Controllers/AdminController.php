@@ -78,7 +78,7 @@ class AdminController extends Controller
 
             'nip.required' => 'NIP wajib diisi',
             'nip.numeric' => 'NIP harus berupa angka',
-            'nip.digits_between' => 'NIP harus terdiri dari 10 hingga 20 digit',
+            'nip.digits' => 'NIP harus terdiri dari 18 digit',
             'nip.unique' => 'NIP sudah digunakan',
 
             'tanggal_lahir.required' => 'Tanggal lahir wajib diisi',
@@ -86,11 +86,10 @@ class AdminController extends Controller
 
             'alamat.required' => 'Alamat wajib diisi',
             'alamat.string' => 'Alamat harus berupa teks',
-            'alamat.max' => 'Alamat tidak boleh lebih dari :max karakter',
 
             'no_telepon.required' => 'Nomor telepon wajib diisi',
             'no_telepon.numeric' => 'Nomor telepon hanya boleh berisi angka',
-            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 15 digit',
+            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 hingga 13 digit',
             'no_telepon.unique' => 'Nomor telepon sudah digunakan',
 
             'password.min' => 'Password minimal :min karakter',
@@ -106,12 +105,12 @@ class AdminController extends Controller
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:50',
-            'email' => 'required|email|max:50|unique:users,email,' . $admin->user->id,
-            'nip' => 'required|numeric|digits_between:10,20|unique:admin,nip,' . $admin->id . '|unique:guru,nip|unique:staff,nip',
+            'nama' => 'required|regex:/^[a-zA-Z\s]+$/|max:80',
+            'email' => 'required|email|max:70|unique:users,email,' . $admin->user->id,
+            'nip' => 'required|numeric|digits:18|unique:admin,nip,' . $admin->id . '|unique:guru,nip|unique:staff,nip',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required|string|max:255',
-            'no_telepon' => 'required|numeric|digits_between:10,15|unique:admin,no_telepon,' . $admin->id . '|unique:siswa,no_telepon|unique:guru,no_telepon|unique:staff,no_telepon',
+            'alamat' => 'required|string',
+            'no_telepon' => 'required|numeric|digits_between:10,13|unique:admin,no_telepon,' . $admin->id . '|unique:siswa,no_telepon|unique:guru,no_telepon|unique:staff,no_telepon',
             'password' => 'nullable|min:6|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048'
         ], $messages);
@@ -157,7 +156,7 @@ class AdminController extends Controller
             }
 
             // Ambil nama file
-            $nama_file = time() . '_' . $request->file('foto')->getClientOriginalName();
+            $nama_file = $admin->user->id . '_' . $request->file('foto')->getClientOriginalName(); // Menggunakan ID user untuk menghindari duplikasi
 
             // Simpan file ke folder public/assets/img/admin_foto
             $request->file('foto')->move(public_path('assets/img/admin_foto'), $nama_file);
@@ -238,65 +237,7 @@ class AdminController extends Controller
         // Hitung total dari semua data grafik untuk verifikasi
         $totalInChart = array_sum($siswaData) + array_sum($guruData) + array_sum($staffData);
 
-        // Get actual loan dates from database for verification with timestamps
-        $actualSiswaLoanDates = PeminjamanModel::whereHas('user', function ($query) {
-            $query->where('level', 'siswa');
-        })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select('created_at')
-            ->get()
-            ->map(function ($item) {
-                return \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s');
-            });
-
-        $actualGuruLoanDates = PeminjamanModel::whereHas('user', function ($query) {
-            $query->where('level', 'guru');
-        })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select('created_at')
-            ->get()
-            ->map(function ($item) {
-                return \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s');
-            });
-
-        $actualStaffLoanDates = PeminjamanModel::whereHas('user', function ($query) {
-            $query->where('level', 'staff');
-        })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select('created_at')
-            ->get()
-            ->map(function ($item) {
-                return \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s');
-            });
-
-        // Tambahkan detail menit pada label jika periode adalah day
-        if ($period == 'day') {
-            // Dapatkan semua data peminjaman dengan menit
-            $allPeminjaman = PeminjamanModel::whereBetween('created_at', [$startDate, $endDate])
-                ->select('created_at')
-                ->get();
-
-            if ($allPeminjaman->count() > 0) {
-                // Copy labels asli
-                $detailedLabels = $labels;
-
-                foreach ($allPeminjaman as $peminjaman) {
-                    $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
-                    $hour = (int) $createdAt->format('H');
-                    $minute = (int) $createdAt->format('i');
-
-                    // Perbarui label dengan menit yang tepat jika ada data pada jam tersebut
-                    $index = floor($hour / $intervalValue);
-                    if ($index >= 0 && $index < count($detailedLabels)) {
-                        $detailedLabels[$index] = sprintf('%02d:%02d', $hour, $minute);
-                    }
-                }
-
-                $labels = $detailedLabels;
-            }
-        }
-
-        // Kembalikan data dalam format JSON
+        // Kembalikan data dalam format JSON yang lebih sederhana
         return response()->json([
             'labels' => $labels,
             'siswa' => $siswaData,
@@ -307,95 +248,70 @@ class AdminController extends Controller
             'totalGuru' => $totalPeminjamanGuru,
             'totalStaff' => $totalPeminjamanStaff,
             'totalInChart' => $totalInChart,
-            'actualDates' => [
-                'siswa' => $actualSiswaLoanDates,
-                'guru' => $actualGuruLoanDates,
-                'staff' => $actualStaffLoanDates
-            ]
+            'chartMode' => $interval
         ]);
     }
 
     /**
      * Helper function to get loan data by period and user level
+     * @return array Array of loan counts
+     */
+    /**
+     * Helper function to get loan data by period and user level
+     * Mengambil data peminjaman berdasarkan periode dan level user
+     * Menggunakan tanggal_pinjam untuk memastikan data sesuai waktu aktual peminjaman
+     * @return array Array of loan counts
      */
     private function getPeminjamanByPeriodAndLevel($startDate, $endDate, $interval, $intervalValue, $userLevel)
     {
-        $data = [];
-        $current = clone $startDate;
-        $dateFormat = 'd/m/Y'; // Format for displaying and debugging dates
-
-        // Ambil data peminjaman aktual dari database terlebih dahulu
+        // Ambil data peminjaman aktual dari database
+        // Gunakan tanggal_pinjam (bukan created_at) untuk menentukan waktu peminjaman
         $peminjamanData = PeminjamanModel::whereHas('user', function ($query) use ($userLevel) {
             $query->where('level', $userLevel);
         })
-            ->whereBetween('created_at', [$startDate, $endDate]) // Menggunakan created_at untuk mendapatkan jam dan menit
-            ->select('created_at')
+            ->where('status', '!=', 'Diproses')
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
+            ->select('tanggal_pinjam') // Gunakan tanggal_pinjam untuk timestamp yang lebih akurat
             ->get();
 
-        $actualDates = $peminjamanData->map(function ($item) use ($dateFormat) {
-            return \Carbon\Carbon::parse($item->created_at)->format($dateFormat);
-        })->toArray();
-
-        // Initialize empty array with correct date keys based on periods
-        $dateMap = [];
-        $tempCurrent = clone $startDate;
-        while ($tempCurrent <= $endDate) {
-            $dateKey = $tempCurrent->format($dateFormat);
-            $dateMap[$dateKey] = 0;
-
-            if ($interval == 'hour') {
-                $tempCurrent->addHours($intervalValue);
-            } elseif ($interval == 'day') {
-                $tempCurrent->addDays($intervalValue);
-            }
-        }
-
-        // Count actual loans for each date
-        foreach ($peminjamanData as $peminjaman) {
-            $dateKey = \Carbon\Carbon::parse($peminjaman->created_at)->format($dateFormat);
-            if (isset($dateMap[$dateKey])) {
-                $dateMap[$dateKey]++;
-            }
-        }
-
-        // Now create data array in the correct sequence
-        $current = clone $startDate;
-        $timeData = [];
-
         if ($interval == 'hour') {
-            // Untuk periode hari, buat slot per jam dengan menit
-            $timeSlots = [];
-            for ($hour = 0; $hour < 24; $hour += $intervalValue) {
-                // Track original hour untuk memetakan kembali ke array hasil
-                $timeSlots[$hour] = 0;
+            // Untuk tampilan per jam (24 jam), tanpa menit
+            $hourData = array_fill(0, 24, 0); // Inisialisasi 24 jam dengan nilai 0
+
+            // Hitung peminjaman untuk setiap jam
+            foreach ($peminjamanData as $peminjaman) {
+                $tanggalPinjam = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam);
+                $hour = (int) $tanggalPinjam->format('H');
+
+                // Tambahkan count untuk jam yang sesuai
+                $hourData[$hour]++;
             }
 
-            // Hitung peminjaman untuk setiap slot waktu
-            foreach ($peminjamanData as $peminjaman) {
-                $createdAt = \Carbon\Carbon::parse($peminjaman->created_at);
-                $hour = (int) $createdAt->format('H');
+            return $hourData;
+        } else {
+            // Format untuk week dan month
+            $format = ($interval == 'day') ? 'd/m' : 'Y-m-d';
+            $dateMap = [];
 
-                // Hitung peminjaman per jam
-                if (isset($timeSlots[$hour])) {
-                    $timeSlots[$hour]++;
+            // Inisialisasi semua tanggal dalam rentang dengan nilai 0
+            $current = clone $startDate;
+            while ($current <= $endDate) {
+                $dateKey = $current->format($format);
+                $dateMap[$dateKey] = 0;
+                $current->addDays($intervalValue);
+            }
+
+            // Hitung peminjaman untuk setiap tanggal
+            // PERBAIKAN: Menggunakan tanggal_pinjam, bukan created_at
+            foreach ($peminjamanData as $peminjaman) {
+                $dateKey = \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format($format);
+                if (isset($dateMap[$dateKey])) {
+                    $dateMap[$dateKey]++;
                 }
             }
 
-            // Konversi dari map ke array berurutan
-            foreach ($timeSlots as $hour => $count) {
-                $timeData[] = $count;
-            }
-
-            return $timeData;
-        } else {
-            // Format hari/bulan seperti sebelumnya
-            while ($current <= $endDate) {
-                $dateKey = $current->format($dateFormat);
-                // Only add count for dates that exist in the dateMap
-                $data[] = isset($dateMap[$dateKey]) ? $dateMap[$dateKey] : 0;
-                $current->addDays($intervalValue);
-            }
-            return $data;
+            // Konversi ke array berurutan
+            return array_values($dateMap);
         }
     }
 }

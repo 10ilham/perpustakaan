@@ -33,7 +33,7 @@
                 <div class="col-md-4">
                     <div class="profile-card">
                         <div class="card-body">
-                            <h3 class="card-title">{{ $kategori->nama }}</h3>
+                            <h3 class="card-title">{{ $kategori->nama_kategori }}</h3>
                             <p>{{ $kategori->deskripsi ?: 'Tidak ada deskripsi' }}</p>
                             <div class="badge badge-outline-primary"
                                 style="margin-bottom: 15px; margin-top: 10px; display: block;">
@@ -118,7 +118,7 @@
                                                         <p class="card-text m-0"
                                                             style="text-align: justify; display: block; width: 100%;">
                                                             Kategori:
-                                                            {{ $kategori->nama }}
+                                                            {{ $kategori->nama_kategori }}
                                                         </p>
                                                         <p class="card-text m-0"
                                                             style="text-align: justify; display: block; width: 100%;">

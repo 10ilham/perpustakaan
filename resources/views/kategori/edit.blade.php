@@ -32,10 +32,10 @@
                         @endif
 
                         <div class="form-group">
-                            <label for="nama">Nama Kategori</label>
-                            <input type="text" name="nama" id="nama" class="form-control"
-                                value="{{ old('nama', $kategori->nama) }}" required>
-                            @error('nama')
+                            <label for="nama_kategori">Nama Kategori</label>
+                            <input type="text" name="nama_kategori" id="nama_kategori" class="form-control"
+                                value="{{ old('nama_kategori', $kategori->nama_kategori) }}" required>
+                            @error('nama_kategori')
                                 <div class="custom-alert" role="alert">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path

@@ -110,10 +110,10 @@
                             </div>
                         @elseif($user->level === 'siswa')
                             <div class="form-group">
-                                <label for="nis">NIS</label>
-                                <input type="number" name="nis" id="nis" class="form-control"
-                                    value="{{ old('nis', $profileData->nis ?? '') }}">
-                                @error('nis')
+                                <label for="nisn">NISN</label>
+                                <input type="number" name="nisn" id="nisn" class="form-control"
+                                    value="{{ old('nisn', $profileData->nisn ?? '') }}">
+                                @error('nisn')
                                     <div class="custom-alert" role="alert">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                             <path
@@ -128,12 +128,24 @@
                                 <label for="kelas">Kelas</label>
                                 <select name="kelas" id="kelas" class="form-control">
                                     <option value="">Pilih Kelas</option>
-                                    <option value="VII A" {{ old('kelas', $profileData->kelas ?? '') == 'VII A' ? 'selected' : '' }}>VII A</option>
-                                    <option value="VII B" {{ old('kelas', $profileData->kelas ?? '') == 'VII B' ? 'selected' : '' }}>VII B</option>
-                                    <option value="VIII A" {{ old('kelas', $profileData->kelas ?? '') == 'VIII A' ? 'selected' : '' }}>VIII A</option>
-                                    <option value="VIII B" {{ old('kelas', $profileData->kelas ?? '') == 'VIII B' ? 'selected' : '' }}>VIII B</option>
-                                    <option value="IX A" {{ old('kelas', $profileData->kelas ?? '') == 'IX A' ? 'selected' : '' }}>IX A</option>
-                                    <option value="IX B" {{ old('kelas', $profileData->kelas ?? '') == 'IX B' ? 'selected' : '' }}>IX B</option>
+                                    <option value="VII A"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'VII A' ? 'selected' : '' }}>VII A
+                                    </option>
+                                    <option value="VII B"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'VII B' ? 'selected' : '' }}>VII B
+                                    </option>
+                                    <option value="VIII A"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'VIII A' ? 'selected' : '' }}>VIII A
+                                    </option>
+                                    <option value="VIII B"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'VIII B' ? 'selected' : '' }}>VIII B
+                                    </option>
+                                    <option value="IX A"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'IX A' ? 'selected' : '' }}>IX A
+                                    </option>
+                                    <option value="IX B"
+                                        {{ old('kelas', $profileData->kelas ?? '') == 'IX B' ? 'selected' : '' }}>IX B
+                                    </option>
                                 </select>
                                 @error('kelas')
                                     <div class="custom-alert" role="alert">
@@ -166,16 +178,36 @@
                                 <label for="mata_pelajaran">Mata Pelajaran</label>
                                 <select name="mata_pelajaran" id="mata_pelajaran" class="form-control">
                                     <option value="">Pilih Mata Pelajaran</option>
-                                    <option value="Matematika" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Matematika' ? 'selected' : '' }}>Matematika</option>
-                                    <option value="Bahasa Indonesia" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Indonesia' ? 'selected' : '' }}>Bahasa Indonesia</option>
-                                    <option value="Bahasa Inggris" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Inggris' ? 'selected' : '' }}>Bahasa Inggris</option>
-                                    <option value="Bahasa Arab" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Arab' ? 'selected' : '' }}>Bahasa Arab</option>
-                                    <option value="Bahasa Sunda" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Sunda' ? 'selected' : '' }}>Bahasa Sunda</option>
-                                    <option value="IPA" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'IPA' ? 'selected' : '' }}>IPA</option>
-                                    <option value="IPS" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'IPS' ? 'selected' : '' }}>IPS</option>
-                                    <option value="Pendidikan Agama Islam" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Pendidikan Agama Islam' ? 'selected' : '' }}>Pendidikan Agama Islam</option>
-                                    <option value="Fiqih" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Fiqih' ? 'selected' : '' }}>Fiqih</option>
-                                    <option value="Akidah Akhlak" {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Akidah Akhlak' ? 'selected' : '' }}>Akidah Akhlak</option>
+                                    <option value="Matematika"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Matematika' ? 'selected' : '' }}>
+                                        Matematika</option>
+                                    <option value="Bahasa Indonesia"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Indonesia' ? 'selected' : '' }}>
+                                        Bahasa Indonesia</option>
+                                    <option value="Bahasa Inggris"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Inggris' ? 'selected' : '' }}>
+                                        Bahasa Inggris</option>
+                                    <option value="Bahasa Arab"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Arab' ? 'selected' : '' }}>
+                                        Bahasa Arab</option>
+                                    <option value="Bahasa Sunda"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Bahasa Sunda' ? 'selected' : '' }}>
+                                        Bahasa Sunda</option>
+                                    <option value="IPA"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'IPA' ? 'selected' : '' }}>
+                                        IPA</option>
+                                    <option value="IPS"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'IPS' ? 'selected' : '' }}>
+                                        IPS</option>
+                                    <option value="Pendidikan Agama Islam"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Pendidikan Agama Islam' ? 'selected' : '' }}>
+                                        Pendidikan Agama Islam</option>
+                                    <option value="Fiqih"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Fiqih' ? 'selected' : '' }}>
+                                        Fiqih</option>
+                                    <option value="Akidah Akhlak"
+                                        {{ old('mata_pelajaran', $profileData->mata_pelajaran ?? '') == 'Akidah Akhlak' ? 'selected' : '' }}>
+                                        Akidah Akhlak</option>
                                 </select>
                                 @error('mata_pelajaran')
                                     <div class="custom-alert" role="alert">
@@ -206,14 +238,26 @@
                             </div>
                             <div class="form-group">
                                 <label for="bagian">Bagian</label>
-                                  <select name="bagian" id="bagian" class="form-control">
+                                <select name="bagian" id="bagian" class="form-control">
                                     <option value="">Pilih Bagian</option>
-                                    <option value="Kepala Tata Usaha" {{ old('bagian', $profileData->bagian ?? '') == 'Kepala Tata Usaha' ? 'selected' : '' }}>Kepala Tata Usaha</option>
-                                    <option value="Tata Usaha" {{ old('bagian', $profileData->bagian ?? '') == 'Tata Usaha' ? 'selected' : '' }}>Tata Usaha</option>
-                                    <option value="Staff Keuangan" {{ old('bagian', $profileData->bagian ?? '') == 'Staff Keuangan' ? 'selected' : '' }}>Staff Keuangan</option>
-                                    <option value="Staff Laboratorium" {{ old('bagian', $profileData->bagian ?? '') == 'Staff Laboratorium' ? 'selected' : '' }}>Staff Laboratorium</option>
-                                    <option value="Staff Keamanan" {{ old('bagian', $profileData->bagian ?? '') == 'Staff Keamanan' ? 'selected' : '' }}>Staff Keamanan</option>
-                                    <option value="Staff Kebersihan" {{ old('bagian', $profileData->bagian ?? '') == 'Staff Kebersihan' ? 'selected' : '' }}>Staff Kebersihan</option>
+                                    <option value="Kepala Tata Usaha"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Kepala Tata Usaha' ? 'selected' : '' }}>
+                                        Kepala Tata Usaha</option>
+                                    <option value="Tata Usaha"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Tata Usaha' ? 'selected' : '' }}>
+                                        Tata Usaha</option>
+                                    <option value="Staff Keuangan"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Staff Keuangan' ? 'selected' : '' }}>
+                                        Staff Keuangan</option>
+                                    <option value="Staff Laboratorium"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Staff Laboratorium' ? 'selected' : '' }}>
+                                        Staff Laboratorium</option>
+                                    <option value="Staff Keamanan"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Staff Keamanan' ? 'selected' : '' }}>
+                                        Staff Keamanan</option>
+                                    <option value="Staff Kebersihan"
+                                        {{ old('bagian', $profileData->bagian ?? '') == 'Staff Kebersihan' ? 'selected' : '' }}>
+                                        Staff Kebersihan</option>
                                 </select>
                                 @error('bagian')
                                     <div class="custom-alert" role="alert">

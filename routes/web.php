@@ -100,6 +100,7 @@ Route::middleware(['auth', LevelMiddleware::class])->group(function () {
     Route::get('/peminjaman/detail/{id}', [PeminjamanController::class, 'detail'])->name('peminjaman.detail');
     Route::post('/peminjaman/kembalikan/{id}', [PeminjamanController::class, 'kembalikanBuku'])->name('peminjaman.kembalikan');
     Route::delete('/peminjaman/hapus/{id}', [PeminjamanController::class, 'hapusPeminjaman'])->name('peminjaman.hapus');
+    Route::post('/peminjaman/{id}/konfirmasi-pengambilan', [PeminjamanController::class, 'konfirmasiPengambilan'])->name('peminjaman.konfirmasi-pengambilan');
 
     // Route untuk peminjaman manual (khusus admin)
     Route::get('/peminjaman/manual', [PeminjamanController::class, 'formManual'])->name('peminjaman.manual');

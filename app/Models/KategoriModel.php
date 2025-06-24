@@ -25,9 +25,11 @@ class KategoriModel extends Model // Konsep OOP: Inheritance - mewarisi sifat da
      * Konsep OOP: Encapsulation - Melindungi atribut dari modifikasi yang tidak diinginkan
      */
     protected $fillable = [
-        'nama',      // Nama kategori buku
-        'deskripsi', // Deskripsi kategori buku
         'id_admin',  // Foreign key ke tabel admin
+        'nama_kategori',      // Nama kategori buku
+        'deskripsi', // Deskripsi kategori buku
+        'created_at', // Timestamp saat kategori dibuat
+        'updated_at', // Timestamp saat kategori terakhir diperbarui
     ];
 
     /**

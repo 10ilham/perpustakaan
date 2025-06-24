@@ -70,7 +70,6 @@
             </div>
 
             <p>Jika Anda tidak mengubah email akun Anda, abaikan email ini.</p>
-            <p>Tombol verifikasi akan kadaluarsa dalam 24 jam.</p>
 
             <p>Terima kasih,<br>
                 Tim Perpustakaan MTSN 6 GARUT</p>

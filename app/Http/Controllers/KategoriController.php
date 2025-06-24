@@ -45,17 +45,17 @@ class KategoriController extends Controller
     public function simpan(Request $request)
     {
         $messages = [
-            'nama.required' => 'Nama kategori harus diisi',
-            'nama.string' => 'Nama kategori harus berupa string',
-            'nama.max' => 'Nama kategori tidak boleh lebih dari 255 karakter',
-            'nama.unique' => 'Nama kategori sudah ada',
+            'nama_kategori.required' => 'Nama kategori harus diisi',
+            'nama_kategori.string' => 'Nama kategori harus berupa string',
+            'nama_kategori.max' => 'Nama kategori tidak boleh lebih dari :max karakter',
+            'nama_kategori.unique' => 'Nama kategori sudah ada',
 
             'deskripsi.string' => 'Deskripsi kategori harus berupa string',
         ];
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategori,nama',
+            'nama_kategori' => 'required|string|max:30|unique:kategori,nama_kategori',
             'deskripsi' => 'nullable|string',
         ], $messages);
 
@@ -64,7 +64,7 @@ class KategoriController extends Controller
 
         // Simpan kategori baru dengan id_admin
         $kategoriData = [
-            'nama' => $request->nama,
+            'nama_kategori' => $request->nama_kategori,
             'deskripsi' => $request->deskripsi,
         ];
 
@@ -92,17 +92,17 @@ class KategoriController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
-            'nama.required' => 'Nama kategori harus diisi',
-            'nama.string' => 'Nama kategori harus berupa string',
-            'nama.max' => 'Nama kategori tidak boleh lebih dari 255 karakter',
-            'nama.unique' => 'Nama kategori sudah ada',
+            'nama_kategori.required' => 'Nama kategori harus diisi',
+            'nama_kategori.string' => 'Nama kategori harus berupa string',
+            'nama_kategori.max' => 'Nama kategori tidak boleh lebih dari :max karakter',
+            'nama_kategori.unique' => 'Nama kategori sudah ada',
 
             'deskripsi.string' => 'Deskripsi kategori harus berupa string',
         ];
 
         // Validasi input
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategori,nama,' . $id,
+            'nama_kategori' => 'required|string|max:30|unique:kategori,nama_kategori,' . $id,
             'deskripsi' => 'nullable|string',
         ], $messages);
 
@@ -112,7 +112,7 @@ class KategoriController extends Controller
         // Update kategori
         $kategori = KategoriModel::findOrFail($id);
         $updateData = [
-            'nama' => $request->nama,
+            'nama_kategori' => $request->nama_kategori,
             'deskripsi' => $request->deskripsi,
         ];
 

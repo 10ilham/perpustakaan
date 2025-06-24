@@ -44,7 +44,7 @@
                             @foreach ($kategori as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->nama }}</td>
+                                    <td>{{ $item->nama_kategori }}</td>
                                     <td>{{ $item->deskripsi ?: 'Tidak ada deskripsi' }}</td>
                                     <td>{{ $item->buku->count() }} buku</td>
                                     <td>

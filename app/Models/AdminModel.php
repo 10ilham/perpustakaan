@@ -31,6 +31,8 @@ class AdminModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan m
         'alamat',      // Alamat admin
         'no_telepon',  // Nomor telepon admin
         'foto',        // Path ke foto admin
+        'created_at',  // Timestamp saat akun dibuat
+        'updated_at',  // Timestamp saat akun terakhir diperbarui
     ];
 
     /**

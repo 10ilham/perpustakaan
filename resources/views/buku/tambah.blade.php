@@ -74,7 +74,7 @@
                                         @foreach ($kategori as $kat)
                                             <option value="{{ $kat->id }}"
                                                 {{ collect(old('kategori_id', []))->contains($kat->id) ? 'selected' : '' }}>
-                                                {{ $kat->nama }}
+                                                {{ $kat->nama_kategori }}
                                             </option>
                                         @endforeach
                                     </select>

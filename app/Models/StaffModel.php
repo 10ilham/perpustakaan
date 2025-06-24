@@ -36,6 +36,8 @@ class StaffModel extends Model // Konsep OOP: Inheritance - mewarisi sifat dan m
         'alamat',       // Alamat staff
         'no_telepon',   // Nomor telepon staff
         'foto',         // Path ke foto staff
+        'created_at',   // Timestamp saat akun dibuat
+        'updated_at',   // Timestamp saat akun terakhir diperbarui
     ];
 
     /**

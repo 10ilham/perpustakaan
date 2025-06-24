@@ -93,9 +93,9 @@
                                     </div>
                                 @elseif($user->level === 'siswa')
                                     <div class="form-group">
-                                        <label for="nis">NIS</label>
-                                        <input type="text" id="nis" class="form-control"
-                                            value="{{ $profileData->nis ?? '-' }}" readonly>
+                                        <label for="nisn">NISN</label>
+                                        <input type="text" id="nisn" class="form-control"
+                                            value="{{ $profileData->nisn ?? '-' }}" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label for="kelas">Kelas</label>

@@ -81,7 +81,7 @@ class UserSeeder extends Seeder
         DB::table('staff')->insert([
             'user_id' => $staffId,
             'nip' => '1122334455',
-            'jabatan' => 'Tata Usaha',
+            'bagian' => 'Tata Usaha',
             'tanggal_lahir' => '1992-01-01',
             'alamat' => 'Jl. Staff Perpustakaan No. 1',
             'no_telepon' => '081234567893',

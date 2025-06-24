@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email_verified_at', 30)->nullable();
-            $table->string('email_verification_token', 150)->nullable();
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->timestamp('email_verified_at')->nullable();
+        //     $table->text('email_verification_token')->nullable();
+        // });
     }
 
     /**

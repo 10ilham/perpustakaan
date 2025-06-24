@@ -54,10 +54,10 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="nis">NIS</label>
-                            <input type="text" name="nis" id="nis" class="form-control"
-                                value="{{ $siswa->nis }}" required>
-                            @error('nis')
+                            <label for="nisn">NISN</label>
+                            <input type="text" name="nisn" id="nisn" class="form-control"
+                                value="{{ $siswa->nisn }}" required>
+                            @error('nisn')
                                 <div class="custom-alert" role="alert">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path
