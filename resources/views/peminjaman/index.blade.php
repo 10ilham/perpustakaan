@@ -40,8 +40,11 @@
                         @elseif(request('status') == 'Terlambat')
                             <h2>{{ $peminjaman->where('status', 'Terlambat')->count() }}</h2>
                             <p>Sedang Dipinjam & Terlambat</p>
-                        @elseif(request('status') == 'Dipinjam')
-                            <h2>{{ $dipinjam }}</h2>
+                        @elseif(request('status') == 'Diproses')
+                            <h2>{{ $peminjaman->where('status', 'Dipinjam')->count() }}</h2>
+                            <p>Sedang Dipinjam</p>
+                        @elseif(request('status') == 'Dibatalkan')
+                            <h2>{{ $peminjaman->where('status', 'Dipinjam')->count() }}</h2>
                             <p>Sedang Dipinjam</p>
                         @else
                             <h2>{{ $dipinjam }}</h2>
@@ -63,8 +66,11 @@
                             <h2>{{ $peminjaman->where('status', 'Dikembalikan')->where('is_terlambat', true)->count() }}
                             </h2>
                             <p>Dikembalikan & Terlambat</p>
-                        @elseif(request('status') == 'Dikembalikan')
-                            <h2>{{ $dikembalikan }}</h2>
+                        @elseif(request('status') == 'Diproses')
+                            <h2>{{ $peminjaman->where('status', 'Dikembalikan')->count() }}</h2>
+                            <p>Dikembalikan</p>
+                        @elseif(request('status') == 'Dibatalkan')
+                            <h2>{{ $peminjaman->where('status', 'Dikembalikan')->count() }}</h2>
                             <p>Dikembalikan</p>
                         @else
                             <h2>{{ $dikembalikan }}</h2>
@@ -89,12 +95,50 @@
                         @elseif(request('status') == 'Terlambat')
                             <h2>{{ $terlambat }}</h2>
                             <p>Total Terlambat</p>
+                        @elseif(request('status') == 'Diproses')
+                            <h2>{{ $peminjaman->where('status', 'Terlambat')->count() }}</h2>
+                            <p>Terlambat</p>
+                        @elseif(request('status') == 'Dibatalkan')
+                            <h2>{{ $peminjaman->where('status', 'Terlambat')->count() }}</h2>
+                            <p>Terlambat</p>
                         @else
                             <h2>{{ $terlambat }}</h2>
                             <p>Terlambat</p>
                         @endif
                     </div>
                     <i class='bx bxs-time icon'></i>
+                </div>
+            </div>
+
+            <!-- Card Diproses -->
+            <div class="card">
+                <div class="head">
+                    <div>
+                        @if (request('status') == 'Diproses')
+                            <h2>{{ isset($diproses) ? $diproses : $peminjaman->where('status', 'Diproses')->count() }}</h2>
+                            <p>Sedang Diproses</p>
+                        @else
+                            <h2>{{ $peminjaman->where('status', 'Diproses')->count() }}</h2>
+                            <p>Sedang Diproses</p>
+                        @endif
+                    </div>
+                    <i class='bx bx-loader icon'></i>
+                </div>
+            </div>
+
+            <!-- Card Dibatalkan -->
+            <div class="card">
+                <div class="head">
+                    <div>
+                        @if (request('status') == 'Dibatalkan')
+                            <h2>{{ isset($dibatalkan) ? $dibatalkan : $peminjaman->where('status', 'Dibatalkan')->count() }}</h2>
+                            <p>Dibatalkan</p>
+                        @else
+                            <h2>{{ $peminjaman->where('status', 'Dibatalkan')->count() }}</h2>
+                            <p>Dibatalkan</p>
+                        @endif
+                    </div>
+                    <i class='bx bx-x-circle icon'></i>
                 </div>
             </div>
         </div>
@@ -118,11 +162,15 @@
                         {{-- Filter status --}}
                         <select name="status" id="status" class="form-control" style="max-width: 180px;">
                             <option value="">Semua Status</option>
+                            <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses
+                            </option>
                             <option value="Dipinjam" {{ request('status') == 'Dipinjam' ? 'selected' : '' }}>Dipinjam
                             </option>
                             <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>
                                 Dikembalikan</option>
                             <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>Terlambat
+                            </option>
+                            <option value="Dibatalkan" {{ request('status') == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan
                             </option>
                         </select>
 
@@ -265,6 +313,10 @@
                                                                     style="color: #dc3545; font-weight: bold">{{ $item->status }}
                                                                     ({{ $item->is_late ? $item->late_days : '?' }}
                                                                     hari)</span>
+                                                            @elseif ($item->status == 'Dibatalkan')
+                                                                <span class="badge"
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -413,6 +465,10 @@
                                                                     style="color: #dc3545; font-weight: bold">{{ $item->status }}
                                                                     ({{ $item->is_late ? $item->late_days : '?' }}
                                                                     hari)</span>
+                                                            @elseif ($item->status == 'Dibatalkan')
+                                                                <span class="badge"
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -558,6 +614,10 @@
                                                                     style="color: #dc3545; font-weight: bold">{{ $item->status }}
                                                                     ({{ $item->is_late ? $item->late_days : '?' }}
                                                                     hari)</span>
+                                                            @elseif ($item->status == 'Dibatalkan')
+                                                                <span class="badge"
+                                                                    style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                                </span>
                                                             @endif
                                                         </td>
                                                         <td style="display: none;">{{ $item->catatan ?? '-' }}</td>
@@ -651,6 +711,9 @@
                                 <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>
                                     Terlambat
                                 </option>
+                                <option value="Dibatalkan" {{ request('status') == 'Dibatalkan' ? 'selected' : '' }}>
+                                    Dibatalkan
+                                </option>
                             </select>
                         </div>
 
@@ -723,26 +786,30 @@
                                             <td>
                                                 @if ($item->status == 'Diproses')
                                                     <span class="badge"
-                                                        style="background-color: #fd7238; color: white">{{ $item->status }}</span>
+                                                        style="color: #0077ff; font-weight: bold">{{ $item->status }}</span>
                                                 @elseif ($item->status == 'Dipinjam')
                                                     <span class="badge"
-                                                        style="background-color: #ffc107; color: black">{{ $item->status }}</span>
+                                                        style="color: #ffc107; font-weight: bold">{{ $item->status }}</span>
                                                 @elseif ($item->status == 'Dikembalikan')
                                                     @if ($item->is_terlambat)
                                                         <span class="badge"
-                                                            style="background-color: #28a745; color: white">{{ $item->status }}</span>
+                                                            style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
                                                         <span class="badge"
-                                                            style="background-color: #dc3545; color: white">Terlambat
+                                                            style="color: #dc3545; font-weight: bold">Terlambat
                                                             ({{ $item->jumlah_hari_terlambat }} hari)
                                                         </span>
                                                     @else
                                                         <span class="badge"
-                                                            style="background-color: #28a745; color: white">{{ $item->status }}</span>
+                                                            style="color: #28a745; font-weight: bold">{{ $item->status }}</span>
                                                     @endif
                                                 @elseif ($item->status == 'Terlambat')
                                                     <span class="badge"
-                                                        style="background-color: #dc3545; color: white">{{ $item->status }}
+                                                        style="color: #dc3545; font-weight: bold">{{ $item->status }}
                                                         ({{ $item->is_late ? $item->late_days : '?' }} hari)</span>
+                                                @elseif ($item->status == 'Dibatalkan')
+                                                    <span class="badge"
+                                                        style="color: #dc3545; font-weight: bold">{{ $item->status }}
+                                                    </span>
                                                 @endif
                                             </td>
                                             <td>
@@ -895,6 +962,9 @@
                 endDate.addEventListener('change', function() {
                     if (endDate.value) {
                         startDate.max = endDate.value;
+                    } else {
+                        // Jika end date dikosongkan, hapus batasan max pada start date
+                        startDate.removeAttribute('max');
                     }
                 });
 

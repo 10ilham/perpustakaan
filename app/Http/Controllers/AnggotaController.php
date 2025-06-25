@@ -507,17 +507,18 @@ class AnggotaController extends Controller
 
         // Ambil data peminjaman aktual dari database untuk periode yang dipilih
         // Tidak termasuk peminjaman dengan status 'Diproses'
-        // PERBAIKAN: Menggunakan tanggal_pinjam untuk timestamp yang lebih akurat,
-        // bukan created_at yang hanya menunjukkan kapan peminjaman dientry
+        // Menggunakan tanggal_pinjam untuk timestamp yang lebih akurat,
         $peminjamanFromDB = PeminjamanModel::where('user_id', $userId)
             ->where('status', '!=', 'Diproses') // Mengecualikan peminjaman yang masih berstatus 'Diproses'
+            ->where('status', '!=', 'Dibatalkan') // Mengecualikan peminjaman yang dibatalkan
             ->whereBetween('tanggal_pinjam', [$startDate, $endDate]) // Gunakan tanggal_pinjam
             ->select('tanggal_pinjam') // Gunakan tanggal_pinjam
             ->get();
 
-        // Dapatkan total peminjaman user (tidak termasuk status 'Diproses')
+        // Dapatkan total peminjaman user (tidak termasuk status 'Diproses' dan 'Dibatalkan')
         $totalPeminjaman = PeminjamanModel::where('user_id', $userId)
-            ->where('status', '!=', 'Diproses') // Konsisten dengan query chart data
+            ->where('status', '!=', 'Diproses')
+            ->where('status', '!=', 'Dibatalkan')
             ->count();
 
         $labels = [];

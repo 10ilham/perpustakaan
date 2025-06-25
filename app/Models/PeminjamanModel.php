@@ -38,6 +38,7 @@ class PeminjamanModel extends Model // Konsep OOP: Inheritance - mewarisi sifat 
         'catatan',               // Catatan terkait peminjaman
         'is_terlambat',          // Flag apakah peminjaman terlambat
         'jumlah_hari_terlambat', // Jumlah hari keterlambatan
+        'is_stok_returned',      // Flag apakah stok sudah dikembalikan untuk peminjaman gagal
         'diproses_by',
         'created_at',            // Timestamp saat peminjaman dibuat
         'updated_at',            // Timestamp saat peminjaman terakhir diperbarui

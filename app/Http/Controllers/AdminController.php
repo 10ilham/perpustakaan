@@ -24,7 +24,7 @@ class AdminController extends Controller
         // Data untuk dashboard
         $totalBuku = BukuModel::count();
         $totalKategori = KategoriModel::count();
-        $totalPeminjaman = PeminjamanModel::count();
+        $totalPeminjaman = PeminjamanModel::where('status', '!=', 'Dibatalkan')->where('status', '!=', 'Diproses')->count();
 
         // Total anggota tidak termasuk admin
         // $totalAnggota = User::where('level', '!=', 'admin')->count();
@@ -270,6 +270,7 @@ class AdminController extends Controller
             $query->where('level', $userLevel);
         })
             ->where('status', '!=', 'Diproses')
+            ->where('status', '!=', 'Dibatalkan')
             ->whereBetween('tanggal_pinjam', [$startDate, $endDate])
             ->select('tanggal_pinjam') // Gunakan tanggal_pinjam untuk timestamp yang lebih akurat
             ->get();

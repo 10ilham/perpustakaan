@@ -57,6 +57,16 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="filter-form-group">
+                            <label for="status" class="filter-form-label">Status</label>
+                            <select id="status" name="status" class="filter-form-input">
+                                <option value="">Semua Status</option>
+                                <option value="tepat_waktu" {{ request('status') === 'tepat_waktu' ? 'selected' : '' }}>
+                                    Tepat Waktu</option>
+                                <option value="terlambat" {{ request('status') === 'terlambat' ? 'selected' : '' }}>
+                                    Terlambat</option>
+                            </select>
+                        </div>
                         <div class="filter-buttons-container">
                             <button type="submit" class="btn-download btn-filter">
                                 <i class='bx bx-search'></i> Filter
@@ -68,6 +78,16 @@
                     </form>
                 @else
                     <form method="GET" action="{{ route('laporan.sudah_kembali') }}" class="filter-form-grid">
+                        <div class="filter-form-group">
+                            <label for="status" class="filter-form-label">Status</label>
+                            <select id="status" name="status" class="filter-form-input">
+                                <option value="">Semua Status</option>
+                                <option value="tepat_waktu" {{ request('status') === 'tepat_waktu' ? 'selected' : '' }}>
+                                    Tepat Waktu</option>
+                                <option value="terlambat" {{ request('status') === 'terlambat' ? 'selected' : '' }}>
+                                    Terlambat</option>
+                            </select>
+                        </div>
                         <div class="filter-form-group">
                             <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
                             <input type="date" id="tanggal_mulai" name="tanggal_mulai"

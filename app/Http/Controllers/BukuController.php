@@ -146,14 +146,18 @@ class BukuController extends Controller
             $buku->status = 'Tersedia';
         }
 
+        // Simpan buku terlebih dahulu untuk mendapatkan ID
+        $buku->save();
+
+        // Setelah save, baru upload foto (sehingga ID buku tersedia)
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
-            $nama_file = $buku->id . '_' . $foto->getClientOriginalName(); // Menggunakan ID buku untuk menghindari duplikasi
+            $nama_file = $buku->id . '_' . $foto->getClientOriginalName(); // Sekarang ID buku sudah tersedia
             $foto->move(public_path('assets/img/buku/'), $nama_file);
             $buku->foto = $nama_file;
+            // Update kembali data buku untuk menyimpan nama file foto
+            $buku->save();
         }
-
-        $buku->save();
 
         if ($request->has('kategori_id')) {
             $buku->kategori()->attach($request->kategori_id);

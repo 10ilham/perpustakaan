@@ -19,9 +19,60 @@ body {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     margin-bottom: 1rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 !important; /* Remove padding that might cause misalignment */
 }
 
-/* Responsivitas tabel yang lebih baik */
+/* Ensure tables take full width of their container */
+.table-responsive table {
+    width: 100% !important;
+    min-width: 100%;
+}
+
+/* Ensure card content is properly aligned */
+.content-data {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Make sure data containers match cards width */
+.data {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Fix for DataTables alignment */
+div.dataTables_wrapper {
+    width: 100% !important;
+    margin: 0 auto;
+}
+
+/* Override any automatic width calculations from DataTables */
+table.dataTable {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Make sure tab-pane content is properly contained */
+.tab-pane {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Ensure card containers don't overflow */
+.card {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Fix for padding inconsistencies */
+.p-3 {
+    padding: 1rem !important;
+}
 
 /* Responsivitas form yang lebih baik */
 input, select, textarea {
@@ -1151,6 +1202,12 @@ button[data-toggle="collapse"] {
     color: #dc3545 !important;
     background-color: rgba(220, 53, 69, 0.1);
 }
+
+.badge-dibatalkan {
+    color: #9A2A2A !important;
+    background-color: rgba(154, 42, 42, 0.1);
+}
+
 
 /* Gaya untuk kelompok badge */
 .badge-group {

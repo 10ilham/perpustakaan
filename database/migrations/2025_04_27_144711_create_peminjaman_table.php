@@ -19,9 +19,10 @@ return new class extends Migration
             $table->dateTime('tanggal_pinjam');
             $table->date('tanggal_kembali');
             $table->date('tanggal_pengembalian')->nullable();
-            $table->enum('status', ['Diproses', 'Dipinjam', 'Dikembalikan', 'Terlambat'])->default('Diproses');
+            $table->enum('status', ['Diproses', 'Dipinjam', 'Dikembalikan', 'Terlambat', 'Dibatalkan'])->default('Diproses');
             $table->text('catatan')->nullable();
             $table->boolean('is_terlambat')->default(false);
+            $table->boolean('is_stok_returned')->default(false);
             $table->integer('jumlah_hari_terlambat')->default(0);
             $table->string('diproses_by', 6)->nullable();
             $table->timestamps();

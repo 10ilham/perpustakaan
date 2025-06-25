@@ -85,7 +85,7 @@
                                             <option value="{{ $item->id }}" data-judul="{{ $item->judul }}"
                                                 data-pengarang="{{ $item->pengarang }}"
                                                 data-penerbit="{{ $item->penerbit }}" data-stok="{{ $item->stok_buku }}"
-                                                data-kategori="{{ $item->kategori->pluck('nama')->implode(', ') }}"
+                                                data-kategori="{{ $item->kategori->pluck('nama_kategori')->implode(', ') }}"
                                                 data-foto="{{ $item->foto }}" data-kode-buku="{{ $item->kode_buku }}"
                                                 data-tahun-terbit="{{ $item->tahun_terbit }}"
                                                 data-status="{{ $item->status }}"

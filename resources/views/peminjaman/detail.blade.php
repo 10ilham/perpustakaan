@@ -120,6 +120,17 @@
                                             @endif
                                         </div>
                                     </div>
+                                @elseif ($peminjaman->status == 'Dibatalkan')
+                                    <div class="status-box status-dibatalkan">
+                                        <div class="icon">
+                                            <i class="bx bx-x-circle"></i>
+                                        </div>
+                                        <div class="info">
+                                            <h4>{{ $peminjaman->status }}</h4>
+                                            <p>Peminjaman dibatalkan karena buku tidak diambil sebelum tanggal batas
+                                                pengembalian kadaluarsa.</p>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
 
@@ -257,8 +268,8 @@
         </div>
 
         <!-- Modal Konfirmasi Pengambilan -->
-        <div class="modal fade bootstrap-modal" id="pengambilanModal" tabindex="-1" aria-labelledby="pengambilanModalLabel"
-            aria-hidden="true">
+        <div class="modal fade bootstrap-modal" id="pengambilanModal" tabindex="-1"
+            aria-labelledby="pengambilanModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">

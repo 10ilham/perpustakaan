@@ -13,8 +13,10 @@ class LaporanController extends Controller
     public function index()
     {
         // === STATISTIK UMUM ===
-        // Hitung total peminjaman (tidak termasuk buku yang masih diproses)
-        $totalPeminjaman = PeminjamanModel::where('status', '!=', 'Diproses')->count();
+        // Hitung total peminjaman (tidak termasuk buku yang masih diproses atau dibatalkan)
+        $totalPeminjaman = PeminjamanModel::where('status', '!=', 'Diproses')
+            ->where('status', '!=', 'Dibatalkan')
+            ->count();
 
         // Hitung buku yang saat ini masih dipinjam atau terlambat dikembalikan
         $belumKembali = PeminjamanModel::whereIn('status', ['Dipinjam', 'Terlambat'])->count();
@@ -46,7 +48,9 @@ class LaporanController extends Controller
                 // Untuk setiap jenis pengguna, hitung total buku yang pernah dipinjam
                 $user->total_peminjaman = PeminjamanModel::whereHas('user', function ($q) use ($user) {
                     $q->where('level', $user->level);
-                })->where('status', '!=', 'Diproses')->count();
+                })->where('status', '!=', 'Diproses')
+                    ->where('status', '!=', 'Dibatalkan')
+                    ->count();
 
                 // Untuk setiap jenis pengguna, hitung buku yang sedang dipinjam saat ini
                 $user->sedang_pinjam = PeminjamanModel::whereHas('user', function ($q) use ($user) {
@@ -96,6 +100,17 @@ class LaporanController extends Controller
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('level', $request->level);
             });
+        }
+
+        // Filter berdasarkan status sedang dipinjam (tetapi masih belum terlambat) atau terlambat jika ada
+        if ($request->has('status') && $request->status) {
+            if ($request->status === 'belum_terlambat') {
+                // Ambil peminjaman yang masih aktif (Dipinjam dan belum terlambat)
+                $query->where('status', 'Dipinjam')->where('tanggal_kembali', '>=', now());
+            } elseif ($request->status === 'terlambat') {
+                // Ambil peminjaman yang terlambat
+                $query->where('status', 'Terlambat');
+            }
         }
 
         $peminjamanBelumKembali = $query->orderBy('tanggal_kembali', 'asc')
@@ -156,6 +171,19 @@ class LaporanController extends Controller
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('level', $request->level);
             });
+        }
+
+        // Filter berdasarkan status pengembalian (tepat waktu atau terlambat) jika ada
+        if ($request->has('status') && $request->status) {
+            if ($request->status === 'tepat_waktu') {
+                // Ambil peminjaman yang dikembalikan tepat waktu atau lebih awal
+                // (tanggal_pengembalian <= tanggal_kembali)
+                $query->whereRaw('tanggal_pengembalian <= tanggal_kembali');
+            } elseif ($request->status === 'terlambat') {
+                // Ambil peminjaman yang dikembalikan terlambat
+                // (tanggal_pengembalian > tanggal_kembali)
+                $query->whereRaw('tanggal_pengembalian > tanggal_kembali');
+            }
         }
 
         $peminjamanSudahKembali = $query->orderBy('tanggal_pengembalian', 'desc')->get();
@@ -219,6 +247,7 @@ class LaporanController extends Controller
                 // Status 'Diproses' tidak termasuk dalam perhitungan
                 // PERBAIKAN: Gunakan tanggal_pinjam, bukan created_at untuk statistik yang lebih akurat
                 $todayLoans = PeminjamanModel::where('status', '!=', 'Diproses')
+                    ->where('status', '!=', 'Dibatalkan')
                     ->whereDate('tanggal_pinjam', $today->toDateString())
                     ->get(['id', 'tanggal_pinjam']);
 
@@ -293,6 +322,7 @@ class LaporanController extends Controller
 
                         // Jumlah peminjaman pada tanggal tersebut (tidak termasuk status 'Diproses')
                         'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->where('status', '!=', 'Dibatalkan')
                             ->whereDate('tanggal_pinjam', $day->toDateString())->count(),
 
                         // Jumlah pengembalian pada tanggal tersebut
@@ -320,6 +350,7 @@ class LaporanController extends Controller
 
                         // Jumlah peminjaman pada tanggal tersebut (tidak termasuk status 'Diproses')
                         'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->where('status', '!=', 'Dibatalkan')
                             ->whereDate('tanggal_pinjam', $date->toDateString())->count(),
 
                         // Jumlah pengembalian pada tanggal tersebut
@@ -357,6 +388,7 @@ class LaporanController extends Controller
 
                         // Jumlah peminjaman pada bulan dan tahun tersebut (tidak termasuk status 'Diproses')
                         'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->where('status', '!=', 'Dibatalkan')
                             ->whereYear('tanggal_pinjam', $month->year)    // Filter berdasarkan tahun
                             ->whereMonth('tanggal_pinjam', $month->month)  // Filter berdasarkan bulan
                             ->count(),
@@ -383,6 +415,7 @@ class LaporanController extends Controller
 
                         // Jumlah peminjaman pada bulan tersebut dalam tahun ini (tidak termasuk status 'Diproses')
                         'dipinjam' => PeminjamanModel::where('status', '!=', 'Diproses')
+                            ->where('status', '!=', 'Dibatalkan')
                             ->whereYear('tanggal_pinjam', $currentYear)   // Filter berdasarkan tahun ini
                             ->whereMonth('tanggal_pinjam', $month)        // Filter berdasarkan bulan 1-12
                             ->count(),
@@ -434,7 +467,8 @@ class LaporanController extends Controller
                     // Untuk periode lain: tampilkan peminjaman dalam periode (tidak termasuk "Diproses")
                     $query = PeminjamanModel::whereHas('user', function ($q) use ($user) {
                         $q->where('level', $user->level);  // Filter berdasarkan level pengguna
-                    })->where('status', '!=', 'Diproses');  // Kecualikan status "Diproses"
+                    })->where('status', '!=', 'Diproses') // Kecualikan status "Diproses"
+                        ->where('status', '!=', 'Dibatalkan'); // Kecualikan status "Dibatalkan"
 
                     // Terapkan filter rentang tanggal jika ada
                     if ($dateRange) {

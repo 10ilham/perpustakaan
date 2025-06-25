@@ -37,10 +37,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',                    // Email pengguna (digunakan untuk login)
         'password',                 // Password pengguna (dienkripsi HASH)
         'level',                    // Peran pengguna (admin, siswa, guru, staff)
-        'created_at',             // Timestamp saat akun dibuat
-        'updated_at',             // Timestamp saat akun terakhir diperbarui
         'email_verified_at',        // Timestamp saat email diverifikasi
         'email_verification_token', // Token untuk verifikasi email
+        'created_at',             // Timestamp saat akun dibuat
+        'updated_at',             // Timestamp saat akun terakhir diperbarui
     ];
 
     /**
