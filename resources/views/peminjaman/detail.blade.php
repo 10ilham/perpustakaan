@@ -121,6 +121,17 @@
                                             @endif
                                         </div>
                                     </div>
+                                @elseif ($peminjaman->status == 'Diproses')
+                                    <div class="status-box status-diproses">
+                                        <div class="icon">
+                                            <i class="bx bx-loader-circle"></i>
+                                        </div>
+                                        <div class="info">
+                                            <h4>{{ $peminjaman->status }}</h4>
+                                            <p>Peminjaman sedang diproses. Silakan ambil buku dan konfirmasi pengambilan
+                                                buku.</p>
+                                        </div>
+                                    </div>
                                 @elseif ($peminjaman->status == 'Dibatalkan')
                                     <div class="status-box status-dibatalkan">
                                         <div class="icon">

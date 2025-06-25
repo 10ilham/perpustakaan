@@ -1823,6 +1823,12 @@ option .icon {
     border: 1px solid #a5d6a7;
 }
 
+.status-diproses {
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    color: #2196f3;
+}
+
 .status-dibatalkan {
     background-color: #b64556;
     border: 1px solid #ef9a9a;
@@ -1853,6 +1859,10 @@ option .icon {
 
 .status-returned .icon {
     color: #43a047;
+}
+
+.status-diproses .icon {
+    color: #2196f3;
 }
 
 .status-dibatalkan .icon {
