@@ -89,7 +89,7 @@
                             <input type="date" id="tanggal_selesai" name="tanggal_selesai"
                                 value="{{ request('tanggal_selesai') }}" class="filter-form-input">
                         </div>
-                         <div class="filter-form-group">
+                        <div class="filter-form-group">
                             <label for="status" class="filter-form-label">Status</label>
                             <select id="status" name="status" class="filter-form-input">
                                 <option value="">Semua Status</option>
@@ -100,16 +100,7 @@
                                     Terlambat</option>
                             </select>
                         </div>
-                        <div class="filter-form-group">
-                            <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
-                            <input type="date" id="tanggal_mulai" name="tanggal_mulai"
-                                value="{{ request('tanggal_mulai') }}" class="filter-form-input">
-                        </div>
-                        <div class="filter-form-group">
-                            <label for="tanggal_selesai" class="filter-form-label">Tanggal Selesai</label>
-                            <input type="date" id="tanggal_selesai" name="tanggal_selesai"
-                                value="{{ request('tanggal_selesai') }}" class="filter-form-input">
-                        </div>
+
                         <div class="filter-buttons-container">
                             <button type="submit" class="btn-download btn-filter">
                                 <i class='bx bx-search'></i> Filter
@@ -243,6 +234,33 @@
 @section('scripts')
     <!-- Additional library for Word export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    {{-- Javascript mengatur inputan tanggal --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tanggalMulaiInput = document.getElementById('tanggal_mulai');
+            var tanggalSelesaiInput = document.getElementById('tanggal_selesai');
+
+            // Pengaturan awal - menetapkan tanggal minimum untuk tanggal selesai berdasarkan tanggal mulai
+            if (tanggalMulaiInput.value) {
+                tanggalSelesaiInput.setAttribute('min', tanggalMulaiInput.value);
+            }
+
+            // Perbarui nilai minimum tanggal selesai ketika tanggal mulai berubah
+            tanggalMulaiInput.addEventListener('change', function() {
+                if (this.value) {
+                    tanggalSelesaiInput.setAttribute('min', this.value);
+
+                    // Jika tanggal selesai sekarang lebih awal dari tanggal mulai, atur ulang tanggal selesai
+                    if (tanggalSelesaiInput.value && tanggalSelesaiInput.value < this.value) {
+                        tanggalSelesaiInput.value = this.value;
+                    }
+                } else {
+                    // Jika tanggal mulai dikosongkan, hapus batasan minimum tanggal selesai
+                    tanggalSelesaiInput.removeAttribute('min');
+                }
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             // Initialize DataTable with export buttons
