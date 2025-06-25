@@ -79,6 +79,16 @@
                     </form>
                 @else
                     <form method="GET" action="{{ route('laporan.belum_kembali') }}" class="filter-form-grid">
+                        <div class="filter-form-group">
+                            <label for="tanggal_mulai" class="filter-form-label">Tanggal Mulai</label>
+                            <input type="date" id="tanggal_mulai" name="tanggal_mulai"
+                                value="{{ request('tanggal_mulai') }}" class="filter-form-input">
+                        </div>
+                        <div class="filter-form-group">
+                            <label for="tanggal_selesai" class="filter-form-label">Tanggal Selesai</label>
+                            <input type="date" id="tanggal_selesai" name="tanggal_selesai"
+                                value="{{ request('tanggal_selesai') }}" class="filter-form-input">
+                        </div>
                          <div class="filter-form-group">
                             <label for="status" class="filter-form-label">Status</label>
                             <select id="status" name="status" class="filter-form-input">
