@@ -253,8 +253,11 @@ class BukuController extends Controller
         // PENTING: Hitung jumlah buku yang sedang dipinjam dan diproses dari database
         // Ini lebih akurat daripada menghitung dari selisih total dan stok
         $bukuDipinjam = \App\Models\PeminjamanModel::where('buku_id', $id)
-            ->whereIn('status', ['Dipinjam', 'Diproses'])
+            ->whereIn('status', ['Dipinjam', 'Diproses', 'Terlambat'])
             ->count();
+
+        // Tambahkan debug output untuk memverifikasi hasil perhitungan peminjaman aktif
+        // dd("Buku dengan ID $id: Total Dipinjam: $bukuDipinjam");
 
         // Jika ada buku yang sedang dipinjam, kita perlu memastikan total buku tidak kurang dari itu
         if ($bukuDipinjam > 0) {
@@ -285,21 +288,29 @@ class BukuController extends Controller
         $buku->penerbit = $request->penerbit;
         $buku->tahun_terbit = $request->tahun_terbit;
         $buku->deskripsi = $request->deskripsi;
-        $buku->total_buku = $request->total_buku;
+
+        // PERBAIKAN: Dapatkan total buku baru dari request dan pastikan dikonversi ke integer
+        // untuk menghindari masalah tipe data
+        $newTotal = (int)$request->total_buku;
+
+        // Verifikasi bahwa nilai total valid - total tidak boleh kurang dari jumlah buku yang dipinjam
+        if ($newTotal < $bukuDipinjam) {
+            $newTotal = $bukuDipinjam;
+        }
+
+        // Update total_buku dengan nilai input yang baru
+        $buku->total_buku = $newTotal;
 
         // Update id_admin berdasarkan admin yang sedang melakukan edit
         if ($adminModel) {
             $buku->id_admin = $adminModel->id;
         }
 
-        // Dapatkan total buku baru dari request
-        $newTotal = $request->total_buku;
+        // RUMUS UTAMA: stok_buku = total_buku - bukuDipinjam
+        // Hitung stok buku yang tersedia (total buku dikurangi jumlah yang sedang dipinjam)
+        $buku->stok_buku = max(0, $newTotal - $bukuDipinjam);
 
-        // Hitung stok buku yang tersedia: total buku baru dikurangi jumlah peminjaman aktif
-        $newStok = $newTotal - $bukuDipinjam;
-
-        // Pastikan stok tidak negatif
-        $buku->stok_buku = max(0, $newStok);
+        // Buku sudah disiapkan dengan total_buku dan stok_buku yang benar
 
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
@@ -313,6 +324,9 @@ class BukuController extends Controller
             $foto->move(public_path('assets/img/buku/'), $nama_file);
             $buku->foto = $nama_file;
         }
+
+        // Final check: pastikan stok dihitung dengan benar
+        $buku->stok_buku = max(0, $buku->total_buku - $bukuDipinjam);
 
         // Set status berdasarkan stok, jika <= 0, set status "Habis" jika >0, set status "Tersedia"
         if ($buku->stok_buku <= 0) {
@@ -340,10 +354,11 @@ class BukuController extends Controller
                 $kategori_id = reset($kategori_id); // Ambil kategori pertama dari array
             }
 
-            // Pesan sukses dengan detail stok
+            // Pesan sukses dengan detail stok yang lebih jelas
             $successMessage = 'Buku berhasil diperbarui. Total buku: ' . $buku->total_buku .
                 ', Stok tersedia: ' . $buku->stok_buku .
-                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '');
+                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '') .
+                ' (Input total buku: ' . $request->total_buku . ')';
 
             return redirect()->route('kategori.detail', [
                 'id' => $kategori_id,
@@ -358,10 +373,11 @@ class BukuController extends Controller
             $kategoriFilter = $request->input('kategori');
             $status = $request->input('status');
 
-            // Pesan sukses dengan detail stok
+            // Pesan sukses dengan detail stok yang lebih jelas
             $successMessage = 'Buku berhasil diperbarui. Total buku: ' . $buku->total_buku .
                 ', Stok tersedia: ' . $buku->stok_buku .
-                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '');
+                ($bukuDipinjam > 0 ? ', Dipinjam: ' . $bukuDipinjam : '') .
+                ' (Input total buku: ' . $request->total_buku . ')';
 
             // Gunakan parameter yang sama persis dengan tombol "Kembali" di view
             return redirect()->route('buku.index', [

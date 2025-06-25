@@ -55,7 +55,8 @@
                                                 <p class="card-text m-0" style="text-align: justify;">Pengarang:
                                                     {{ $peminjaman->buku->pengarang }}</p>
                                                 <p class="card-text m-0" style="text-align: justify;">Kategori:
-                                                    {{ $peminjaman->buku->kategori->pluck('nama')->implode(', ') }}</p>
+                                                    {{ $peminjaman->buku->kategori->pluck('nama_kategori')->implode(', ') }}
+                                                </p>
                                                 <p class="card-text m-0" style="text-align: justify;">Penerbit:
                                                     {{ $peminjaman->buku->penerbit }}</p>
                                                 <p class="card-text m-0" style="text-align: justify;">Tahun Terbit:
