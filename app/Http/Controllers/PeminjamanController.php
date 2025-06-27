@@ -18,12 +18,6 @@ class PeminjamanController extends Controller
     // Menampilkan daftar peminjaman
     /**
      * Helper method untuk menerapkan filter tanggal pada query peminjaman
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string|null $startDate
-     * @param string|null $endDate
-     * @param string|null $status
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function applyDateFilter($query, $startDate, $endDate, $status = null)
     {
@@ -389,7 +383,7 @@ class PeminjamanController extends Controller
         // Perubahan: Mencakup semua status yang belum dikembalikan (Dipinjam DAN Terlambat)
         $sudahPinjam = PeminjamanModel::where('user_id', Auth::id())
             ->where('buku_id', $id)
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->first();
 
         if ($sudahPinjam) {
@@ -398,7 +392,7 @@ class PeminjamanController extends Controller
 
         // Cek jumlah buku yang sedang dipinjam oleh user
         $jumlahPinjam = PeminjamanModel::where('user_id', Auth::id())
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->count();
 
         // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
@@ -409,7 +403,7 @@ class PeminjamanController extends Controller
         return view('peminjaman.form', compact('buku'));
     }
 
-    // Helper method untuk redirect yang tepat berdasarkan level user
+    // Helper method untuk redirect yang tepat berdasarkan level user untuk anggota ketika peminjaman buku tidak bisa dilakukan
     private function redirectToAppropriateView()
     {
         $userLevel = Auth::user()->level;
@@ -462,7 +456,7 @@ class PeminjamanController extends Controller
         // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan (termasuk status Terlambat)
         $sudahPinjam = PeminjamanModel::where('user_id', Auth::id())
             ->where('buku_id', $request->buku_id)
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->first();
 
         if ($sudahPinjam) {
@@ -471,7 +465,7 @@ class PeminjamanController extends Controller
 
         // Cek jumlah buku yang sedang dipinjam oleh user
         $jumlahPinjam = PeminjamanModel::where('user_id', Auth::id())
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->count();
 
         // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
@@ -733,10 +727,8 @@ class PeminjamanController extends Controller
     }
 
     /**
-     * Mendapatkan daftar anggota berdasarkan level
+     * Mendapatkan daftar anggota berdasarkan level untuk peminjaman manual
      * Anggota yang sudah memiliki peminjaman aktif (status Dipinjam atau Terlambat) tidak ditampilkan
-     * @param string $level
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getAnggotaByLevel($level)
     {
@@ -852,7 +844,7 @@ class PeminjamanController extends Controller
         // Cek apakah user sudah meminjam buku yang sama dan belum dikembalikan
         $sudahPinjam = PeminjamanModel::where('user_id', $request->user_id)
             ->where('buku_id', $request->buku_id)
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->first();
 
         if ($sudahPinjam) {
@@ -861,7 +853,7 @@ class PeminjamanController extends Controller
 
         // Cek jumlah buku yang sedang dipinjam oleh user
         $jumlahPinjam = PeminjamanModel::where('user_id', $request->user_id)
-            ->whereIn('status', ['Dipinjam', 'Terlambat'])
+            ->whereIn('status', ['Dipinjam', 'Terlambat', 'Diproses'])
             ->count();
 
         // Maksimal 1 buku yang boleh dipinjam dalam waktu bersamaan
@@ -924,10 +916,7 @@ class PeminjamanController extends Controller
     }
 
     /**
-     * Helper method untuk memvalidasi format tanggal
-     *
-     * @param string $date
-     * @return bool
+     * Helper method untuk memvalidasi format tanggal untuk filter data tanggal
      */
     private function validateDate($date)
     {
