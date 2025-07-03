@@ -215,7 +215,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($item->status == 'Dipinjam')
+                                                @if ($item->status == 'Diproses')
+                                                    <span class="badge" style="color: #0077ff;">{{ $item->status }}
+                                                    </span>
+                                                @elseif ($item->status == 'Dipinjam')
                                                     <span class="badge" style="color: #ffc107;">{{ $item->status }}
                                                     </span>
                                                 @elseif ($item->status == 'Dikembalikan')
@@ -232,6 +235,9 @@
                                                 @elseif ($item->status == 'Terlambat')
                                                     <span class="badge" style="color: #dc3545;">{{ $item->status }}
                                                         ({{ $item->is_late ? $item->late_days : '?' }} hari)
+                                                    </span>
+                                                @elseif ($item->status == 'Dibatalkan')
+                                                    <span class="badge" style="color: #dc3545;">{{ $item->status }}
                                                     </span>
                                                 @endif
                                             </td>

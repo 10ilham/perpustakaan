@@ -111,15 +111,13 @@
                                     <!-- Level Anggota -->
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="user_level">Level Anggota <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="user_level">Level Anggota <span class="text-danger">*</span></label>
                                             <select name="user_level" id="user_level"
                                                 class="form-control @error('user_level') is-invalid @enderror" required>
                                                 <option value="">-- Pilih Level --</option>
                                                 <option value="siswa"
                                                     {{ old('user_level') == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                                                <option value="guru"
-                                                    {{ old('user_level') == 'guru' ? 'selected' : '' }}>
+                                                <option value="guru" {{ old('user_level') == 'guru' ? 'selected' : '' }}>
                                                     Guru</option>
                                                 <option value="staff"
                                                     {{ old('user_level') == 'staff' ? 'selected' : '' }}>Staff</option>

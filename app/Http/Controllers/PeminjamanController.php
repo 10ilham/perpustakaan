@@ -666,6 +666,7 @@ class PeminjamanController extends Controller
         // Mengelompokkan peminjaman berdasarkan buku_id dan menghitung jumlahnya
         $bukuPopuler = PeminjamanModel::select('buku_id')
             ->selectRaw('COUNT(*) as total_peminjaman')
+            ->whereNotIn('status', ['Diproses', 'Dibatalkan'])
             ->groupBy('buku_id')
             ->orderByRaw('COUNT(*) DESC')
             ->limit($limit)

@@ -171,20 +171,20 @@
                                         <div class="detail-item">
                                             <span class="label">Tanggal Peminjaman</span>
                                             <span
-                                                class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d F Y') }}</span>
+                                                class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->translatedFormat('d F Y') }}</span>
                                         </div>
 
                                         <div class="detail-item">
                                             <span class="label">Batas Waktu Pengembalian</span>
                                             <span
-                                                class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d F Y') }}</span>
+                                                class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->translatedFormat('d F Y') }}</span>
                                         </div>
 
                                         @if ($peminjaman->tanggal_pengembalian)
                                             <div class="detail-item">
                                                 <span class="label">Tanggal Pengembalian</span>
                                                 <span
-                                                    class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pengembalian)->format('d F Y') }}</span>
+                                                    class="value">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pengembalian)->translatedFormat('d F Y') }}</span>
                                             </div>
                                         @endif
                                     </div>
@@ -257,8 +257,7 @@
         </section>
 
         <!-- Modal Konfirmasi Pengembalian -->
-        <div class="modal fade bootstrap-modal" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel"
-            aria-hidden="true">
+        <div class="modal fade bootstrap-modal" id="returnModal" aria-labelledby="returnModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -280,8 +279,8 @@
         </div>
 
         <!-- Modal Konfirmasi Pengambilan -->
-        <div class="modal fade bootstrap-modal" id="pengambilanModal" tabindex="-1"
-            aria-labelledby="pengambilanModalLabel" aria-hidden="true">
+        <div class="modal fade bootstrap-modal" id="pengambilanModal" aria-labelledby="pengambilanModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
